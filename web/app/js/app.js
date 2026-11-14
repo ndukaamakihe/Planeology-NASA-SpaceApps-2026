@@ -4,7 +4,25 @@ const TT = window.TT, h = TT.h;
 TT.pages = TT.pages || {};
 const main = TT.$('#main'), nav = TT.$('#nav'), menu = TT.$('#menu'), foot = TT.$('#foot');
 menu.innerHTML = TT.icons.menu;
-menu.addEventListener('click', () => { const o = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', o); });
+/* header menu: view options for the Analog Finder; on small screens it also opens the page links */
+const pop = h('div', {class:'glass menu-pop', role:'dialog', 'aria-label':'Options', hidden:true});
+document.body.appendChild(pop);
+function drawPop(){
+  TT.clear(pop);
+  const mode = TT.lsGet('planalogy.mode', 'simple') === 'advanced' ? 'advanced' : 'simple';
+  const seg = h('div', {class:'seg', role:'radiogroup', 'aria-label':'Analog Finder view'});
+  [['simple', 'Simple'], ['advanced', 'Advanced']].forEach(([k, l]) => seg.appendChild(h('button', {type:'button', role:'radio', 'aria-checked': mode === k,
+    onclick: () => { TT.lsSet('planalogy.mode', k); window.dispatchEvent(new CustomEvent('planalogy-mode', {detail: k})); drawPop(); }}, l)));
+  pop.append(h('h4', null, 'Analog Finder view'), seg,
+    h('p', {class:'tiny muted'}, mode === 'simple' ? 'Mars target, mission scenarios and the climate timeline.' : 'Adds category weights, the AI mission and the dry-land filters.'));
+}
+const closeMenu = () => { pop.hidden = true; nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); };
+menu.addEventListener('click', () => {
+  if (!pop.hidden){ closeMenu(); return; }
+  drawPop(); pop.hidden = false; if (window.innerWidth <= 900) nav.classList.add('open'); menu.setAttribute('aria-expanded', 'true');
+});
+document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target) && !menu.contains(e.target) && !nav.contains(e.target)) closeMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !pop.hidden){ closeMenu(); menu.focus(); } });
 TT.$('#skip').addEventListener('click', () => TT.focusMain());
 
 function parse(){
@@ -22,7 +40,7 @@ function parse(){
 let current = null, first = true;
 function route(){
   if (current && current.destroy){ try { current.destroy(); } catch(e){ console.error(e); } }
-  current = null; nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false');
+  current = null; closeMenu();
   const r = parse(); TT.clear(main); window.scrollTo(0, 0);
   const page = {finder:TT.pages.finder, home:TT.pages.home, explore:TT.pages.explore, detail:TT.pages.detail, compare:TT.pages.compare, about:TT.pages.about, admin:TT.pages.admin}[r.name];
   const titles = {finder:'Analog Finder — Planalogy', home:'Planalogy — Find Earth\'s Extremes', explore:'Explore — Planalogy', detail:'Location — Planalogy', compare:'Compare — Planalogy', about:'About and methodology — Planalogy', admin:'Admin — Planalogy'};

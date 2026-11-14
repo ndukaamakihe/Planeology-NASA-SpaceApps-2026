@@ -114,11 +114,12 @@ TT.createGlobe = function(canvas, o){
     setOverlay(body, cv){
       if (!planets[body]) { planets[body] = makePlanet(body, renderer, (b, what, e) => { o.onLoad && o.onLoad(b, what, e); }); planets[body].visible = planets[body] === cur; scene.add(planets[body]); }
       const u = planets[body].userData;
-      if (u.overlay){ planets[body].remove(u.overlay); u.overlay.material.map && u.overlay.material.map.dispose(); u.overlay.material.dispose(); u.overlay = null; }
+      if (u.overlay && cv && u.overlay.userData.cv === cv && u.overlay.userData.w === cv.width){ u.overlay.material.map.needsUpdate = true; return; }
+      if (u.overlay){ planets[body].remove(u.overlay); u.overlay.material.map && u.overlay.material.map.dispose(); u.overlay.material.dispose(); u.overlay.geometry.dispose(); u.overlay = null; }
       if (!cv) return;
       const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
       const m = new THREE.Mesh(new THREE.SphereGeometry(1.0028, 128, 64), new THREE.MeshBasicMaterial({map: t, transparent: true, depthWrite: false}));
-      m.renderOrder = 3; planets[body].add(m); u.overlay = m;
+      m.renderOrder = 3; m.userData.cv = cv; m.userData.w = cv.width; planets[body].add(m); u.overlay = m;
     },
     setMarkers(list, keep){
       items = list; if (!cur) return;
@@ -155,6 +156,9 @@ TT.createGlobe = function(canvas, o){
       camera.aspect = W / H; camera.updateProjectionMatrix();
       const sc = o.markerPx / H * 2 * Math.tan(camera.fov * D2R / 2);
       if (cur) cur.userData.markers.children.forEach(s => { const k = s.userData.base ? 1.7 : 1; s.scale.set(sc * k, sc * k, 1); if (s.userData.base) s.userData.base = sc * 1.7; });
+      // resizing clears the canvas and resize callbacks run after this frame's render: draw again now,
+      // or an animated resize (the Finder's planet swap) shows an empty stage until it ends
+      if (alive && cur){ camera.position.copy(ll2v(view.lat, view.lon, view.dist)); camera.up.set(0, 1, 0); camera.lookAt(0, 0, 0); renderer.render(scene, camera); }
     },
     dispose(){ alive = false; cancelAnimationFrame(raf); ro.disconnect(); renderer.dispose(); canvas.removeEventListener('wheel', onWheel); },
     pickAt(x, y, r){

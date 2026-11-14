@@ -34,13 +34,15 @@ def cell_id(planet: str, lat: float, lon: float) -> str:
     return f"{planet}_{lat:+05.1f}_{lon:+06.1f}"
 
 
-ALL_FEATURES = ["regional_relief_m", "surface_temp_swing_K", "surface_temp_min_K", "ati_percentile",
-                "albedo", "rock_group", "inside_impact_structure", "ground_ice_flag"]
+ALL_FEATURES = ["slope_deg", "roughness_m", "relief_m", "surface_temp_swing_K", "surface_temp_min_K",
+                "air_temp_swing_K", "ati_percentile", "albedo", "mineral_groups", "rock_group",
+                "inside_impact_structure", "ground_ice_flag"]
 
 
 def _weights(**overrides: float) -> dict[str, float]:
-    base = {"regional_relief_m": 1, "surface_temp_swing_K": 2, "surface_temp_min_K": 1, "ati_percentile": 1,
-            "albedo": 1, "rock_group": 1, "inside_impact_structure": 1, "ground_ice_flag": 1}
+    base = {"slope_deg": 1, "roughness_m": 1, "relief_m": 1, "surface_temp_swing_K": 2, "surface_temp_min_K": 1,
+            "air_temp_swing_K": 1, "ati_percentile": 1, "albedo": 1, "mineral_groups": 1, "rock_group": 1,
+            "inside_impact_structure": 1, "ground_ice_flag": 1}
     base.update(overrides)
     return base
 
@@ -53,7 +55,7 @@ PRESETS: list[dict[str, Any]] = [
         "target": "Gale Crater (Curiosity)",
         "why": "Terrain decides mobility; surface material (thermal inertia, albedo) separates dunes, gravel and bedrock.",
         "dimension_weights": {"terrain": 2, "thermophysical": 1, "optical": 1, "thermal": 0.5,
-                              "geology": 0.5, "craters": 0.5, "water": 0.5},
+                              "mineralogy": 0.25, "geology": 0.5, "craters": 0.5, "water": 0.5},
         "feature_weights": _weights(),
         "known_analogs": ["Atacama", "Arizaro", "Kara-Kul"],
     },
@@ -63,7 +65,7 @@ PRESETS: list[dict[str, Any]] = [
         "mission": "Perseverance-type sampling of water-formed sediments",
         "target": "Jezero Crater (Perseverance)",
         "why": "Rock type and surface material record the water history (Science P7/P8); dry lake beds and salt flats match best.",
-        "dimension_weights": {"geology": 2, "thermophysical": 1, "optical": 1, "terrain": 1,
+        "dimension_weights": {"geology": 2, "mineralogy": 1, "thermophysical": 1, "optical": 1, "terrain": 1,
                               "thermal": 0.5, "water": 0.5, "craters": 0.5},
         "feature_weights": _weights(),
         "known_analogs": ["Atacama", "Arizaro"],

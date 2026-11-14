@@ -7,25 +7,37 @@ both planets and is documented here.
 
 Features (Science decisions; weights and scales are PROVISIONAL):
 
-* P1 terrain     regional_relief_m: max - min elevation over the 3x3 block
-                 of cells around the cell (about 300 km). Derived here because
-                 the grid has no slope or roughness. The zero point cancels,
-                 so it is comparable across planets. Very coarse for rover-scale
-                 terrain: needs finer DEM data.
-* P2 thermal     surface_temp_swing_K (best Mars-like signal) and
-                 surface_temp_min_K (cold extremes only).
+* P1 terrain     slope_deg, roughness_m, relief_m: mean slope, standard
+                 deviation of elevation and max - min elevation inside the cell,
+                 computed by the Data team from a ~9-10 km DEM grid with the same
+                 method on both planets (Earth WorldClim 5', Mars MOLA at 6 ppd).
+                 Pure geometry, so the zero point cancels. regional_relief_m
+                 (3x3 cells, about 300 km) is kept as a fallback for grids
+                 without these columns.
+* P2 thermal     surface_temp_swing_K (best Mars-like signal),
+                 surface_temp_min_K (cold extremes only) and air_temp_swing_K
+                 (air vs air, as Science asked: Earth mean monthly tmax - tmin,
+                 Mars air T at 14h - 02h). air_temp_swing_K is also what climate
+                 projections deliver, so the year slider changes the score.
 * P3 thermophys. ati_percentile: apparent thermal inertia as its percentile
                  within its own planet (land cells), because Science says only
                  rankings are comparable. The percentile is computed once over
                  the whole planet table (a fixed dataset version), never over a
                  candidate list.
 * P4 optical     albedo (same 0-1 scale on both planets).
+* P7 mineralogy  mineral_groups: set of present mineral groups compared with
+                 Jaccard, as Science suggested. PROXY on this grid: Earth from the
+                 GLiM rock class, Mars from TES abundances (normalised, >= 20 %)
+                 plus OMEGA/CRISM hydrated-mineral sites. Half weight until
+                 Science replaces it with mineral lists from papers.
 * P8 geology     rock_group (shared class names), half weight (overlaps P7).
+                 Mars impact units take the most frequent group around them,
+                 so Gale is sedimentary (rock_code keeps the original unit).
 * P9 craters     inside_impact_structure: crater_count > 0 (yes/no, as Science
                  asked; density is ~0 everywhere on Earth).
 * P10 water      ground_ice_flag (yes/no).
-* P5, P6, P7     not scored: P5 is a declared limitation, P6 has no Earth
-                 dataset, and P7 has no Earth columns in this grid.
+* P5, P6        not scored: P5 is a declared limitation, P6 has no Earth
+                 dataset.
 
 Earth pre-filter ("dry, bare land", PROVISIONAL thresholds): is_land = 1,
 rock_group not ice/water, precipitation < 500 mm/yr, NDVI < 0.2 (or unknown).
@@ -44,6 +56,7 @@ PROTOCOL = {
     "cross_body_comparable": True,
 }
 SUPPORT = "grid_1deg_v1"
+MINERAL_GROUPS = ["basaltic", "felsic", "clays_hydrated", "sulfates_salts", "carbonates", "iron_oxides"]
 
 
 def feature_definitions() -> list[dict[str, Any]]:
@@ -52,11 +65,19 @@ def feature_definitions() -> list[dict[str, Any]]:
                 "comparator_id": comparator, "comparability_protocol": {"id": f"{fid}_grid1deg_v1", **PROTOCOL}}
 
     return [
-        scalar("regional_relief_m", "terrain", "m", "P1: max - min elevation over the 3x3 block of 1-degree cells (derived)."),
+        scalar("slope_deg", "terrain", "deg", "P1: mean slope inside the cell from a ~9-10 km DEM grid (Data team)."),
+        scalar("roughness_m", "terrain", "m", "P1: standard deviation of elevation inside the cell (~9-10 km pixels)."),
+        scalar("relief_m", "terrain", "m", "P1: max - min elevation inside the cell (~9-10 km pixels)."),
+        scalar("regional_relief_m", "terrain", "m", "P1 fallback: max - min elevation over the 3x3 block of 1-degree cells (derived)."),
         scalar("surface_temp_swing_K", "thermal", "K", "P2: mean day minus night ground temperature (MODIS / MCD v6)."),
         scalar("surface_temp_min_K", "thermal", "K", "P2: coldest monthly/seasonal night ground temperature."),
+        scalar("air_temp_swing_K", "thermal", "K", "P2: mean daily air temperature range (WorldClim tmax - tmin / MCD v6 14h - 02h)."),
         scalar("ati_percentile", "thermophysical", "1", "P3: percentile of apparent thermal inertia within its own planet."),
         scalar("albedo", "optical", "1", "P4: surface albedo, 0-1 (MODIS MCD43C3 / TES bolometric)."),
+        {"id": "mineral_groups", "dimension": "mineralogy",
+         "definition": "P7 proxy: present mineral groups (Earth: GLiM rock class; Mars: TES >= 20 % of non-dust minerals + hydrated sites).",
+         "canonical_unit": "set", "kind": "set", "comparator_id": "jaccard_v1", "categories": MINERAL_GROUPS,
+         "comparability_protocol": {"id": "mineral_groups_grid1deg_v1", **PROTOCOL}},
         {"id": "rock_group", "dimension": "geology", "definition": "P8: common rock group (GLiM grouped / SIM 3292 grouped).",
          "canonical_unit": "class", "kind": "categorical", "comparator_id": "categorical_match_v1",
          "categories": ["volcanic", "ancient_crust", "sedimentary", "evaporite_salt", "ice", "impact", "water"],
@@ -71,6 +92,10 @@ def feature_definitions() -> list[dict[str, Any]]:
 
 
 TAUS = {  # PROVISIONAL scales, shared by all mission presets
+    "slope_deg": (5, "deg"),
+    "roughness_m": (1500, "m"),
+    "relief_m": (4000, "m"),
+    "air_temp_swing_K": (50, "K"),
     "regional_relief_m": (3000, "m"),
     "surface_temp_swing_K": (100, "K"),
     "surface_temp_min_K": (100, "K"),
@@ -78,6 +103,8 @@ TAUS = {  # PROVISIONAL scales, shared by all mission presets
     "albedo": (0.2, "1"),
 }
 DIMENSION_OF = {
+    "slope_deg": "terrain", "roughness_m": "terrain", "relief_m": "terrain", "air_temp_swing_K": "thermal",
+    "mineral_groups": "mineralogy",
     "regional_relief_m": "terrain", "surface_temp_swing_K": "thermal", "surface_temp_min_K": "thermal",
     "ati_percentile": "thermophysical", "albedo": "optical", "rock_group": "geology",
     "inside_impact_structure": "craters", "ground_ice_flag": "water",
@@ -101,7 +128,7 @@ def make_profile(
     constraints: list[dict] | None = None,
     required: list[str] | None = None,
     extra_limitations: list[str] | None = None,
-    version: str = "0.1.0",
+    version: str = "0.2.0",
 ) -> dict[str, Any]:
     """Build a profile over the grid features; scales come from TAUS."""
     features = []
@@ -125,12 +152,17 @@ def profile(target_id: str, version: str = "0.1.0") -> dict[str, Any]:
     return {
         "id": "rover_navigation_science_v1", "version": version, "target_id": target_id,
         "calibration_status": "provisional",
-        "description": "Weights follow the Science P1-P10 analysis (P8 half weight). Scales are wide enough that Earth's smaller swings do not all saturate.",
-        "dimension_weights": {"terrain": 1, "thermal": 1, "thermophysical": 1, "optical": 1, "geology": 0.5, "craters": 1, "water": 1},
+        "description": "Weights follow the Science P1-P10 analysis (P8 half weight, P7 proxy half weight). Scales are wide enough that Earth's smaller swings do not all saturate.",
+        "dimension_weights": {"terrain": 1, "thermal": 1, "thermophysical": 1, "optical": 1, "mineralogy": 0.5,
+                              "geology": 0.5, "craters": 1, "water": 1},
         "features": [
-            {"feature_id": "regional_relief_m", "weight": 1, "tau": 3000, "tau_unit": "m"},
+            {"feature_id": "slope_deg", "weight": 1, "tau": 5, "tau_unit": "deg"},
+            {"feature_id": "roughness_m", "weight": 1, "tau": 1500, "tau_unit": "m"},
+            {"feature_id": "relief_m", "weight": 1, "tau": 4000, "tau_unit": "m"},
             {"feature_id": "surface_temp_swing_K", "weight": 2, "tau": 100, "tau_unit": "K"},
             {"feature_id": "surface_temp_min_K", "weight": 1, "tau": 100, "tau_unit": "K"},
+            {"feature_id": "air_temp_swing_K", "weight": 1, "tau": 50, "tau_unit": "K"},
+            {"feature_id": "mineral_groups", "weight": 1},
             {"feature_id": "ati_percentile", "weight": 1, "tau": 0.5, "tau_unit": "1"},
             {"feature_id": "albedo", "weight": 1, "tau": 0.2, "tau_unit": "1"},
             {"feature_id": "rock_group", "weight": 1},
@@ -194,10 +226,16 @@ def cell_site(planet: str, grid: dict, key: tuple[float, float], ati_table: list
     r = grid[key]
     crater = _num(r, "crater_count")
     ice = _num(r, "ground_ice_flag")
+    minerals = r.get("mineral_groups") or ""
     values = {
+        "slope_deg": _num(r, "slope_deg"),
+        "roughness_m": _num(r, "roughness_m"),
+        "relief_m": _num(r, "relief_m"),
         "regional_relief_m": _relief(grid, lat, lon),
         "surface_temp_swing_K": _num(r, "surface_temp_swing_K"),
         "surface_temp_min_K": _num(r, "surface_temp_min_K"),
+        "air_temp_swing_K": _num(r, "air_temp_swing_K"),
+        "mineral_groups": tuple(sorted(minerals.split("|"))) if minerals else None,
         "ati_percentile": _percentile(ati_table, _num(r, "apparent_thermal_inertia")),
         "albedo": _num(r, "albedo"),
         "rock_group": r.get("rock_group") or None,

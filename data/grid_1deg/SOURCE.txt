@@ -1,0 +1,6 @@
+Ready-to-use dataset, 1 x 1 degree grid, cell centres lat 89.5..-89.5, lon -179.5..179.5 (east positive).
+Same columns and units on both planets (temperatures K, pressure Pa, radiation W/m2, heights m).
+Empty value = parameter not available on this planet or no data in this cell.
+Built by prepare_data.py from the raw files in data/earth and data/mars.
+Column descriptions, units and sources per planet: parameters.csv (also table 'parameters' in the sqlite).
+Preview maps of every column: preview/*.png

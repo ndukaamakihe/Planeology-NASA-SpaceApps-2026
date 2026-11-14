@@ -115,12 +115,27 @@ def test_js_similarities_for_any_mars_point_match_engine(exported, tmp_path, poi
 
 
 @pytest.mark.skipif(NODE is None, reason="Node.js not installed")
-def test_edge_mars_cell_reports_missing_target_values(exported, tmp_path):
-    """A cell without enough neighbours has no relief: the browser flags it instead of inventing it."""
-    _, out = exported
+def test_edge_mars_cell_reports_missing_target_values(tmp_path):
+    """A target cell with an empty value gets no similarity for it in the browser (never 0).
+
+    Terrain now comes from the grid's own columns (slope_deg, roughness_m, relief_m), so an edge
+    cell is comparable; an empty slope value at the target must still give null.
+    """
+    data = tmp_path / "grid"
+    data.mkdir()
+    _write(data / "earth_1deg.csv", _earth_rows())
+    mars = _mars_rows()
+    for r in mars:
+        if (r["lat"], r["lon"]) == (-4.5, 136.5):
+            r["slope_deg"] = ""
+    _write(data / "mars_1deg.csv", mars)
+    out = tmp_path / "web"
+    we.export(data, out, calibrate=False)
     js = _node(tmp_path, out, {"lat": -4.6, "lon": 136.6})
     assert js["cell"] == [-4.5, 136.5]
-    assert all(v[0] is None for v in js["sims"].values())  # regional_relief_m is the first feature
+    i = we.FEATURES.index("slope_deg")
+    assert all(v[i] is None for v in js["sims"].values())
+    assert all(v[we.FEATURES.index("roughness_m")] is not None for v in js["sims"].values())
 
 
 @pytest.mark.skipif(NODE is None, reason="Node.js not installed")

@@ -378,3 +378,43 @@ details summary{color:var(--accent2)}
 .f-slider.off label{opacity:.55}
 .f-switch{display:flex;gap:10px;align-items:center;font-size:.88rem;cursor:pointer}
 .f-switch input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* Analog Finder: dual view (main globe + the other planet in a corner; they swap with an animation) */
+.finder .f-globe{position:absolute;overflow:hidden;--sw:left .65s cubic-bezier(.2,.8,.2,1),bottom .65s cubic-bezier(.2,.8,.2,1),width .65s cubic-bezier(.2,.8,.2,1),height .65s cubic-bezier(.2,.8,.2,1),border-radius .65s ease,box-shadow .65s ease;transition:var(--sw),opacity .3s ease .6s}
+/* swap: the new main planet grows from the corner on top; the old one shrinks beneath it, then fades in at the corner */
+.finder .f-globe.main.grow{z-index:13}
+.finder .f-globe.mini.enter{opacity:0;transition:var(--sw),opacity 0s}
+.finder .f-mini-hit{transition:border-color .2s,opacity .25s ease}
+.finder.swapping .f-mini-hit{opacity:0;pointer-events:none}
+.finder .f-globe.main{left:0;bottom:0;width:100%;height:100%;border-radius:0;z-index:1}
+.finder .f-globe.mini{left:334px;bottom:84px;width:220px;height:220px;border-radius:18px;z-index:11;background:radial-gradient(circle at 50% 45%,#15213a 0%,#080D1B 75%);box-shadow:0 12px 34px rgba(2,6,16,.55)}
+.finder .f-mini-hit{position:absolute;left:334px;bottom:84px;width:220px;height:220px;z-index:12;padding:0 0 9px;border:1px solid var(--line2);border-radius:18px;background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;transition:border-color .2s}
+.finder .f-mini-hit:hover{border-color:var(--accent)}
+.finder .f-mini-hit:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.f-mini-label{display:inline-flex;gap:8px;align-items:center;font-size:.76rem;font-weight:600;background:rgba(8,13,27,.82);padding:4px 11px;border-radius:99px;border:1px solid var(--line)}
+.f-mini-go{color:var(--accent2)}
+.finder .f-globe.mini canvas.view{pointer-events:none}
+.f-mode{margin-left:auto;margin-right:6px}
+.f-mode button{min-height:28px;padding:4px 9px;font-size:.76rem}
+.finder.simple .adv{display:none !important}
+.f-yearrow{display:flex;gap:8px;align-items:center;margin-top:10px}
+.f-yearrow .f-range{flex:1}
+.f-play{min-width:38px;justify-content:center}
+.f-year{min-width:3.6em;text-align:right;font-size:.95rem;color:var(--text)}
+.f-year-note{margin:6px 0 0}
+#f-hyper + span{font-size:.86rem}
+@media (max-width:900px){
+  .finder .f-globe.mini,.finder .f-mini-hit{left:calc(100% - 132px);bottom:calc(100% - 132px);width:120px;height:120px}
+  .f-mode{display:none}
+  .f-mini-label{font-size:.66rem;white-space:nowrap;padding:3px 8px;max-width:112px;overflow:hidden;text-overflow:ellipsis}
+}
+@media (prefers-reduced-motion:reduce){ .finder .f-globe{transition:none} }
+
+/* header menu: view options (and the page links on small screens) */
+.menu-btn{display:inline-flex}
+.menu-pop{position:fixed;top:calc(var(--hdr) + 6px);right:12px;z-index:60;width:290px;padding:14px;border-radius:14px}
+.menu-pop h4{margin:0 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text2)}
+.menu-pop .seg{display:flex;width:100%}.menu-pop .seg button{flex:1;justify-content:center}
+.menu-pop p{margin:8px 0 0}
+.f-scen{display:flex;flex-direction:column;align-items:center;line-height:1.15;gap:1px}
+.f-scen b{font-size:.82rem}
