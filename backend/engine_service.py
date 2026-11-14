@@ -9,7 +9,11 @@ of every scored cell, map points, the calibration verdict, declared
 limitations and, when yearly Earth files exist, the year slider.
 
 Data: data/grid_1deg/ (earth_1deg.csv, mars_1deg.csv, parameters.csv).
-Yearly files for the slider: data/grid_1deg/earth_1deg_<year>.csv.
+Any other regular grid works the same way: put one earth_<name>.csv and one
+mars_<name>.csv in a folder (e.g. data/grid_50km/earth_50km.csv with 0.45 deg
+cells and mars_50km.csv with 0.84 deg cells) and pass --data <folder>. Cell
+size is read from the files (backend/grid_data.py).
+Yearly files for the slider: earth_<name>_<year>.csv next to earth_<name>.csv.
 
 Command line:
     python -m backend.engine_service                  # all presets
@@ -31,7 +35,7 @@ from typing import Any
 from analogue_engine import calibrate_weights, explain, rank, rank_over_years, to_json
 
 from backend import grid_data as g
-from backend.analog_presets import CELLS, EARTH, PRESETS, build_profile, cell_id
+from backend.analog_presets import CELLS, EARTH, PRESETS, analog_id, build_profile, target_key
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 GRID_DIR = PROJECT_ROOT / "data" / "grid_1deg"
@@ -46,27 +50,55 @@ class DataNotFound(RuntimeError):
 # --------------------------------------------------------------------------- data
 
 
-def _check_dir(data_dir: Path) -> None:
-    missing = [f for f in ("earth_1deg.csv", "mars_1deg.csv") if not (data_dir / f).exists()]
-    if missing:
-        raise DataNotFound(
-            f"{missing} not found in {data_dir}. Put the Data team's grid in data/grid_1deg/ "
-            "(branch data-grid-1deg) or pass --data <folder>."
-        )
+_BASE_FILE = re.compile(r"(earth|mars)_([^_]+)\.csv")
+
+
+def grid_files(data_dir: Path) -> tuple[str, str]:
+    """Names of the Earth and Mars grid files in a folder (earth_<name>.csv, mars_<name>.csv).
+
+    earth_1deg.csv / mars_1deg.csv win if present; otherwise the folder must
+    hold exactly one base file per planet (yearly files are not counted).
+    """
+    found: dict[str, list[str]] = {"earth": [], "mars": []}
+    for p in sorted(data_dir.glob("*.csv")) if data_dir.is_dir() else []:
+        m = _BASE_FILE.fullmatch(p.name)
+        if m:
+            found[m.group(1)].append(p.name)
+    names = []
+    for planet in ("earth", "mars"):
+        files = found[planet]
+        if f"{planet}_1deg.csv" in files:
+            names.append(f"{planet}_1deg.csv")
+        elif len(files) == 1:
+            names.append(files[0])
+        elif not files:
+            raise DataNotFound(
+                f"No {planet}_<grid>.csv found in {data_dir}. Put the Data team's grid in data/grid_1deg/ "
+                "(branch data-grid-1deg) or pass --data <folder>."
+            )
+        else:
+            raise DataNotFound(f"Several {planet} grids in {data_dir} ({files}); keep one per folder.")
+    return names[0], names[1]
 
 
 @lru_cache(maxsize=8)
-def load_grid(data_dir: str, earth_file: str = "earth_1deg.csv") -> dict[str, Any]:
-    """Load and prepare the grid once per (folder, Earth file); about 3 s."""
+def load_grid(data_dir: str, earth_file: str | None = None) -> dict[str, Any]:
+    """Load and prepare the grid once per (folder, Earth file); about 3 s at 1 degree."""
     path = Path(data_dir)
-    _check_dir(path)
-    return g.build(path, earth_file)
+    earth, mars = grid_files(path)
+    return g.build(path, earth_file or earth, mars)
 
 
 def yearly_files(data_dir: Path) -> list[tuple[int, str]]:
+    """(year, file) for earth_<name>_<year>.csv files next to the base Earth file."""
+    try:
+        earth, _ = grid_files(data_dir)
+    except DataNotFound:
+        return []
+    stem = earth[: -len(".csv")]
     found = []
-    for p in data_dir.glob("earth_1deg_*.csv"):
-        m = re.fullmatch(r"earth_1deg_(\d{4})\.csv", p.name)
+    for p in data_dir.glob(f"{stem}_*.csv"):
+        m = re.fullmatch(re.escape(stem) + r"_(\d{4})\.csv", p.name)
         if m:
             found.append((int(m.group(1)), p.name))
     return sorted(found)
@@ -79,7 +111,7 @@ def list_presets() -> list[dict[str, Any]]:
     """Metadata for the preset buttons."""
     return [
         {"id": p["id"], "name": p["name"], "mission": p["mission"], "target": p["target"],
-         "target_cell": dict(zip(("lat", "lon"), CELLS[p["target"]])), "why": p["why"],
+         "target_point": dict(zip(("lat", "lon"), CELLS[p["target"]])), "why": p["why"],
          "known_analogs": p["known_analogs"]}
         for p in PRESETS
     ]
@@ -93,8 +125,11 @@ def _preset(preset_id: str) -> dict[str, Any]:
 
 
 def _target(preset: dict[str, Any], data: dict[str, Any]) -> dict[str, Any]:
-    lat, lon = CELLS[preset["target"]]
-    return g.cell_site("mars", data["mars"], (lat, lon), data["mars_ati"])
+    """Engine Site of the Mars cell that contains the preset's target."""
+    key = target_key(data, preset["target"])
+    if key is None or key not in data["mars"]:
+        raise DataNotFound(f"No Mars grid cell contains {preset['target']} {CELLS[preset['target']]}")
+    return g.cell_site("mars", data["mars"], key, data["mars_ati"], spec=data["mars_spec"], support=data["support"])
 
 
 def preset_profile(
@@ -112,7 +147,8 @@ def preset_profile(
     (hidden known analogs must improve); otherwise Science's weights are used.
     """
     preset = _preset(preset_id)
-    start = build_profile(preset)
+    data = load_grid(str(data_dir))
+    start = build_profile(preset, data)
     if not calibrate:
         return start, {"weights_used": "science (start)", "verdict": "not_run", "verdict_reason": "calibration off"}
 
@@ -120,20 +156,21 @@ def preset_profile(
     if cache_file is not None and cache_file.exists() and not refresh:
         cache = json.loads(cache_file.read_text(encoding="utf-8"))
         hit = cache.get(preset_id)
-        if hit and hit.get("start_version") == start["version"]:
+        # entries written before the grid was recorded come from the 1-degree grid
+        if (hit and hit.get("start_version") == start["version"]
+                and hit.get("grid", g.SUPPORT) == data["support"]):
             return hit["profile"], hit["info"]
 
-    data = load_grid(str(data_dir))
     target = _target(preset, data)
     ids = {s["id"] for s in data["earth_sites"]}
-    known = [cell_id("earth", *EARTH[n]) for n in preset["known_analogs"]]
+    known = [analog_id(data, n) for n in preset["known_analogs"]]
     present = [k for k in known if k in ids]
     if not present:
         info = {"weights_used": "science (start)", "verdict": "not_validated",
                 "verdict_reason": "none of the known analogs are among the candidate cells"}
         return start, info
     cal = calibrate_weights(target, data["earth_sites"], start, g.feature_definitions(), present)
-    names = {cell_id("earth", *v): k for k, v in EARTH.items()}
+    names = {analog_id(data, k): k for k in EARTH}
     info = {
         "weights_used": "calibrated" if cal.verdict == "accepted" else "science (start)",
         "verdict": cal.verdict, "verdict_reason": cal.verdict_reason,
@@ -147,7 +184,7 @@ def preset_profile(
     }
     profile = cal.recommended_profile
     if cache_file is not None:
-        cache[preset_id] = {"start_version": start["version"], "profile": profile, "info": info}
+        cache[preset_id] = {"start_version": start["version"], "grid": data["support"], "profile": profile, "info": info}
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         cache_file.write_text(to_json(cache) + "\n", encoding="utf-8")
     return profile, info
@@ -175,7 +212,7 @@ def run_preset(
     target = _target(preset, data)
     profile, info = preset_profile(preset_id, data_dir, calibrate=calibrate, cache_file=cache_file)
     result = rank(target, data["earth_sites"], profile, g.feature_definitions())
-    known = {cell_id("earth", *v): k for k, v in EARTH.items()}
+    known = {analog_id(data, k): k for k in EARTH}
 
     sites = []
     for e in result.ranked[:top_n]:
@@ -194,16 +231,21 @@ def run_preset(
             for s in sites
         ],
     }
-    lat, lon = CELLS[preset["target"]]
+    lat, lon = target_key(data, preset["target"])
+    pt_lat, pt_lon = CELLS[preset["target"]]
+    espec = data["earth_spec"]
     return {
         "project": "Planalogy",
         "preset": {k: preset[k] for k in ("id", "name", "mission", "why")},
-        "target": {"name": preset["target"], "body": "Mars", "lat": lat, "lon": lon},
+        "target": {"name": preset["target"], "body": "Mars", "lat": lat, "lon": lon,
+                   "point": {"lat": pt_lat, "lon": pt_lon}},
+        "grid": {"earth": espec.as_dict(), "mars": data["mars_spec"].as_dict(), "spatial_support": data["support"]},
         "calibration": info,
         "profile_used": profile,
         "counts": {"ranked": len(result.ranked), "partial": len(result.partial), "excluded": len(result.excluded)},
         "sites": sites,
-        "heatmap": {"columns": ["lat", "lon", "score_0_100"], "cell_size_deg": 1, "rows": heatmap},
+        "heatmap": {"columns": ["lat", "lon", "score_0_100"], "cell_size_deg": espec.lat_step,
+                    "cell_size_lon_deg": espec.lon_step, "rows": heatmap},
         "map_data": map_points,
         "declared_limitations": list(result.declared_limitations),
         "warnings": list(result.warnings),
@@ -225,13 +267,13 @@ def run_preset_over_years(
     years = yearly_files(data_dir)
     if len(years) < 2:
         return {"preset": preset_id, "years": [y for y, _ in years],
-                "message": "Put at least two earth_1deg_<year>.csv files in the data folder to use the year slider."}
+                "message": "Put at least two earth_<grid>_<year>.csv files in the data folder to use the year slider."}
     preset = _preset(preset_id)
     profile, info = preset_profile(preset_id, data_dir, calibrate=calibrate, cache_file=cache_file)
     base = load_grid(str(data_dir))
     target = _target(preset, base)
     sites_by_year = {y: load_grid(str(data_dir), f)["earth_sites"] for y, f in years}
-    watch = [cell_id("earth", *EARTH[n]) for n in preset["known_analogs"]]
+    watch = [analog_id(base, n) for n in preset["known_analogs"]]
     tl = rank_over_years(target, sites_by_year, profile, g.feature_definitions(), watch=watch, top_k=top_k)
     out = json.loads(tl.to_json())
     out["preset"] = preset_id

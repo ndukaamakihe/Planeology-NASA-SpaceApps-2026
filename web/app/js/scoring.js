@@ -1,4 +1,5 @@
-/* Planalogy — the analogue engine's scoring, reproduced in the browser for the 1° grid.
+/* Planalogy — the analogue engine's scoring, reproduced in the browser for any regular grid
+ * (1°, 50 km, …; each planet's grid comes from manifest.grid).
  *
  * Similarity per feature, with the engine's comparators and fixed scales (from the manifest):
  *   clipped_linear_v1:      s = 1 − min(1, |x − t| / τ)
@@ -23,19 +24,47 @@
 
   const colIndex = table => { const ix = {}; table.columns.forEach((c, i) => { ix[c] = i; }); return ix; };
 
-  /** Feature values of the Mars cell that contains (lat, lon); null if that cell has no data. */
+  /** A planet's grid from the manifest (step, origin, size); old manifests: 1° global grid. */
+  function gridOf(manifest, body) {
+    if (manifest.grid && manifest.grid[body]) return manifest.grid[body];
+    const s = manifest.grid_deg || 1;
+    return { lat_step: s, lon_step: s, lat0: -90 + s / 2, lon0: -180 + s / 2, n_lat: Math.round(180 / s),
+             n_lon: Math.round(360 / s), decimals: 1, cell_km: null };
+  }
+
+  /** Centre of the grid cell containing (lat, lon), or null outside the grid —
+   *  same rule as GridSpec.containing in backend/grid_data.py (never snaps to an edge cell). */
+  function containingCell(grid, lat, lon) {
+    const wrapLon = x => ((x + 180) % 360 + 360) % 360 - 180;
+    const round6 = x => Number(x.toFixed(6));
+    const fi = (lat - (grid.lat0 - grid.lat_step / 2)) / grid.lat_step;
+    const fj = (wrapLon(lon) - (grid.lon0 - grid.lon_step / 2)) / grid.lon_step;
+    let i = Math.floor(fi + 1e-9), j = Math.floor(fj + 1e-9);
+    if (i === grid.n_lat && fi <= grid.n_lat + 1e-9) i -= 1; // on the outer edge (e.g. the pole)
+    if (Math.abs(grid.n_lon * grid.lon_step - 360) < 1e-6) j = ((j % grid.n_lon) + grid.n_lon) % grid.n_lon;
+    else if (j === grid.n_lon && fj <= grid.n_lon + 1e-9) j -= 1;
+    if (i < 0 || i >= grid.n_lat || j < 0 || j >= grid.n_lon) return null;
+    return { lat: round6(grid.lat0 + i * grid.lat_step), lon: round6(grid.lon0 + j * grid.lon_step) };
+  }
+
+  /** Feature values of the Mars cell that contains (lat, lon); null if no cell or no data there. */
   function marsCell(manifest, mars, lat, lon) {
-    const step = manifest.grid_deg || 1;
-    const snap = (v, lo) => Math.floor((v - lo) / step) * step + lo + step / 2;
-    const clat = Math.max(-90 + step / 2, Math.min(90 - step / 2, snap(lat, -90)));
-    let clon = snap(((lon + 180) % 360 + 360) % 360 - 180, -180);
+    const c = containingCell(gridOf(manifest, 'mars'), lat, lon);
+    if (!c) return null;
     const ix = colIndex(mars);
     if (!mars._byKey) { mars._byKey = new Map(); mars.rows.forEach(r => mars._byKey.set(r[ix.lat] + ',' + r[ix.lon], r)); }
-    const row = mars._byKey.get(clat + ',' + clon);
+    const row = mars._byKey.get(c.lat + ',' + c.lon);
     if (!row) return null;
     const values = {};
     manifest.features.forEach(f => { values[f.id] = row[ix[f.id]]; });
-    return { lat: clat, lon: clon, values };
+    return { lat: c.lat, lon: c.lon, values };
+  }
+
+  /** Short label for a planet's cells: "1° cell" or "0.45° cell (≈50 km)". */
+  function cellLabel(manifest, body) {
+    const g = gridOf(manifest, body);
+    if (g.lat_step === 1 && g.lon_step === 1) return '1° cell';
+    return g.lat_step + '° cell' + (g.cell_km ? ' (≈' + Math.round(g.cell_km) + ' km)' : '');
   }
 
   /** Earth table for a year: the base table with the yearly file's columns (climate-dependent) replaced. */
@@ -180,5 +209,6 @@
              missing: item.missing, failed: item.failed };
   }
 
-  return { marsCell, earthForYear, similarities, effectiveWeights, scoreCells, categoryScores, card };
+  return { gridOf, containingCell, marsCell, cellLabel, earthForYear, similarities, effectiveWeights, scoreCells,
+           categoryScores, card };
 });

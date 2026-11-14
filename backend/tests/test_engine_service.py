@@ -7,6 +7,7 @@ Run from the repository root:
 from __future__ import annotations
 
 import csv
+import math
 import json
 from pathlib import Path
 
@@ -38,7 +39,8 @@ def _earth_rows(swing_shift: float = 0.0):
 
 def _mars_rows():
     rows = []
-    for lat0, lon0 in CELLS.values():
+    for lat, lon in CELLS.values():  # targets are points: build the 3x3 block around their 1-degree cell
+        lat0, lon0 = math.floor(lat) + 0.5, math.floor(lon) + 0.5
         for dlat in (-1, 0, 1):
             for dlon in (-1, 0, 1):
                 rows.append({

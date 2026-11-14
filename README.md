@@ -47,6 +47,16 @@ python -m backend.engine_service --years
 This writes `data/results/<preset>_years.json` with the sites gaining or
 losing analogy.
 
+**Other resolutions (e.g. 50 km cells):** nothing assumes 1° cells. Put one
+`earth_<name>.csv` and one `mars_<name>.csv` (same columns) in a folder, for
+example `data/grid_50km/` with Earth at 0.45° and Mars at 0.84°, and pass
+`--data data/grid_50km` to `engine_service` or `web_export`. Each planet's
+step and origin are read from the files. The relief uses that grid's
+neighbouring cells, and targets and known analogs (stored as site
+coordinates) map to the cell that contains them. Both planets must use the
+same degree step or the same cell size in km; otherwise loading stops with a
+clear error. Yearly files are `earth_<name>_<year>.csv`.
+
 ## Web app (Planalogy)
 
 `web/app/` is the static web app. It has the 3D globe and an **Analog
@@ -61,6 +71,9 @@ cell and every Mars cell. `web/app/js/scoring.js` applies the engine's
 comparators, scales, weights and ordering. A test under Node.js checks that
 the similarities match the engine bit for bit and that the ranking is
 identical. Yearly Earth files only carry the climate-dependent columns.
+When the data files would exceed 12 MB (fine grids), they are written as
+gzip-compressed `.json.gz`, about 4x smaller, with unchanged values; the app
+reads both formats. Use `--gzip` or `--no-gzip` to force either.
 To refresh the data after new grid files, including yearly files for the
 year slider, run:
 

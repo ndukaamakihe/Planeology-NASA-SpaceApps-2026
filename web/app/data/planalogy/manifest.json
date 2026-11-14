@@ -1,8 +1,30 @@
 {
-  "schema": "planalogy.web.v2",
+  "schema": "planalogy.web.v3",
   "model": "analogue_engine.adapted_gower@0.2.0",
   "data_mode": "real",
-  "grid_deg": 1,
+  "grid": {
+    "earth": {
+      "lat_step": 1.0,
+      "lon_step": 1.0,
+      "lat0": -89.5,
+      "lon0": -179.5,
+      "n_lat": 180,
+      "n_lon": 360,
+      "decimals": 1,
+      "cell_km": 111.2
+    },
+    "mars": {
+      "lat_step": 1.0,
+      "lon_step": 1.0,
+      "lat0": -61.5,
+      "lon0": -179.5,
+      "n_lat": 152,
+      "n_lon": 360,
+      "decimals": 1,
+      "cell_km": 59.2
+    },
+    "spatial_support": "grid_1deg_v1"
+  },
   "features": [
     {
       "id": "regional_relief_m",
@@ -110,6 +132,10 @@
       "name": "Gale Crater (Curiosity)",
       "lat": -5.5,
       "lon": 137.5,
+      "point": {
+        "lat": -5.4,
+        "lon": 137.8
+      },
       "values": {
         "regional_relief_m": 2916.8438,
         "surface_temp_swing_K": 85.3348,
@@ -126,6 +152,10 @@
       "name": "Jezero Crater (Perseverance)",
       "lat": 18.5,
       "lon": 77.5,
+      "point": {
+        "lat": 18.38,
+        "lon": 77.58
+      },
       "values": {
         "regional_relief_m": 2177.5703,
         "surface_temp_swing_K": 77.0714,
@@ -142,6 +172,10 @@
       "name": "Arcadia Planitia (approx.)",
       "lat": 46.5,
       "lon": -167.5,
+      "point": {
+        "lat": 46.5,
+        "lon": -167.5
+      },
       "values": {
         "regional_relief_m": 35.96090000000004,
         "surface_temp_swing_K": 62.0172,
@@ -382,6 +416,7 @@
     },
     "mars": "mars.json"
   },
+  "compression": "none",
   "dry_bare_rule": "precipitation < 500 mm/yr, NDVI < 0.2 (or unknown), not ice or water (provisional, Science)",
   "thresholds": {
     "strong_at_least": 75,

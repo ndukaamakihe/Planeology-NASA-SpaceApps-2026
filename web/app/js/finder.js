@@ -18,9 +18,19 @@ const REGION = {
 };
 const DEFAULT_FW = {regional_relief_m:1, surface_temp_swing_K:2, surface_temp_min_K:1, ati_percentile:1, albedo:1, rock_group:1, inside_impact_structure:1, ground_ice_flag:1};
 const cache = {};
-const load = f => cache[f] || (cache[f] = fetch(DATA + f).then(r => { if (!r.ok) throw new Error(f + ': ' + r.status); return r.json(); }));
+/* JSON or gzip-compressed JSON (.json.gz, used for fine grids). Gzip is detected from the bytes, so it also works
+   when a server already decoded it. */
+async function readJSON(r){
+  const buf = new Uint8Array(await r.arrayBuffer());
+  if (buf[0] === 0x1f && buf[1] === 0x8b){
+    if (typeof DecompressionStream === 'undefined') throw new Error('This browser cannot read compressed data');
+    return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).json();
+  }
+  return JSON.parse(new TextDecoder().decode(buf));
+}
+const load = f => cache[f] || (cache[f] = fetch(DATA + f).then(r => { if (!r.ok) throw new Error(f + ': ' + r.status); return readJSON(r); }));
 const pct = x => x == null ? '—' : Math.round(x * 100);
-const region = it => REGION[it.lat + ',' + it.lon];
+const region = it => REGION[(Math.floor(it.lat) + .5) + ',' + (Math.floor(it.lon) + .5)]; // names are per 1° box, any grid
 
 /* score -> colour (stretched over the current ranking) */
 const STOPS = [[0, [40, 70, 150, .16]], [.4, [64, 128, 220, .5]], [.65, [96, 190, 240, .78]], [.82, [250, 210, 110, .92]], [1, [255, 110, 60, 1]]];
@@ -155,13 +165,17 @@ TT.pages.finder = function(root){
   /* ---------- overlay ---------- */
   const ov = document.createElement('canvas'); ov.width = 720; ov.height = 360;
   function paintOverlay(){
-    const x = ov.getContext('2d'); x.clearRect(0, 0, 720, 360);
-    const r = st.res.ranked;
+    const g = PS.gridOf(st.m, 'earth');
+    // at least 2 px per cell (1°: 720x360 as before; 50 km cells: 1600x800), capped for GPU textures
+    const W = Math.min(4096, Math.max(720, Math.round(720 / Math.min(1, g.lon_step)))), px = W / 360;
+    if (ov.width !== W){ ov.width = W; ov.height = W / 2; }
+    const x = ov.getContext('2d'); x.clearRect(0, 0, ov.width, ov.height);
+    const r = st.res.ranked, cw = g.lon_step * px, chh = g.lat_step * px;
     if (r.length){
       const hi = r[0].score, lo = r[r.length - 1].score, span = (hi - lo) || 1;
       for (let i = r.length - 1; i >= 0; i--){
         const it = r[i]; x.fillStyle = rgba(ramp((it.score - lo) / span));
-        x.fillRect((it.lon - .5 + 180) * 2, (90 - it.lat - .5) * 2, 2, 2);
+        x.fillRect((it.lon - g.lon_step / 2 + 180) * px, (90 - it.lat - g.lat_step / 2) * px, cw, chh);
       }
       drawLegend(lo, hi);
     } else drawLegend(null, null);
@@ -242,7 +256,7 @@ TT.pages.finder = function(root){
     TT.clear(customBox);
     const miss = st.sims ? st.sims.targetMissing : [];
     const labels = miss.map(f => (st.m.features.find(x => x.id === f) || {}).label || f);
-    TT.append(customBox, [h('div', {class:'f-custom-head'}, h('b', {class:'small'}, st.custom.name), h('span', {class:'mono tiny muted'}, '1° cell')),
+    TT.append(customBox, [h('div', {class:'f-custom-head'}, h('b', {class:'small'}, st.custom.name), h('span', {class:'mono tiny muted'}, PS.cellLabel(st.m, 'mars'))),
       labels.length ? h('p', {class:'tiny', style:{margin:'6px 0 0', color:'var(--warn)'}}, 'No data at this Mars cell, not compared: ' + labels.join(', ')) : null,
       h('p', {class:'tiny muted', style:{margin:'6px 0 0'}}, 'Preset weights were calibrated for their own target.')]);
   }
@@ -282,7 +296,7 @@ TT.pages.finder = function(root){
 
   /* ---------- right panel ---------- */
   function drawStatus(){
-    if (st.picking){ status.textContent = 'Click anywhere on Mars to use that 1° cell as the target.'; return; }
+    if (st.picking){ status.textContent = 'Click anywhere on Mars to use that ' + PS.cellLabel(st.m, 'mars') + ' as the target.'; return; }
     status.textContent = st.view === 'mars' ? 'Mars target: ' + targetName()
       : (st.res ? st.res.ranked.length.toLocaleString() + (st.dry ? ' dry, bare' : '') + ' Earth cells ranked against ' + targetName().split(' (')[0] : '');
   }
@@ -324,7 +338,7 @@ TT.pages.finder = function(root){
       h('div', {class:'f-card-head'},
         h('div', null, h('div', {class:'mono tiny muted'}, '#' + it.position + ' of ' + st.res.ranked.length.toLocaleString()),
           h('h3', null, region(it) ? '≈ ' + region(it) : 'Earth cell'),
-          h('div', {class:'mono tiny muted'}, TT.fmtCoord(it.lat, it.lon, 1) + ' · 1° cell')),
+          h('div', {class:'mono tiny muted'}, TT.fmtCoord(it.lat, it.lon, 1) + ' · ' + PS.cellLabel(st.m, 'earth'))),
         h('div', {class:'f-big'}, h('b', null, pct(it.score)), h('span', null, '/100'))),
       known ? h('span', {class:'badge measured', style:{marginBottom:'10px'}}, 'Known analog: ' + known) : null,
       !it.dryBare ? h('span', {class:'badge unavailable', style:{marginBottom:'10px'}}, 'Not dry, bare land') : null,

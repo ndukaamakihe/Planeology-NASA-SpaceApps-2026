@@ -7,8 +7,12 @@ its own known analogs for calibration.
 
 Weights follow the Science P1-P10 analysis and the mission's needs; they are
 PROVISIONAL starting points that calibration then adjusts. Known analogs come
-from the Science documents and must be confirmed by Science. Coordinates are
-the 1-degree cells that contain each site.
+from the Science documents and must be confirmed by Science.
+
+Coordinates are points at each site (approximate), not cell centres: the
+cell that contains the point is looked up in whatever grid is loaded, so the
+same lists work at 1 degree, 50 km or any other resolution. At 1 degree each
+point falls in the cell used originally (checked by the tests).
 
 Not a preset on purpose: helicopter flight (e.g. Ingenuity). It depends on
 air density, which no Earth site reproduces.
@@ -20,22 +24,34 @@ from typing import Any
 
 from backend import grid_data as g
 
+# Mars targets (lat, lon; east positive)
 CELLS = {
-    "Gale Crater (Curiosity)": (-5.5, 137.5),
-    "Jezero Crater (Perseverance)": (18.5, 77.5),
+    "Gale Crater (Curiosity)": (-5.4, 137.8),
+    "Jezero Crater (Perseverance)": (18.38, 77.58),
     "Arcadia Planitia (approx.)": (46.5, -167.5),
 }
+# Known Earth analogs (lat, lon)
 EARTH = {
-    "Atacama": (-24.5, -69.5),
-    "Arizaro": (-24.5, -67.5),
-    "Kara-Kul": (39.5, 73.5),
-    "Dry Valleys": (-77.5, 161.5),
-    "Devon Island (Haughton)": (75.5, -89.5),
+    "Atacama": (-24.08, -69.92),  # Yungay hyperarid core
+    "Arizaro": (-24.7, -67.75),  # Salar de Arizaro
+    "Kara-Kul": (39.02, 73.45),  # Kara-Kul impact structure
+    "Dry Valleys": (-77.52, 161.83),  # Wright Valley, McMurdo Dry Valleys
+    "Devon Island (Haughton)": (75.38, -89.67),  # Haughton crater
 }
 
+cell_id = g.cell_id  # id format, e.g. earth_+83.5_-077.5 at 1 degree
 
-def cell_id(planet: str, lat: float, lon: float) -> str:
-    return f"{planet}_{lat:+05.1f}_{lon:+06.1f}"
+
+def target_key(data: dict[str, Any], name: str) -> tuple[float, float] | None:
+    """Mars cell (centre) containing a named target in the loaded grid; None if outside it."""
+    return data["mars_spec"].containing(*CELLS[name])
+
+
+def analog_id(data: dict[str, Any], name: str) -> str | None:
+    """Id of the Earth cell containing a named known analog in the loaded grid; None if outside it."""
+    spec = data["earth_spec"]
+    key = spec.containing(*EARTH[name])
+    return None if key is None else spec.cell_id(*key)
 
 
 ALL_FEATURES = ["regional_relief_m", "surface_temp_swing_K", "surface_temp_min_K", "ati_percentile",
@@ -107,11 +123,22 @@ PRESETS: list[dict[str, Any]] = [
 ]
 
 
-def build_profile(preset: dict[str, Any]) -> dict[str, Any]:
-    lat, lon = CELLS[preset["target"]]
+def build_profile(preset: dict[str, Any], data: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Science starting profile for a preset, for the loaded grid (``data`` from grid_data.build).
+
+    Without ``data`` it assumes the original 1-degree grid.
+    """
+    if data is None:
+        spec, base = g.GridSpec.one_degree("mars"), None
+    else:
+        spec, base = data["mars_spec"], data["limitations"]
+    key = spec.containing(*CELLS[preset["target"]])
+    if key is None:
+        raise ValueError(f"{preset['target']} {CELLS[preset['target']]} is outside the Mars grid")
+    target = spec.cell_id(*key)
     return g.make_profile(
-        preset["id"], cell_id("mars", lat, lon), preset["dimension_weights"], preset["feature_weights"],
+        preset["id"], target, preset["dimension_weights"], preset["feature_weights"],
         description=f"{preset['name']}: {preset['why']}",
         constraints=preset.get("constraints"), required=preset.get("required"),
-        extra_limitations=preset.get("extra_limitations"),
+        extra_limitations=preset.get("extra_limitations"), base_limitations=base,
     )
