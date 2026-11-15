@@ -120,9 +120,17 @@ def target_values(lat, lon):
     return v
 
 
+WEIGHTS = {"mode": "trained"}  # "trained" (11 km, presets_trained_11km.json, if present) or "app" (1-degree manifest weights)
+
+
 def preset(pid):
     for p in manifest()["presets"]:
         if p["id"] == pid:
+            tf = HERE / "presets_trained_11km.json"
+            if WEIGHTS["mode"] == "trained" and tf.exists():
+                t = json.loads(tf.read_text(encoding="utf-8"))["presets"].get(pid)
+                if t:
+                    return {**p, "category_weights": t["category_weights"], "feature_weights": t["feature_weights"], "weights_used": "trained at 11 km"}
             return p
     raise SystemExit(f"unknown preset {pid}; choose from {[p['id'] for p in manifest()['presets']]}")
 
@@ -297,6 +305,8 @@ def main(argv=None):
         s.add_argument("--exclude-known-km", type=float, default=0)
         s.add_argument("--hyper-arid", action="store_true")
         s.add_argument("--brief", action="store_true")
+        s.add_argument("--weights", choices=["trained", "app"], default="trained",
+                       help="trained: weights trained on the 11 km grid (default); app: the 1-degree app weights")
         if name == "shift":
             s.add_argument("--scenario", default="ssp585", choices=list(SCEN))
             s.add_argument("--year", type=int, default=2090, choices=[2030, 2050, 2070, 2090])
@@ -314,9 +324,10 @@ def main(argv=None):
         print(json.dumps([{"km": round(float(x)), **K[i]} for i, x in sorted(enumerate(d), key=lambda t: t[1]) if x <= a.km],
                          ensure_ascii=False, indent=1))
         return
+    WEIGHTS["mode"] = a.weights
     run = Run(a.preset, tuple(map(float, a.mars_point.split(","))) if a.mars_point else None)
     now = run.year("now")
-    head = {"preset": a.preset, "mission": run.p.get("mission") or run.p.get("name"), "mars_target": run.label,
+    head = {"preset": a.preset, "weights": run.p.get("weights_used", "app (1-degree)"), "mission": run.p.get("mission") or run.p.get("name"), "mars_target": run.label,
             "mars_cell": run.tv["_cell"], "mars_values": {k: v for k, v in run.tv.items() if not k.startswith("_")},
             "dry_cells_ranked_today": now["n"], "cells": "Earth 0.1 deg / Mars 0.1875 deg, ~11 km"}
     if a.cmd == "cell":

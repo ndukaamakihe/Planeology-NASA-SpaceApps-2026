@@ -1,0 +1,121 @@
+{
+ "note": "Mission weights trained on the 11 km grid (calibrate_soft.py): known analogs as 20 km areas, soft top-5 % target or shared-feature weighting, anchored to Science's weights and accepted by leave-one-out validation.",
+ "presets": {
+  "ice_prospecting": {
+   "method": "soft_rank",
+   "validation": "hidden known analogs: mean rank 17204 -> 10905 (+36.6%), 7/7 improved",
+   "sites": 7,
+   "category_weights": {
+    "terrain": 0.0661,
+    "thermal": 0.5823,
+    "thermophysical": 0.1124,
+    "optical": 0.0043,
+    "mineralogy": 0.0,
+    "geology": 0.2351,
+    "craters": 0.0,
+    "water": 0.0
+   },
+   "feature_weights": {
+    "slope_deg": 0.0043,
+    "roughness_m": 0.0396,
+    "relief_m": 0.0222,
+    "surface_temp_swing_K": 0.153,
+    "surface_temp_min_K": 0.3181,
+    "air_temp_swing_K": 0.1112,
+    "ati_percentile": 0.1124,
+    "albedo": 0.0043,
+    "mineral_groups": 0.0,
+    "rock_group": 0.2351,
+    "inside_impact_structure": 0.0,
+    "ground_ice_flag": 0.0
+   }
+  },
+  "rover_navigation": {
+   "method": "shared_features",
+   "validation": "hidden known analogs: mean rank 52802 -> 44549 (+15.6%), 10/19 improved",
+   "sites": 19,
+   "category_weights": {
+    "terrain": 0.4357,
+    "thermal": 0.0595,
+    "thermophysical": 0.1148,
+    "optical": 0.1912,
+    "mineralogy": 0.0217,
+    "geology": 0.0471,
+    "craters": 0.0676,
+    "water": 0.0624
+   },
+   "feature_weights": {
+    "slope_deg": 0.1259,
+    "roughness_m": 0.1453,
+    "relief_m": 0.1645,
+    "surface_temp_swing_K": 0.0315,
+    "surface_temp_min_K": 0.0142,
+    "air_temp_swing_K": 0.0138,
+    "ati_percentile": 0.1148,
+    "albedo": 0.1912,
+    "mineral_groups": 0.0217,
+    "rock_group": 0.0471,
+    "inside_impact_structure": 0.0676,
+    "ground_ice_flag": 0.0624
+   }
+  },
+  "sample_science": {
+   "method": "soft_rank",
+   "validation": "hidden known analogs: mean rank 113054 -> 57369 (+49.3%), 20/33 improved",
+   "sites": 33,
+   "category_weights": {
+    "terrain": 0.1372,
+    "thermal": 0.191,
+    "thermophysical": 0.1537,
+    "optical": 0.0721,
+    "mineralogy": 0.137,
+    "geology": 0.0097,
+    "craters": 0.1496,
+    "water": 0.1496
+   },
+   "feature_weights": {
+    "slope_deg": 0.0438,
+    "roughness_m": 0.0539,
+    "relief_m": 0.0395,
+    "surface_temp_swing_K": 0.1067,
+    "surface_temp_min_K": 0.0475,
+    "air_temp_swing_K": 0.0368,
+    "ati_percentile": 0.1537,
+    "albedo": 0.0721,
+    "mineral_groups": 0.137,
+    "rock_group": 0.0097,
+    "inside_impact_structure": 0.1496,
+    "ground_ice_flag": 0.1496
+   }
+  },
+  "thermal_environment": {
+   "method": "soft_rank",
+   "validation": "hidden known analogs: mean rank 74832 -> 54752 (+26.8%), 12/17 improved",
+   "sites": 17,
+   "category_weights": {
+    "terrain": 0.1568,
+    "thermal": 0.7042,
+    "thermophysical": 0.0384,
+    "optical": 0.0367,
+    "mineralogy": 0.0,
+    "geology": 0.0,
+    "craters": 0.0,
+    "water": 0.0639
+   },
+   "feature_weights": {
+    "slope_deg": 0.0293,
+    "roughness_m": 0.0471,
+    "relief_m": 0.0804,
+    "surface_temp_swing_K": 0.3324,
+    "surface_temp_min_K": 0.2333,
+    "air_temp_swing_K": 0.1385,
+    "ati_percentile": 0.0384,
+    "albedo": 0.0367,
+    "mineral_groups": 0.0,
+    "rock_group": 0.0,
+    "inside_impact_structure": 0.0,
+    "ground_ice_flag": 0.0639
+   }
+  }
+ }
+}

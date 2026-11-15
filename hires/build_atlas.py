@@ -111,12 +111,12 @@ for name, lat, lon, preset in KNOWN_LOSERS:
     losers.append({"name": name, "where": f"{lat:.2f}°, {lon:.2f}°", "mission": LABEL[preset],
                    "trajectory": n["trajectory"], "mechanism": mechanism(n["trajectory"])})
 
-SIGNAL = [  # top ice-prospecting cells (corrected tool, >50 km from catalogued analogs); regional signal, not audited
-    ("Western Tibetan Plateau", 30.75, 84.45),
-    ("Western Tibetan Plateau", 30.65, 83.05),
-    ("Central Tibetan Plateau", 30.65, 87.35),
-    ("Western Tibetan Plateau (Ngari)", 31.35, 81.55),
-    ("Western Tibetan Plateau (Ngari)", 31.95, 81.05),
+SIGNAL = [  # top ice-prospecting cells with the trained weights (>50 km from catalogued analogs); not new sites
+    ("North Baffin Island, Borden Peninsula (Nunavut)", 72.05, -82.45),
+    ("Northeast Greenland, 80.5 N", 80.45, -24.45),
+    ("Western Tibetan Plateau", 30.35, 83.95),
+    ("Western Tibetan Plateau (Ngari)", 31.35, 81.75),
+    ("Central Tibetan Plateau", 30.45, 87.85),
 ]
 signal = []
 for name, lat, lon in SIGNAL:
@@ -131,24 +131,23 @@ land_cells = int((idx >= 0).sum())
 atlas = {
     "layers": layers,
     "finalists": fins,
-    "finalists_intro": ("The ten agents proposed 42 candidates. The auditor re-ran them, checked the neighbouring cells and the "
-                        "literature (English, Chinese, Russian, Mongolian, Persian, Spanish) and kept four. None is a sure thing: "
-                        "each is the best-supported site in its group, with its caveats shown. Pins on the map match the numbers."),
-    "known_losers": losers,
-    "known_losers_intro": "Sites already used as Mars analogs, checked by the auditor with the same 11 km grid. "
-                          "Ranks are among dry cells for that mission; 'not dry' means the site no longer meets "
-                          "Science's dry-land rule that year.",
-    "known": [{"name": k["name"], "lat": k["lat"], "lon": k["lon"]} for k in known],
+    "finalists_intro": ("Ten agents proposed 42 candidates. A first audit re-ran them, checked neighbouring cells and the literature "
+                        "(English, Chinese, Russian, Mongolian, Persian, Spanish) and kept four. After the mission profiles were trained "
+                        "at 11 km, a second audit re-checked the new top cells and confirmed three of them, added two sites, and kept "
+                        "the Uvs Nuur loss. None is a sure thing: each is the best-supported site in its group, with its caveats. "
+                        "All numbers use the trained weights; pins on the map match the numbers."),
     "candidates": [{"name": f["name"], "scout": "", "status": "finalist", "reason": text(f.get("verdict"))} for f in audit.get("finalists", [])]
                   + [{"name": r.get("name"), "scout": r.get("scout", ""), "status": "rejected", "reason": text(r.get("reason"))}
                      for r in audit.get("rejected", [])],
     "signal": signal,
-    "signal_intro": ("With ground ice as a hard requirement, the best Earth analogs for Arcadia Planitia at 11 km sit on the "
-                     "volcanic permafrost plateau of western Tibet, 4,700-5,300 m up. They count as Mars-like only because they "
-                     "stay below 0 °C, and several stop counting by mid-century. The Tibetan Plateau is studied as a Mars "
-                     "analog region (Qaidam Basin), so treat these as a regional signal rather than new sites: the auditor did not vet them."),
+    "signal_intro": ("With ground ice as a hard requirement and the trained weights, the best Earth analogs for Arcadia Planitia "
+                     "are flat Arctic permafrost plains (north Baffin Island, northeast Greenland) and the volcanic permafrost "
+                     "plateau of western Tibet. They count as Mars-like only as cold deserts, and many stop counting by mid-century. "
+                     "The auditor found no ice site that fully qualifies: the north Baffin cell is 1 mm under the 250 mm limit "
+                     "today, so its loss is a threshold effect, and the Tibetan Plateau is already studied as a Mars analog "
+                     "region. Treat this as a regional signal."),
     "stats": [[f"{land_cells/1e6:.2f} M", "Earth land cells at 11 km"], [f"{land_cells/25628:.0f}×", "more cells than the 1° grid"],
-              [f"{layers['dry_now']:,}", "cells count as Mars-like dry land today"], ["10 + 1", "search agents and an auditor"],
+              [f"{layers['dry_now']:,}", "cells count as Mars-like dry land today"], ["10 + 2", "search agents and audit rounds"], ["4", "mission profiles trained at 11 km"],
               [str(len(fins)), "audited finalists"]],
     "method": [
         {"title": "Data at 11 km", "items": [
@@ -167,10 +166,15 @@ atlas = {
             "Mars targets are the rovers' landing sites (Bradbury in Gale, Octavia E. Butler in Jezero) and Arcadia Planitia for ice.",
             "Dry land is Science's rule: NDVI below 0.2, not ice or water, and aridity 0.20 or less or a cold desert (below 0 °C, under 250 mm).",
             "Future years apply the CMIP6 changes from the Data team's projections (SSP2-4.5, SSP5-8.5) to the 11 km climate; vegetation stays as today."]},
+        {"title": "Mission profiles trained at 11 km", "items": [
+            "Weights were re-trained on known analogs: Science's sites plus catalogued sites of the matching kind (rover test sites, evaporite basins, high or hyper-arid deserts, polar sites).",
+            "A known site is a 20 km area, and it only has to reach the top 5 % of cells (a soft target), not beat every cell.",
+            "Training stays anchored to Science's weights and is accepted only if hidden known sites improve in leave-one-out validation: rover +16 % (19 sites), samples +49 % (33), thermal +27 % (17), ice +37 % (7).",
+            "Large shifts for Science to review: sample science nearly drops rock type (1° data), thermal and ice drop albedo, rover gives more weight to terrain."]},
         {"title": "Search and audit", "items": [
             "Ten agents each searched one slice (rover, samples and thermal by continent; ice for crewed missions; ESA's Oxia Planum; climate gains; climate losses).",
             "Each kept 3-5 candidates after web searches for prior Mars-analog use and checks of what is actually in the cell; candidates within 50 km of 245 catalogued analogs were dropped.",
-            "An auditor re-ran 29 candidate cells (all reproduced), checked neighbours and local-language literature, rejected 28 and kept the finalists below.",
+            "An auditor re-ran 29 candidate cells (all reproduced), checked neighbours and local-language literature and rejected 28. A second audit re-checked about 30 cells under the trained weights and rejected 20 more.",
             "The audit found a gap-handling bug (cells without NDVI counted as bare ground). It is fixed: every number on this page comes from the corrected run."]},
         {"title": "Limits", "items": [
             "Rock type, minerals and ground ice come from 1° data, so they do not vary inside a 110 km block.",

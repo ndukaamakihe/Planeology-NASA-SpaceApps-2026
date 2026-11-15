@@ -22,11 +22,12 @@ dry-land rule. Only the cells are smaller.
 3. [Build pipeline](#build-pipeline)
 4. [Validation against the 1° grid](#validation-against-the-1-grid)
 5. [Engine and rules at 11 km](#engine-and-rules-at-11-km)
-6. [The search tool](#the-search-tool)
-7. [The app at 11 km](#the-app-at-11-km)
-8. [Search for new analogs (agents and audit)](#search-for-new-analogs-agents-and-audit)
-9. [Results](#results)
-10. [Limitations and open questions](#limitations-and-open-questions)
+6. [Training the mission profiles at 11 km](#training-the-mission-profiles-at-11-km)
+7. [The search tool](#the-search-tool)
+8. [The app at 11 km](#the-app-at-11-km)
+9. [Search for new analogs (agents and audits)](#search-for-new-analogs-agents-and-audits)
+10. [Results](#results)
+11. [Limitations and open questions](#limitations-and-open-questions)
 
 ## Layout and setup
 
@@ -141,6 +142,56 @@ pixels is larger than on ~10 km pixels; relief inside an 11 km cell is smaller t
   - optionally Oxia Planum (18.16, -24.33, ESA Rosalind Franklin) and Deuteronilus Mensae (43.9, 24.4).
 - **Dry land (Science's rule v2):** not ice or water, bare ground (NDVI < 0.2), and either aridity ≤ 0.20 or a cold desert (mean air temperature < 0 °C, precipitation < 250 mm/yr, albedo < 0.6). Where no NDVI exists even after gap filling, only Antarctica counts as bare.
 
+## Training the mission profiles at 11 km
+
+The app's mission weights are Science's starting weights; only the rover profile had been calibrated, on the
+1° grid. At 11 km they were trained again on known analogs.
+
+**First attempt: the engine's method** (`calibrate_hires.py`, report `calibration_11km.json`).
+
+- Method: `analogue_engine.calibration`, vectorised with numpy so it runs on all ~259,000 dry cells.
+  - Pairwise logistic loss: every known analog should score above every other cell.
+  - KL anchor to Science's weights.
+  - Leave-one-out gate.
+- Results were mixed:
+  - rover with Science's three sites: accepted (+35 %, 2 of 3);
+  - rover with 17 catalogued sites: rejected (+1 %);
+  - sample science: rejected;
+  - ice: no usable site.
+- Why: known analogs were chosen for many reasons (access, one special feature, history), so asking each one to beat every cell is too strict. At 11 km the site's point can also fall in an unrepresentative cell.
+
+**Second attempt, used: "look alike", not "rank first"** (`calibrate_soft.py`, report `calibration_soft_11km.json`).
+
+- **A site is an area:** every dry, complete cell within 20 km of its point. The site's score is a soft maximum over those cells.
+- **Soft target:** a site only has to reach the top 5 % of cells. Loss = softplus((q - s_site) / T), where q is the score at the top-5 % threshold.
+- **Shared features**, a second, closed-form method: weights proportional to w0 · exp(z), where z measures how consistently the known sites look like the Mars target on each feature, compared with all candidates.
+- **Labels:** Science's known analogs plus catalogued sites of the matching kind:
+  - rover: field-test sites and stations;
+  - sample science: evaporite basins and paleolakes;
+  - thermal: hyper-arid and high-altitude deserts;
+  - ice: polar and permafrost sites.
+- **Anchor and gate:** both methods stay anchored to Science's weights, and both pass the engine's gate: hide each site, train on the others, and compare the hidden site's best-cell rank with its rank under Science's weights. Accepted if the mean improves by at least 5 % and at least half of the hidden sites improve.
+
+| Mission | Sites | Method kept | Hidden sites, mean rank | Improved | Sites in top 5 % |
+|---|---|---|---|---|---|
+| Rover navigation (Gale) | 19 | shared features | 52,802 → 44,549 (+16 %) | 10 / 19 | 9 → 10 |
+| Sample science (Jezero) | 33 | soft rank | 113,054 → 57,369 (+49 %) | 20 / 33 | 5 → 7 |
+| Thermal testing (Gale) | 17 | soft rank | 74,832 → 54,752 (+27 %) | 12 / 17 | 5 → 10 |
+| Ground-ice ISRU (Arcadia) | 7 | soft rank | 17,204 → 10,905 (+37 %) | 7 / 7 | 0 → 0 |
+
+The trained weights are in `presets_trained_11km.json`; Science's starting weights are in
+`science_presets.json`. The tool uses the trained weights by default (`--weights app` for the 1° app
+weights), and the 11 km app shows them as "Calibrated on known analogs".
+
+Large shifts for Science to review:
+
+- **Sample science nearly drops rock type** (0.27 → 0.01): rock type is 1° data, too coarse to separate evaporite basins.
+- **Thermal and ice drop albedo.** Thermal relies on the day-night swing and cold nights; ice on the coldest ground temperature and rock type.
+- **Rover gives more weight to terrain** (relief, roughness) and albedo.
+
+The labels come from the unverified catalog, so the trained weights are evidence of consistency with sites
+already in use, not scientific validation.
+
 ## The search tool
 
 `planalogy_hires.py` scores all 2.1 M Earth land cells in about 4 s, reading the shared memory-mapped table.
@@ -210,7 +261,7 @@ python -I hires/render_layers.py <atlas>/layers [future_ranks.json]
 python -I hires/build_atlas.py <audit.json> <atlas>/layers/layers.json <atlas>/data/atlas.json
 ```
 
-## Search for new analogs (agents and audit)
+## Search for new analogs (agents and audits)
 
 **Goal:** find Earth sites that are genuinely new as Mars analogs (not in the literature, not used for
 tests), useful for a real mission, and ideally gaining or losing analog status with climate change.
@@ -232,20 +283,39 @@ tests), useful for a real mission, and ideally gaining or losing analog status w
    - rejected 28 candidates, with reasons;
    - kept 4 finalists.
 3. **The audit found a bug:** cells without NDVI counted as bare ground, so lakes and vegetated Arctic tundra passed as dry land. It is fixed (water mask and NDVI gap filling, see the build pipeline). All numbers below come from the corrected run.
+4. **A second audit, under the trained weights:**
+   - re-checked about 30 cells, each with 8 neighbours, and searched in English, Chinese and Russian;
+   - looked for the best concrete site per mission and for robust climate stories;
+   - rejected 20 more candidates.
+   - A climate story counts as robust only if it happens by 2050 in both scenarios with a clear margin.
 
 ## Results
 
 Numbers from the corrected tool. Ranks are among the dry cells for that mission (259,212 today). Ranks
 change a lot from one cell to the next: read a finalist as the peak of a good area, not a unique spot.
 
-**Audited finalists** (auditor confidence out of 10):
+**Audited finalists** (trained weights; auditor confidence out of 10):
 
-| # | Site | Mission | Today | 2050 / 2090 | Confidence |
-|---|---|---|---|---|---|
-| 1 | Yanshuigou / Qiulitag foothills north of Kuqa, Xinjiang, China (41.85, 82.95) | Rover navigation, Gale | #1, score 82.6 | #2 in 2050 both scenarios; #2 / #4 in 2090 | 6 |
-| 2 | Eastern Uvs Nuur basin, Mongolia (50.35, 94.05) | Thermal testing, Gale | #7, dry only as a cold desert | not dry from 2050 in both scenarios (mean air temperature passes 0 °C) | 5 |
-| 3 | Golfo San Jorge pampa, Chubut, Argentina (-45.35, -67.65) | Sample science, Jezero | not dry (aridity 0.203) | dry from 2050 in both scenarios, about #235; rainfall falls | 5 |
-| 4 | Mehriz-Taft piedmont south of Yazd, Iran (31.65, 54.45) | Rover navigation, Gale | #10 | #7-#10 through 2090 | 4 |
+| Site | Mission | Today | Future | Confidence |
+|---|---|---|---|---|
+| Yanshuigou / Qiulitag anticlines north of Kuqa, Xinjiang, China (41.85, 82.95) | Rover navigation, Gale | #1, score 86.0 | #2 in 2050 in both scenarios; #2 / #5 in 2090 | 6 |
+| Golfo San Jorge pampa, Chubut, Argentina (-45.35, -67.65) | Sample science, Jezero | not dry (aridity 0.203) | **gain:** dry from 2050 in both scenarios (about #550); rainfall falls, neighbours gain too | 5 |
+| Paso Zapaleri plateau, Altiplano, Chile (-22.85, -67.15) | Thermal testing, Gale | #9 | #5 in 2050 in both scenarios, #4-#5 in 2090 | 5 |
+| Uvs Nuur basin floor, Mongolia (50.25, 93.35) | Sample science, Jezero | #80, dry only as a cold desert | **loss:** not dry from 2050 in both scenarios, basin-wide (mean air temperature passes 0 °C; small margin in 2050, large by 2090) | 4 |
+| Zhamanshin impact crater, Kazakhstan (48.40, 60.97) | Sample science, Jezero | #77 | stable to 2090 | 4 |
+| Mehriz-Taft piedmont south of Yazd, Iran (31.65, 54.45) | Rover navigation, Gale | #2 | #3 in 2050, #3 / #6 in 2090 | 4 |
+
+Caveats per finalist:
+
+- **Kuqa:** layered red beds and salts, a stand-in for Curiosity's clay-to-sulfate traverse. Access to Xinjiang is the weak point.
+- **Golfo San Jorge:** a tourist "Valle de Marte" trail lies 25-35 km away; oil fields nearby.
+- **Zapaleri:** the largest ground day-night swing among the top thermal cells (34.8 K) at 4,650 m, reachable by road from San Pedro de Atacama. Ten catalogued analogs lie within 250 km.
+- **Zhamanshin:** fits Jezero if its centre really holds lake sediments over impactites (to be checked). NASA GSFC is studying the crater, so it is new as a sampling analog, not unstudied.
+- **Yazd:** a single-cell peak, with very limited access.
+
+No site fully qualified for ground ice. The best lead, a flat permafrost plain on the southern Borden
+Peninsula, north Baffin Island (72.05, -82.45, #1 of 28,493), loses status only because its precipitation
+is 1 mm under the 250 mm limit today: a rule-boundary effect, not a robust climate story.
 
 No Mars-analog use was found for any finalist. That is not proof of absence. No candidate in the United
 States was both new and robust: Utah candidates are within ~50 km of published analog work, and the best
@@ -263,11 +333,13 @@ by a small margin.
 Claims that Dallol, the Samail ophiolite and Haughton crater lose status did not survive the audit (bug side
 effects or single marginal cells).
 
-**Ground ice:** with ground ice required, the best Earth analogs for Arcadia Planitia are on the volcanic
-permafrost plateau of western Tibet (4,700-5,300 m). Of the top five cells, three stop counting by 2050
-under both scenarios. Ice-prospecting candidates fall from 28,493 cells today to 19,946 in 2090 under SSP5-8.5.
-The Tibetan Plateau is already studied as a Mars analog region (Qaidam Basin), so this is a regional climate
-signal, not a new site.
+**Ground ice:** with ground ice required, the best Earth analogs for Arcadia Planitia are flat Arctic
+permafrost plains (north Baffin Island, northeast Greenland) and the volcanic permafrost plateau of western
+Tibet. They count as Mars-like only as cold deserts, and many stop counting by mid-century; ice-prospecting
+candidates fall from 28,493 cells today to 19,946 in 2090 under SSP5-8.5. With the 1° app weights the top
+cells are on the Tibetan Plateau; with the trained weights, north Baffin Island ranks first. The Tibetan
+Plateau is already studied as a Mars analog region (Qaidam Basin), so this is a regional climate signal,
+not a new site.
 
 **Dry land worldwide:** 259,212 cells today.
 
@@ -283,6 +355,7 @@ signal, not a new site.
 - Rock type, minerals and ground ice come from 1° data and do not vary inside a 110 km block.
 - Mars temperatures come from a ~200 km climate model.
 - Terrain scales (τ) at 11 km are provisional.
+- The trained weights rely on labels from the unverified catalog; the large shifts (rock type for sample science, albedo for thermal and ice) need Science's review.
 - The cold-desert albedo check (< 0.6) is ours; to confirm with Science.
 - Vegetation stays as today in future years: no global NDVI projection exists, so drying regions that lose plant cover are missed.
 - The future uses the 1° multi-model change. WorldClim also publishes CMIP6 at 2.5′ per model; a finer future would need several models downloaded and averaged.

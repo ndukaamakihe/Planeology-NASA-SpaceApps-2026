@@ -110,8 +110,8 @@ for key, (la, lo), label in (("oxia", (18.16, -24.33), "Oxia Planum, ESA Rosalin
     tv = H.target_values(la, lo)
     targets[key] = {"label": label, "cell": tv.pop("_cell"), "values": tv}
 engine = {"features": man["features"], "categories": man["categories"], "tau_scale": H.TAU_SCALE,
-          "presets": [{k: p[k] for k in ("id", "name", "mission", "target", "category_weights", "feature_weights", "requirements")}
-                      for p in man["presets"]],
+          "presets": [{k: q[k] for k in ("id", "name", "mission", "target", "category_weights", "feature_weights", "requirements")}
+                      for q in (H.preset(p["id"]) for p in man["presets"])],  # trained 11 km weights when available
           "targets": targets, "rocks": S["rocks"], "minerals": H.MINERALS}
 (out / "engine.json").write_text(json.dumps(engine, ensure_ascii=False, indent=0), encoding="utf-8")
 for f in ("cells.json", "deltas.json", "engine.json"):

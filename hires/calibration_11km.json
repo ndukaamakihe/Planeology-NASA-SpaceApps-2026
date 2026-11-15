@@ -1,0 +1,161 @@
+{
+ "ice_prospecting/science": {
+  "preset": "ice_prospecting",
+  "labels": "science",
+  "candidates": 28493,
+  "tunable": [
+   "slope_deg",
+   "roughness_m",
+   "relief_m",
+   "surface_temp_swing_K",
+   "surface_temp_min_K",
+   "air_temp_swing_K",
+   "ati_percentile",
+   "albedo",
+   "rock_group"
+  ],
+  "used": [],
+  "unusable": [
+   "Dry Valleys",
+   "Devon Island (Haughton)"
+  ],
+  "verdict": "not_validated",
+  "reason": "fewer than 2 usable known analogs",
+  "start_weights": {
+   "slope_deg": 0.0741,
+   "roughness_m": 0.0741,
+   "relief_m": 0.0741,
+   "surface_temp_swing_K": 0.2222,
+   "surface_temp_min_K": 0.1111,
+   "air_temp_swing_K": 0.1111,
+   "ati_percentile": 0.1111,
+   "albedo": 0.1111,
+   "rock_group": 0.1111
+  }
+ },
+ "ice_prospecting/extended": {
+  "preset": "ice_prospecting",
+  "labels": "extended",
+  "candidates": 28493,
+  "tunable": [
+   "slope_deg",
+   "roughness_m",
+   "relief_m",
+   "surface_temp_swing_K",
+   "surface_temp_min_K",
+   "air_temp_swing_K",
+   "ati_percentile",
+   "albedo",
+   "rock_group"
+  ],
+  "used": [
+   "Colour Peak spring (Axel Heiberg)",
+   "Lost Hammer spring (Axel Heiberg)",
+   "Expedition Fiord (Axel Heiberg)",
+   "Lake Hazen (Ellesmere)"
+  ],
+  "unusable": [
+   "Dry Valleys",
+   "Devon Island (Haughton)",
+   "Gypsum Hill spring (Axel Heiberg)",
+   "Bylot Island",
+   "Vatnajokull",
+   "Langjokull",
+   "Myrdalsjokull / Katla",
+   "Svalbard Bockfjord volcanic complex (AMASE)",
+   "Sverrefjellet volcano",
+   "Longyearbyen / Adventdalen (Svalbard)",
+   "Don Juan Pond",
+   "Beacon Valley",
+   "University Valley",
+   "Lake Vida",
+   "Wright Valley",
+   "Taylor Valley",
+   "Victoria Valley",
+   "Lake Vanda",
+   "Lake Bonney",
+   "Lake Fryxell",
+   "Lake Hoare",
+   "Lake Joyce",
+   "Blood Falls",
+   "Garwood Valley",
+   "Lake Untersee",
+   "Lake Vostok"
+  ],
+  "verdict": "accepted",
+  "reason": "hidden analogs: mean rank 22094 -> 19146 (+13.3%), 3/4 improved; threshold 5% and half improved",
+  "start_weights": {
+   "slope_deg": 0.0741,
+   "roughness_m": 0.0741,
+   "relief_m": 0.0741,
+   "surface_temp_swing_K": 0.2222,
+   "surface_temp_min_K": 0.1111,
+   "air_temp_swing_K": 0.1111,
+   "ati_percentile": 0.1111,
+   "albedo": 0.1111,
+   "rock_group": 0.1111
+  },
+  "calibrated_weights": {
+   "slope_deg": 0.011,
+   "roughness_m": 0.0276,
+   "relief_m": 0.0147,
+   "surface_temp_swing_K": 0.1923,
+   "surface_temp_min_K": 0.3059,
+   "air_temp_swing_K": 0.12,
+   "ati_percentile": 0.1745,
+   "albedo": 0.0097,
+   "rock_group": 0.1442
+  },
+  "start_dimension_weights": {
+   "geology": 0.1111,
+   "optical": 0.1111,
+   "terrain": 0.2222,
+   "thermal": 0.4444,
+   "thermophysical": 0.1111
+  },
+  "calibrated_dimension_weights": {
+   "geology": 0.1442,
+   "optical": 0.0097,
+   "terrain": 0.0534,
+   "thermal": 0.6182,
+   "thermophysical": 0.1745
+  },
+  "ranks_start": {
+   "Colour Peak spring (Axel Heiberg)": 27332,
+   "Lost Hammer spring (Axel Heiberg)": 16476,
+   "Expedition Fiord (Axel Heiberg)": 26481,
+   "Lake Hazen (Ellesmere)": 18087
+  },
+  "ranks_calibrated": {
+   "Colour Peak spring (Axel Heiberg)": 19843,
+   "Lost Hammer spring (Axel Heiberg)": 9629,
+   "Expedition Fiord (Axel Heiberg)": 19425,
+   "Lake Hazen (Ellesmere)": 17151
+  },
+  "mean_top_percent_start": 77.54,
+  "mean_top_percent_calibrated": 57.95,
+  "leave_one_out": [
+   {
+    "held_out": "Colour Peak spring (Axel Heiberg)",
+    "start": 27332,
+    "calibrated_without_it": 25268
+   },
+   {
+    "held_out": "Lost Hammer spring (Axel Heiberg)",
+    "start": 16476,
+    "calibrated_without_it": 9739
+   },
+   {
+    "held_out": "Expedition Fiord (Axel Heiberg)",
+    "start": 26481,
+    "calibrated_without_it": 22324
+   },
+   {
+    "held_out": "Lake Hazen (Ellesmere)",
+    "start": 18087,
+    "calibrated_without_it": 19252
+   }
+  ],
+  "seconds": 2
+ }
+}

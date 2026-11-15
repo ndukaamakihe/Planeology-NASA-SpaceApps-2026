@@ -1,0 +1,163 @@
+{
+ "note": "Science starting weights (backend/analog_presets.py): the prior that calibration is anchored to.",
+ "known_points": {
+  "Atacama": [
+   -24.08,
+   -69.92
+  ],
+  "Arizaro": [
+   -24.7,
+   -67.75
+  ],
+  "Kara-Kul": [
+   39.02,
+   73.45
+  ],
+  "Dry Valleys": [
+   -77.52,
+   161.83
+  ],
+  "Devon Island (Haughton)": [
+   75.38,
+   -89.67
+  ]
+ },
+ "presets": [
+  {
+   "id": "rover_navigation",
+   "dimension_weights": {
+    "terrain": 2,
+    "thermophysical": 1,
+    "optical": 1,
+    "thermal": 0.5,
+    "mineralogy": 0.25,
+    "geology": 0.5,
+    "craters": 0.5,
+    "water": 0.5
+   },
+   "feature_weights": {
+    "slope_deg": 1,
+    "roughness_m": 1,
+    "relief_m": 1,
+    "surface_temp_swing_K": 2,
+    "surface_temp_min_K": 1,
+    "air_temp_swing_K": 1,
+    "ati_percentile": 1,
+    "albedo": 1,
+    "mineral_groups": 1,
+    "rock_group": 1,
+    "inside_impact_structure": 1,
+    "ground_ice_flag": 1
+   },
+   "known_analogs": [
+    "Atacama",
+    "Arizaro",
+    "Kara-Kul"
+   ],
+   "requirements": []
+  },
+  {
+   "id": "sample_science",
+   "dimension_weights": {
+    "geology": 2,
+    "mineralogy": 1,
+    "thermophysical": 1,
+    "optical": 1,
+    "terrain": 1,
+    "thermal": 0.5,
+    "water": 0.5,
+    "craters": 0.5
+   },
+   "feature_weights": {
+    "slope_deg": 1,
+    "roughness_m": 1,
+    "relief_m": 1,
+    "surface_temp_swing_K": 2,
+    "surface_temp_min_K": 1,
+    "air_temp_swing_K": 1,
+    "ati_percentile": 1,
+    "albedo": 1,
+    "mineral_groups": 1,
+    "rock_group": 1,
+    "inside_impact_structure": 1,
+    "ground_ice_flag": 1
+   },
+   "known_analogs": [
+    "Atacama",
+    "Arizaro"
+   ],
+   "requirements": []
+  },
+  {
+   "id": "thermal_environment",
+   "dimension_weights": {
+    "thermal": 3,
+    "thermophysical": 1,
+    "optical": 1,
+    "terrain": 0.25,
+    "geology": 0,
+    "craters": 0,
+    "water": 0.5
+   },
+   "feature_weights": {
+    "slope_deg": 1,
+    "roughness_m": 1,
+    "relief_m": 1,
+    "surface_temp_swing_K": 2,
+    "surface_temp_min_K": 1,
+    "air_temp_swing_K": 1,
+    "ati_percentile": 1,
+    "albedo": 1,
+    "mineral_groups": 1,
+    "rock_group": 1,
+    "inside_impact_structure": 1,
+    "ground_ice_flag": 1
+   },
+   "known_analogs": [
+    "Atacama",
+    "Dry Valleys",
+    "Arizaro"
+   ],
+   "requirements": []
+  },
+  {
+   "id": "ice_prospecting",
+   "dimension_weights": {
+    "thermal": 2,
+    "terrain": 1,
+    "optical": 0.5,
+    "thermophysical": 0.5,
+    "geology": 0.5,
+    "craters": 0,
+    "water": 0
+   },
+   "feature_weights": {
+    "slope_deg": 1,
+    "roughness_m": 1,
+    "relief_m": 1,
+    "surface_temp_swing_K": 2,
+    "surface_temp_min_K": 1,
+    "air_temp_swing_K": 1,
+    "ati_percentile": 1,
+    "albedo": 1,
+    "mineral_groups": 1,
+    "rock_group": 1,
+    "inside_impact_structure": 1,
+    "ground_ice_flag": 0
+   },
+   "known_analogs": [
+    "Devon Island (Haughton)",
+    "Dry Valleys"
+   ],
+   "requirements": [
+    {
+     "id": "earth_site_has_ground_ice",
+     "feature_id": "ground_ice_flag",
+     "type": "equals",
+     "value": true,
+     "description": "An ice-extraction test needs ground ice at the Earth site."
+    }
+   ]
+  }
+ ]
+}

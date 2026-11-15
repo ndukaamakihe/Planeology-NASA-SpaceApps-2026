@@ -62,8 +62,13 @@ def fine_id(lat, lon):
 
 from backend_points import EARTH  # noqa: E402  (copied point list, see below)
 
+TRAINED = json.loads((Path(__file__).parent / "presets_trained_11km.json").read_text(encoding="utf-8"))["presets"]
 for p in m["presets"]:
     p["known_analogs"] = [{"name": k["name"], "id": fine_id(*EARTH[k["name"]])} for k in p["known_analogs"] if k["name"] in EARTH]
+    t = TRAINED.get(p["id"])
+    if t:  # mission weights trained on the 11 km grid (calibrate_soft.py), accepted by leave-one-out
+        p.update(category_weights=t["category_weights"], feature_weights=t["feature_weights"], weights_used="calibrated",
+                 verdict="accepted", verdict_reason=f"Trained at 11 km on {t['sites']} known analog areas; {t['validation']}")
 m["files"] = {"earth": {"now": "cells.json"}, "mars": "mars.json"}
 for sc in m.get("scenarios", []):
     sc["files"] = {str(y): f"compact:{sc['id']}_{y}" for y in sc["years"]}
