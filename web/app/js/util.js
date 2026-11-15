@@ -7,7 +7,9 @@ TT.h = function h(tag, attrs){
   const el = document.createElement(tag);
   if (attrs) for (const k in attrs){
     const v = attrs[k];
-    if (v == null || v === false) continue;
+    if (v == null) continue;
+    if (k.slice(0,5) === 'aria-' && typeof v === 'boolean'){ el.setAttribute(k, String(v)); continue; }   // aria states need "true"/"false"
+    if (v === false) continue;
     if (k === 'class') el.className = v;
     else if (k === 'html') el.innerHTML = v;            // trusted static markup only (icons)
     else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);

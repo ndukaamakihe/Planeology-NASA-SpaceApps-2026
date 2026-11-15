@@ -1,0 +1,57 @@
+column,unit,description,earth_source,mars_source,comparable
+is_land,0/1,1 = land cell (Mars: always 1),WorldClim elevation mask,-,filter
+cell_area_km2,km2,Area of the 1x1 deg cell (differs per planet and latitude),computed,computed,helper
+slope_deg,deg,"P1: mean slope inside the cell, from a ~9-10 km DEM grid (same method both planets)",WorldClim 5' elevation,MOLA resampled to 6 ppd,yes
+roughness_m,m,P1: standard deviation of elevation inside the cell (~9-10 km pixels),WorldClim 5' elevation,MOLA resampled to 6 ppd,yes
+relief_m,m,P1: highest minus lowest point inside the cell (~9-10 km pixels),WorldClim 5' elevation,MOLA resampled to 6 ppd,yes
+elevation_m,m,"Surface height (Earth: above sea level, Mars: above areoid)",WorldClim 2.1 (SRTM) 5',MOLA MEGDR 16 ppd,yes
+surface_temp_day_K,K,Mean daytime ground temperature,"MODIS MOD11C1 day, monthly normal 2012-21","MCD v6 tsurf 14h, 4 seasons",yes
+surface_temp_night_K,K,Mean night-time ground temperature,MODIS MOD11C1 night,MCD v6 tsurf 02h,yes
+surface_temp_swing_K,K,Mean day minus night ground temperature,MODIS,MCD v6,yes
+surface_temp_min_K,K,Coldest monthly/seasonal night ground temperature,MODIS,MCD v6,yes
+surface_temp_max_K,K,Warmest monthly/seasonal day ground temperature,MODIS,MCD v6,yes
+air_temp_swing_K,K,P2: mean daily air temperature range (Earth tmax-tmin per month; Mars 14h-02h per season),"WorldClim tmax, tmin",MCD v6 t 14h - 02h,yes
+air_temp_mean_K,K,Mean air temperature near the ground,WorldClim tavg (2 m),MCD v6 t at 10 m,yes
+air_temp_min_K,K,Coldest air temperature (coldest month / season night),WorldClim tmin,MCD v6 t 02h,yes
+air_temp_max_K,K,Warmest air temperature (warmest month / season day),WorldClim tmax,MCD v6 t 14h,yes
+air_pressure_Pa,Pa,Surface air pressure,computed from elevation (barometric),MCD v6 ps,yes (Mars ~100x lower)
+solar_radiation_Wm2,W/m2,Daily mean sunlight at the ground,WorldClim srad,MCD v6 daily mean (if downloaded),yes
+solar_flux_14h_Wm2,W/m2,"Sunlight at 14h local time (Mars only, instantaneous)",-,MCD v6 fluxsurf_dn_sw 14h,no
+wind_ms,m/s,Mean near-surface wind speed,WorldClim wind,MCD v6 wind 10 m,yes
+albedo,0..1,Surface brightness,"MODIS MCD43C3 white-sky shortwave, 4 dates 2024",TES bolometric albedo,yes
+apparent_thermal_inertia,1/K,(1 - albedo) / day-night swing; same formula on both planets,computed,computed,yes
+thermal_inertia_SI,J m-2 K-1 s-1/2,Physical thermal inertia (Mars only),-,"TES (Mellon 2000), 60N-50S",no
+rock_group,class,"Common rock group: volcanic, ancient_crust, sedimentary, evaporite_salt, ice, impact, water",GLiM classes grouped,SIM 3292 units grouped,yes
+rock_code,code,Original class (Earth GLiM code / Mars SIM 3292 unit),GLiM,SIM 3292,no
+ground_ice_flag,0/1,1 = ground ice likely (Earth: permafrost >= 0.5 or glacier; Mars: H2O >= 10 wt% or polar unit),Obu 2019 + GLiM,Odyssey GRS + SIM 3292,yes
+permafrost_prob,0..1,"Permafrost probability (Earth, northern hemisphere)",Obu et al. 2019,-,no
+ground_ice_h2o_wt,wt%,Water-equivalent hydrogen in top metre (Mars),-,Odyssey GRS 5x5 deg,no
+crater_count,n,Impact craters with centre in the cell,Earth Impact Database (Wikipedia lists),Robbins 2012 (>= 1 km),yes (use density)
+crater_density_per_10k_km2,n per 10000 km2,crater_count normalised by cell area,computed,computed,yes
+crater_max_diam_km,km,Largest crater in the cell,EID,Robbins 2012,yes
+mineral_groups,set,"P7 PROXY: present mineral groups, '|' separated (basaltic, felsic, clays_hydrated, sulfates_salts, carbonates, iron_oxides)",GLiM class -> typical minerals,"TES (normalised, >= 20 %) + OMEGA/CRISM hydrated sites",yes (proxy)
+dust_cover_index,-,TES dust cover index (lower = more dust),-,Ruff & Christensen 2002,no
+hydrated_mineral_sites,n,"Detections of water-formed minerals (clays, sulfates)",-,OMEGA + CRISM,no
+mineral_quartz,fraction,TES abundance of quartz,-,TES (Bandfield 2002) 4 ppd,no
+mineral_k_feldspar,fraction,TES abundance of k feldspar,-,TES (Bandfield 2002) 4 ppd,no
+mineral_plagioclase,fraction,TES abundance of plagioclase,-,TES (Bandfield 2002) 4 ppd,no
+mineral_amphibole,fraction,TES abundance of amphibole,-,TES (Bandfield 2002) 4 ppd,no
+mineral_low_ca_pyroxene,fraction,TES abundance of low ca pyroxene,-,TES (Bandfield 2002) 4 ppd,no
+mineral_high_ca_pyroxene,fraction,TES abundance of high ca pyroxene,-,TES (Bandfield 2002) 4 ppd,no
+mineral_olivine,fraction,TES abundance of olivine,-,TES (Bandfield 2002) 4 ppd,no
+mineral_hematite,fraction,TES abundance of hematite,-,TES (Bandfield 2002) 4 ppd,no
+mineral_sulfates,fraction,TES abundance of sulfates,-,TES (Bandfield 2002) 4 ppd,no
+mineral_carbonates,fraction,TES abundance of carbonates,-,TES (Bandfield 2002) 4 ppd,no
+mineral_sheet_silicates_hi_si_glass,fraction,TES abundance of sheet silicates hi si glass,-,TES (Bandfield 2002) 4 ppd,no
+mineral_surface_dust,fraction,TES abundance of surface dust,-,TES (Bandfield 2002) 4 ppd,no
+chem_fe_wt,wt%,FE concentration,-,Odyssey GRS 5x5 deg,no
+chem_k_wt,wt%,K concentration,-,Odyssey GRS 5x5 deg,no
+chem_cl_wt,wt%,CL concentration,-,Odyssey GRS 5x5 deg,no
+chem_si_wt,wt%,SI concentration,-,Odyssey GRS 5x5 deg,no
+chem_th_wt,ppm-scale (see label),TH concentration,-,Odyssey GRS 5x5 deg,no
+vapour_pressure_kPa,kPa,Water vapour in air (Earth-only filter),WorldClim vapr,-,filter
+precipitation_mm_yr,mm/yr,Yearly precipitation (Earth-only filter),WorldClim prec,-,filter
+soil_moisture_pct,%,"Topsoil water (Earth-only filter, no data over ice)",AMSR2 via JAXA,-,filter
+ndvi,-1..1,Vegetation index (Earth-only filter),MODIS via JAXA,-,filter
+aridity_index,-,"Earth-only filter: yearly precipitation / Hargreaves PET (UNEP aridity index, same method today and in projections)","WorldClim tmin, tmax, prec",-,filter
+aridity_class,class,Earth-only filter: hyperarid < 0.05 <= arid < 0.2 <= semi_arid < 0.5 <= dry_subhumid < 0.65 <= humid,from aridity_index,-,filter

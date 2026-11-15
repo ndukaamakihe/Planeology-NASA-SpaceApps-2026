@@ -1,8 +1,10 @@
-/* Planalogy — the analogue engine's scoring, reproduced in the browser for the 1° grid.
+/* Planalogy — the analogue engine's scoring, reproduced in the browser for any regular grid
+ * (1°, 50 km, …; each planet's grid comes from manifest.grid).
  *
  * Similarity per feature, with the engine's comparators and fixed scales (from the manifest):
  *   clipped_linear_v1:      s = 1 − min(1, |x − t| / τ)
  *   categorical / boolean:  s = 1 if x == t else 0
+ *   jaccard_v1 (sets):      s = |x ∩ t| / |x ∪ t|  (two empty sets: 1)
  *   missing value:          no similarity (never 0)
  * Score of a cell: Σ w_j s_j / Σ w_j, with the engine's effective weights
  *   w_j = (W_g / Σ W) · (a_j / Σ_{k in g} a_k).
@@ -23,19 +25,47 @@
 
   const colIndex = table => { const ix = {}; table.columns.forEach((c, i) => { ix[c] = i; }); return ix; };
 
-  /** Feature values of the Mars cell that contains (lat, lon); null if that cell has no data. */
+  /** A planet's grid from the manifest (step, origin, size); old manifests: 1° global grid. */
+  function gridOf(manifest, body) {
+    if (manifest.grid && manifest.grid[body]) return manifest.grid[body];
+    const s = manifest.grid_deg || 1;
+    return { lat_step: s, lon_step: s, lat0: -90 + s / 2, lon0: -180 + s / 2, n_lat: Math.round(180 / s),
+             n_lon: Math.round(360 / s), decimals: 1, cell_km: null };
+  }
+
+  /** Centre of the grid cell containing (lat, lon), or null outside the grid —
+   *  same rule as GridSpec.containing in backend/grid_data.py (never snaps to an edge cell). */
+  function containingCell(grid, lat, lon) {
+    const wrapLon = x => ((x + 180) % 360 + 360) % 360 - 180;
+    const round6 = x => Number(x.toFixed(6));
+    const fi = (lat - (grid.lat0 - grid.lat_step / 2)) / grid.lat_step;
+    const fj = (wrapLon(lon) - (grid.lon0 - grid.lon_step / 2)) / grid.lon_step;
+    let i = Math.floor(fi + 1e-9), j = Math.floor(fj + 1e-9);
+    if (i === grid.n_lat && fi <= grid.n_lat + 1e-9) i -= 1; // on the outer edge (e.g. the pole)
+    if (Math.abs(grid.n_lon * grid.lon_step - 360) < 1e-6) j = ((j % grid.n_lon) + grid.n_lon) % grid.n_lon;
+    else if (j === grid.n_lon && fj <= grid.n_lon + 1e-9) j -= 1;
+    if (i < 0 || i >= grid.n_lat || j < 0 || j >= grid.n_lon) return null;
+    return { lat: round6(grid.lat0 + i * grid.lat_step), lon: round6(grid.lon0 + j * grid.lon_step) };
+  }
+
+  /** Feature values of the Mars cell that contains (lat, lon); null if no cell or no data there. */
   function marsCell(manifest, mars, lat, lon) {
-    const step = manifest.grid_deg || 1;
-    const snap = (v, lo) => Math.floor((v - lo) / step) * step + lo + step / 2;
-    const clat = Math.max(-90 + step / 2, Math.min(90 - step / 2, snap(lat, -90)));
-    let clon = snap(((lon + 180) % 360 + 360) % 360 - 180, -180);
+    const c = containingCell(gridOf(manifest, 'mars'), lat, lon);
+    if (!c) return null;
     const ix = colIndex(mars);
     if (!mars._byKey) { mars._byKey = new Map(); mars.rows.forEach(r => mars._byKey.set(r[ix.lat] + ',' + r[ix.lon], r)); }
-    const row = mars._byKey.get(clat + ',' + clon);
+    const row = mars._byKey.get(c.lat + ',' + c.lon);
     if (!row) return null;
     const values = {};
     manifest.features.forEach(f => { values[f.id] = row[ix[f.id]]; });
-    return { lat: clat, lon: clon, values };
+    return { lat: c.lat, lon: c.lon, values };
+  }
+
+  /** Short label for a planet's cells: "1° cell" or "0.45° cell (≈50 km)". */
+  function cellLabel(manifest, body) {
+    const g = gridOf(manifest, body);
+    if (g.lat_step === 1 && g.lon_step === 1) return '1° cell';
+    return g.lat_step + '° cell' + (g.cell_km ? ' (≈' + Math.round(g.cell_km) + ' km)' : '');
   }
 
   /** Earth table for a year: the base table with the yearly file's columns (climate-dependent) replaced. */
@@ -55,6 +85,41 @@
     return { columns: base.columns, rows };
   }
 
+  /** Earth table for a year between two projected years (t = 0 at the first, 1 at the second).
+   *  Climate columns (manifest.year_columns, aridity) are interpolated linearly; flags switch at the midpoint,
+   *  except dry land, which follows the interpolated aridity index (or the cold-desert flag) when there is one. Both tables are full
+   *  tables (earthForYear). This is a display aid between projections: the engine itself scores only the
+   *  projected years. */
+  function blendEarth(manifest, a, b, t) {
+    if (t <= 0) return a;
+    if (t >= 1) return b;
+    const ix = colIndex(a);
+    const cols = (manifest.year_columns || []).concat(['aridity_index', 'cold_desert'])
+      .filter((c, i, arr) => arr.indexOf(c) === i && ix[c] !== undefined && c !== 'dry_bare');
+    const dl = manifest.dry_land || {}, maxA = dl.max_aridity != null ? dl.max_aridity : 0.2;
+    const byId = new Map(b.rows.map(r => [r[ix.id], r]));
+    const seen = new Set(), rows = [];
+    for (const ra of a.rows) {
+      const id = ra[ix.id], rb = byId.get(id);
+      seen.add(id);
+      if (!rb) { if (t < 0.5) rows.push(ra); continue; }
+      const out = ra.slice();
+      for (const c of cols) {
+        const i = ix[c], x = ra[i], y = rb[i];
+        out[i] = typeof x === 'number' && typeof y === 'number' ? x + (y - x) * t : (t < 0.5 ? x : y);
+      }
+      if (ix.dry_bare !== undefined) {
+        // a change between years can only come from the climate (NDVI, ice and water stay as today)
+        const x = ra[ix.dry_bare], y = rb[ix.dry_bare], ai = ix.aridity_index !== undefined ? out[ix.aridity_index] : null;
+        const cold = ix.cold_desert !== undefined ? !!out[ix.cold_desert] : false;
+        out[ix.dry_bare] = x === y ? x : (typeof ai === 'number' ? ai <= maxA || cold : (t < 0.5 ? x : y));
+      }
+      rows.push(out);
+    }
+    if (t >= 0.5) b.rows.forEach(rb => { if (!seen.has(rb[ix.id])) rows.push(rb); });
+    return { columns: a.columns, rows };
+  }
+
   /** Similarity of every Earth cell to a target, feature by feature. */
   function similarities(manifest, earth, targetValues) {
     const ix = colIndex(earth);
@@ -67,6 +132,12 @@
         const f = feats[j], x = row[ix[f.id]], t = targetValues[f.id];
         if (x === null || x === undefined || t === null || t === undefined) { s[j] = null; continue; }
         if (f.comparator === 'clipped_linear_v1') { const d = Math.min(1.0, Math.abs(x - t) / f.tau); s[j] = 1.0 - d; }
+        else if (f.comparator === 'jaccard_v1') {
+          const a = new Set(x), b = new Set(t);
+          let shared = 0; a.forEach(v => { if (b.has(v)) shared++; });
+          const union = a.size + b.size - shared;
+          s[j] = union === 0 ? 1.0 : shared / union;
+        }
         else s[j] = x === t ? 1.0 : 0.0;
       }
       byId[row[ix.id]] = s;
@@ -109,11 +180,17 @@
     (settings.requirements || []).forEach(r => required.add(r.feature));
     const reqs = settings.requirements || [];
     const onlyDry = settings.onlyDryBare !== false && cIndex.dry_bare !== undefined;
+    // hyper-arid only (Science: aridity index < 0.05, e.g. Atacama); needs the aridity column
+    const hyper = !!settings.hyperArid && cIndex.aridity_index !== undefined && cIndex.dry_bare !== undefined;
+    const hyperBelow = (manifest.dry_land && manifest.dry_land.hyper_arid_below) || 0.05;
     const ranked = [], partial = [], excluded = [];
     let skipped = 0;
 
     for (const row of earth.rows) {
       if (onlyDry && !row[cIndex.dry_bare]) { skipped++; continue; }
+      if (hyper && !(row[cIndex.dry_bare] && row[cIndex.aridity_index] !== null && row[cIndex.aridity_index] < hyperBelow)) {
+        skipped++; continue;
+      }
       const id = row[cIndex.id];
       const s = sims.by_id[id];
       if (!s) continue;
@@ -180,5 +257,6 @@
              missing: item.missing, failed: item.failed };
   }
 
-  return { marsCell, earthForYear, similarities, effectiveWeights, scoreCells, categoryScores, card };
+  return { gridOf, containingCell, marsCell, cellLabel, earthForYear, blendEarth, similarities, effectiveWeights, scoreCells,
+           categoryScores, card };
 });

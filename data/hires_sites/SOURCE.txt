@@ -1,0 +1,3 @@
+1-km climate today and projected (WorldClim 2.1 CMIP6, 30 arc-seconds) for the proposed sites only.
+Made by process_future_hires.py from download_future_hires.py (Data team). One map per site and
+scenario: <site folder>_<ssp>.png. Fine pattern = today's climate, change signal = coarse models.

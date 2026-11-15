@@ -278,28 +278,49 @@ python examples/real_data/run_real_grid.py <folder> gale
 6. In `parameters.csv`, keep the `comparable` column (`yes` / `no` /
    `filter` / `helper`). Only `yes` columns can be scored across planets.
 
-**Columns the engine scores now** (Science P1–P10): `elevation_m` (only to
-derive regional relief), `surface_temp_swing_K`, `surface_temp_min_K`,
-`apparent_thermal_inertia` (as a within-planet percentile), `albedo`,
-`rock_group`, `crater_count` (as yes/no), `ground_ice_flag`. Earth
-pre-filter: `is_land`, `precipitation_mm_yr`, `ndvi`, `rock_group`.
+**Columns the engine scores now** (Science P1–P10): `slope_deg`,
+`roughness_m`, `relief_m` (P1; `elevation_m` only for the 3×3 fallback
+`regional_relief_m`), `surface_temp_swing_K`, `surface_temp_min_K`,
+`air_temp_swing_K` (P2), `apparent_thermal_inertia` (P3, as a within-planet
+percentile), `albedo` (P4), `mineral_groups` (P7 proxy, Jaccard),
+`rock_group` (P8), `crater_count` (P9, as yes/no), `ground_ice_flag` (P10).
+Earth pre-filter: `is_land`, `precipitation_mm_yr`, `ndvi`, `rock_group`.
 
-**Requested fixes and additions**
-* The Gale cell has `rock_group = impact`, which no Earth cell has, so P8
-  scores 0 everywhere. Science describes Gale as sedimentary; please confirm
-  the class for target cells.
-* `ground_ice_flag` on Earth only uses northern-hemisphere permafrost, so the
-  Antarctic Dry Valleys show no ice. Please add a southern-hemisphere source
-  if one exists.
-* If possible, add `slope_deg` and `roughness` per cell, computed from a
-  finer DEM with the same method on both planets. Today relief is
-  approximated from 3×3 cells.
+**Fixes and additions from the Data team** (grid version with 56 columns)
+* `slope_deg`, `roughness_m`, `relief_m`: mean slope, standard deviation and
+  max − min of elevation inside each cell, from a ~9–10 km DEM grid with the
+  same method on both planets (Earth WorldClim 5′ = 9.3 km, Mars MOLA
+  resampled to 6 pixels/degree = 9.9 km). Gale: 3.2°, 963 m, 3979 m.
+* `air_temp_swing_K`: mean daily air temperature range. Earth: mean over 12
+  months of WorldClim tmax − tmin. Mars: mean over 4 seasons of MCD v6 air
+  temperature at 14 h − 02 h. Gale: 44 K, Earth land 5–15 K. This is the
+  column that CMIP6 projections (WorldClim future tmax/tmin) can fill per
+  year, so the year slider changes a scored feature, not only the filter.
+* `mineral_groups` (P7 proxy): `|`-separated set from the vocabulary
+  `basaltic, felsic, clays_hydrated, sulfates_salts, carbonates, iron_oxides`.
+  Earth: typical minerals of the GLiM rock class. Mars: TES abundances
+  normalised to the sum of non-dust minerals, present from 20 %, plus
+  OMEGA/CRISM hydrated-mineral sites. Gale → `basaltic|clays_hydrated`.
+  Coarse; Science may replace it with mineral lists from papers.
+* `rock_group` on Mars: cells with an impact unit (e.g. AHi at Gale) take the
+  most frequent non-impact group of the surrounding 5×5 cells. Gale is now
+  `sedimentary`; `rock_code` keeps the original unit.
+* Still open: `ground_ice_flag` in Antarctica (ESA CCI Permafrost v5 covers
+  it and can be added).
 
-**Year slider**: one Earth file per year (or scenario), e.g.
-`earth_1deg_2030.csv`, `earth_1deg_2050.csv`. Each has the same columns and
-the same grid, and only the time-dependent columns change. Name the source
-and scenario in `parameters.csv`. Projected air temperature is not the same
-quantity as ground temperature; ask Science before mixing them.
+**Year slider**: one Earth file per scenario and year in a subfolder,
+`<scenario>/earth_1deg_<year>.csv` (e.g. `ssp245/earth_1deg_2050.csv`), built
+by the Data team's `prepare_future.py` from WorldClim 2.1 CMIP6 projections
+(multi-model ensemble mean; year = middle of the 20-year period 2021–2040 …
+2081–2100). Same grid and columns as today's file. Changed: `air_temp_*`
+including `air_temp_swing_K`, `precipitation_mm_yr`, `aridity_index`,
+`aridity_class`. `ndvi` keeps today's value (no projection; an empty NDVI
+would let every low-rain cell pass the filter and fake a climate effect).
+Emptied (no projection, not used): `soil_moisture_pct`, `vapour_pressure_kPa`.
+Everything else stays as today. Extra helper columns: `n_models`, `air_temp_change_K`,
+`precipitation_change_pct`, `precipitation_spread_mm_yr`,
+`aridity_class_today`. Ground temperature is not projected; ask Science before
+deriving it from air temperature.
 
 ## 5. Backend integration (branch `backend`, `integration.run_assessment`)
 
@@ -459,3 +480,20 @@ panel.
   (perturbations that cannot change anything by construction are skipped),
   the new order and which candidates moved. Use it for "how robust is this
   ranking?" displays, not as a probability.
+
+## 9. Settings file for the GUI (`examples/real_data/analysis_config.json`)
+
+`run_config.py` reads one JSON file; the GUI only edits it. Per parameter:
+`use` (1 = scored, 0 = ignored), `weight` and, for numbers, `tau`. Also the
+dimension weights, the Earth filter (`max_precipitation_mm_yr`, `max_ndvi`,
+`max_aridity_index`, excluded rock groups; empty values pass), the target
+(`gale`, `jezero`, `arcadia` or a Mars cell) and the year slider
+(`timeline.use`, `scenario`, `years`). The defaults reproduce
+`grid_1deg.profile()` exactly (test `tests/test_run_config.py`).
+
+```python
+from run_config import load_config, run
+cfg = load_config()
+cfg["parameters"]["albedo"]["use"] = 0
+result = run(cfg, "data/grid_1deg")   # dict: ranking (heat map), watched, timeline, profile
+```

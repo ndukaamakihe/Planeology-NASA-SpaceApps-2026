@@ -1,88 +1,78 @@
-/* Planalogy — About and methodology. Everything that explains how values are labelled, compared and searched lives here. */
+/* Planalogy — About: what the prototype does, where the data comes from, who built it. */
 (function(){
 const TT = window.TT, h = TT.h;
 
+/* Edit the team here. linkedin: paste each profile URL; while it is empty the card links to a LinkedIn people search. */
+const TEAM = [
+  {name:'Aldiyar Zhakyp', role:'UI/UX', does:'Leads the user interface and user experience.', linkedin:''},
+  {name:'Daniel Vázquez Piñeiro', role:'Software', does:'Works on the software and application development.', linkedin:''},
+  {name:'Jonas Bauer', role:'PM / Storytelling', does:'Coordinates the project and shapes its story.', linkedin:''},
+  {name:'Mohamad Alrifai', role:'Data', does:'Leads data collection, processing and climate data integration.', linkedin:''},
+  {name:'Nduka Amakihe', role:'Software', does:'Works on the software and application development.', linkedin:''},
+  {name:'Wojciech Kaczanowski', role:'Space Science', does:'Contributes the planetary science expertise.', linkedin:''}
+];
+
+const STEPS = [
+  ['Pick an area on Mars', 'Click anywhere on Mars. Planalogy averages the ground in a circle of 100 km radius around the click.'],
+  ['See the match on Earth', 'Every place on Earth is coloured by how closely it resembles your area. Earth turns to the best match, a thin arc links the two places and the match opens.'],
+  ['Choose a mission (under Mission and weights)', 'A rover drive, sample science, thermal testing or ice prospecting. Each mission weighs the surface differently.'],
+  ['Move through the years', 'The slider under the globes runs from today to 2090, one year at a time, under two climate scenarios; press play to watch it. Earth then shows the change since today: red cells drop out, green cells become new analogs, the rest turns blue or orange as it gets more or less similar.'],
+  ['Tune the parameters', 'Switch each parameter on or off and set its weight. The ranking updates at once.']
+];
+
+const SOURCES = [
+  ['Terrain (slope, roughness, relief)', 'WorldClim 2.1 elevation (SRTM)', 'MOLA, Mars Global Surveyor (NASA)'],
+  ['Day–night temperature', 'MODIS land surface temperature (NASA), WorldClim 2.1 air temperature', 'Mars Climate Database v6 (LMD, ESA, CNES)'],
+  ['Thermal inertia', 'Computed from albedo and the day–night swing', 'Same formula; TES (NASA) for reference'],
+  ['Albedo', 'MODIS MCD43C3 (NASA)', 'TES bolometric albedo (NASA)'],
+  ['Mineral groups', 'GLiM rock classes mapped to typical minerals (a proxy)', 'TES mineral maps (NASA), OMEGA (ESA) and CRISM (NASA) hydrated-mineral sites'],
+  ['Rock type', 'GLiM global lithological map (Hartmann and Moosdorf 2012)', 'USGS SIM 3292 global geologic map (Tanaka et al. 2014)'],
+  ['Impact structure', 'Earth Impact Database', 'Robbins and Hynek 2012 crater database'],
+  ['Ground ice', 'Permafrost probability (Obu et al. 2019), glaciers', 'Mars Odyssey GRS hydrogen (NASA), SIM 3292'],
+  ['Dry, bare land filter', 'WorldClim 2.1 precipitation, MODIS NDVI', 'Not needed'],
+  ['Future climate, 2030 to 2090', 'WorldClim 2.1 CMIP6 projections, mean of six climate models, SSP2-4.5 and SSP5-8.5; about 1 km for selected sites', 'Not projected']
+];
+
+const LIMITS = [
+  'Similarity is not suitability. A cell is about 28 km wide on Earth and 30 km on Mars, and you compare areas of 100 km radius; check imagery and the literature before naming a site.',
+  'Air pressure, sunlight, UV, dust and gravity are never scored. Earth cannot reproduce them.',
+  'In the future years air temperature, rain and aridity come from the climate projections. Ground temperatures shift with the air, and permafrost thaws where the mean air temperature rises above −1 °C (a simple threshold rule). Vegetation, glaciers, terrain and rock stay as measured today.',
+  'The 1 km maps show a finer picture, not a more exact forecast: the fine pattern comes from today, the change from climate models with cells of 100 km and more.',
+  'The Moon is a preview. Its sites are shown, but scoring needs a Moon data grid, which is the next step.'
+];
+
+const LI = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="2.5" fill="currentColor"/><path d="M4.4 6.6h1.9v5.2H4.4zM5.35 3.9a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2zM7.5 6.6h1.8v.75c.3-.5.95-.9 1.85-.9 1.7 0 2.05 1.05 2.05 2.45v2.9h-1.9V9.2c0-.6-.05-1.3-.85-1.3s-1 .6-1 1.25v2.65H7.5z" fill="#000"/></svg>';
+function person(p){
+  const url = p.linkedin || 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(p.name);
+  const a = h('a', {class:'li', href:url, target:'_blank', rel:'noopener', 'aria-label': p.name + ' on LinkedIn'}, h('span', null, p.linkedin ? 'LinkedIn' : 'Find on LinkedIn'));
+  a.insertAdjacentHTML('afterbegin', LI);
+  return h('div', {class:'person'}, h('b', null, p.name), h('span', {class:'role'}, p.role), h('p', null, p.does), a);
+}
+
 TT.pages.about = function(root){
-  const page = h('div', {class:'wrap page prose'}); root.appendChild(page);
-  const sec = (id, title, ...kids) => page.appendChild(h('section', {id}, h('h2', null, title), kids));
+  const page = h('div', {class:'page about'}); root.appendChild(page);
+  page.append(
+    h('header', {class:'slide-head'}, h('div', {class:'kicker k-about'}, 'About'), h('h1', null, 'Where on Earth is Mars?')),
+    h('p', {class:'lede'}, 'Before a rover, a drill or a habitat goes to Mars, it is tested on Earth. Planalogy takes any place on Mars and finds the places on Earth that resemble it most, using the same eight measured properties on both planets. It also looks ahead: as the climate warms, some of today\'s test sites turn greener and new drylands appear, so the best place to build a long-lived test station may not be where it is today.'),
+    h('p', {class:'lede'}, 'A student prototype for the NASA Space Apps Challenge 2026, challenge “Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars”.'),
 
-  page.appendChild(h('h1', null, 'About Planalogy'));
-  page.appendChild(h('p', {class:'lede'}, 'A student prototype for the NASA Space Apps Challenge topic “Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars”. It helps a researcher find places on Earth whose terrain, climate or geology resemble a planned Moon or Mars site, and see exactly how far that resemblance goes.'));
+    h('h2', null, 'How to use it'),
+    h('ol', {class:'steps5'}, STEPS.map(([t, d]) => h('li', null, h('b', null, t), h('span', null, d)))),
 
-  sec('what', 'What you can do here',
-    h('ul', null, h('li', null, h('b', null, 'Explore'), ' a 3D globe or 2D map of the Moon, Mars and Earth with candidate landing sites, potential base sites, Earth analog sites and points you place yourself.'),
-      h('li', null, h('b', null, 'Read'), ' a detail page for each place, with every value labelled by status and tied to a numbered source.'),
-      h('li', null, h('b', null, 'Compare'), ' two to four places side by side.'),
-      h('li', null, h('b', null, 'Ask'), ' questions in plain language and get answers drawn only from the records in the database.'),
-      h('li', null, h('b', null, 'Maintain'), ' the data through the admin area, without changing code.')));
+    h('h2', null, 'How the score works'),
+    h('p', null, 'Each parameter gives a similarity between 0 and 1 on a fixed scale. The score is their weighted average, shown from 0 to 100. A missing value is never counted as zero; the cell is left out instead. The mission presets set the weights, and one of them was tuned on known analog sites such as the Atacama Desert.'),
 
-  sec('finder', 'How the Analog Finder scores sites',
-    h('ul', null,
-      h('li', null, 'Every dry, bare 1° cell of Earth is compared with a Mars target, feature by feature: relief, day–night ground temperature swing, coldest ground temperature, thermal inertia (rank within each planet), albedo, rock type, impact structure and ground ice.'),
-      h('li', null, 'Each feature gives a similarity from 0 to 1 with a fixed scale; the score is their weighted average. A missing value is never counted as zero: the cell is listed as incomplete instead.'),
-      h('li', null, 'Mission presets set the weights. A preset uses weights learned from known analogs only if they also find a hidden known analog better; otherwise it keeps the science team’s weights.'),
-      h('li', null, 'Requirements, such as ground ice for ice drilling, exclude sites instead of lowering their score. Pressure, sunlight, UV, dust and gravity are never scored: Earth cannot reproduce them.'),
-      h('li', null, 'Similarity is not suitability. Cells are about 110 km wide; check imagery and the literature before naming a site.')));
+    h('h2', null, 'Where the data comes from'),
+    h('div', {class:'cmp-scroll'}, h('table', {class:'t'},
+      h('thead', null, h('tr', null, ['Parameter', 'Earth', 'Mars'].map(t => h('th', null, t)))),
+      h('tbody', null, SOURCES.map(r => h('tr', null, r.map(c => h('td', null, c))))))),
+    h('p', {class:'small muted'}, 'All layers were brought to one grid per planet (Earth 0.25°, about 28 km; Mars 0.5°, about 30 km) with the same parameter names on both planets. Globe imagery: Earth from Solar System Scope (CC BY 4.0, based on NASA Blue Marble, summer, snow-free), Mars from NASA 3D Resources, Moon from the NASA CGI Moon Kit (LRO); relief shading from MOLA and WorldClim elevation.'),
 
-  sec('status', 'How values are labelled',
-    h('p', null, 'No number appears without a status, a source and, where known, a date and an uncertainty.'),
-    h('table', {class:'t'}, h('thead', null, h('tr', null, h('th', null, 'Status'), h('th', null, 'Meaning'))), h('tbody', null,
-      h('tr', null, h('td', null, TT.badge('measured')), h('td', null, 'A figure reported by a cited source. It is as reliable as that source, and may be a model result or an older catalogue value; the note says so when known.')),
-      h('tr', null, h('td', null, TT.badge('derived')), h('td', null, 'Computed or inferred from other values, such as absolute latitude from latitude. Not directly measured.')),
-      h('tr', null, h('td', null, TT.badge('unavailable')), h('td', null, 'No value in this dataset. Planalogy never fills a gap with an estimate; the site shows “Not available”, and the note usually says why.')))),
-    h('p', null, 'Whole records carry a review status too. ', h('span', {class:'badge sample'}, 'sample data'), ' means the figures were compiled from the cited public sources by the project team and have not been checked by a domain expert. ', h('span', {class:'badge measured'}, 'reviewed'), ' is reserved for records an expert has signed off.'));
+    h('h2', null, 'What it cannot tell you'),
+    h('ul', null, LIMITS.map(x => h('li', null, x))),
 
-  sec('analogs', 'How analog links are made',
-    h('p', null, 'An analog link says “this Earth place is worth studying for that Moon or Mars place”. Each link has a written rationale and cites its source. These links are ', h('b', null, 'editorial inferences'), ', not measured matches, and carry no score. Whether two places actually agree on terrain size, temperature or position is shown separately on the Compare page.'));
-
-  sec('method', 'How comparison works',
-    h('p', null, 'Compare counts how many shared numeric parameters of two places agree within a stated tolerance. It shows the count (for example “3 of 4 scored parameters agree”) and the full table behind it. It does not produce a similarity percentage, because a single number would hide which parameters drove it and how arbitrary the tolerances are.'),
-    h('table', {class:'t'}, h('thead', null, h('tr', null, ['Parameter', 'Rule', 'Agrees when', 'Notes'].map(t => h('th', null, t)))), h('tbody', null,
-      TT.Cmp.rules.map(r => h('tr', null, h('td', null, r.label), h('td', null, r.rule === 'ratio' ? 'Ratio of the two values' : 'Difference'), h('td', {class:'val'}, r.rule === 'ratio' ? 'within a factor of ' + r.tol : 'within ' + r.tol + ' ' + r.unit), h('td', {class:'small'}, r.note || (r.rule === 'ratio' ? 'Sizes span orders of magnitude, so a ratio is used.' : ''))))
-      , h('tr', null, h('td', null, 'Annual precipitation'), h('td', null, 'Shown only'), h('td', null, '—'), h('td', {class:'small'}, 'It has no Moon or Mars counterpart.')))),
-    h('ul', null, h('li', null, 'A parameter is scored only if both places have a numeric value. Unavailable values, bounded values (such as “less than 10”) and text values are shown but not scored.'),
-      h('li', null, 'With fewer than two comparable parameters, Compare says there is not enough shared data instead of scoring.'),
-      h('li', null, 'Every parameter has a weight, 1 by default. You can change the weights on the Compare page; the result then reads “agrees on n of m scored parameters (weight a of b)”.'),
-      h('li', null, 'Tolerances are our own and are judgements, not scientific standards. Treat the count as a way to read the table, not as a verdict.')));
-
-  sec('ai', 'How AI search works',
-    h('p', null, 'Type a question into the search box on the Explore page and press Ask. Planalogy sends your question together with a compact summary of every published record to Claude, with instructions to use only those records. The reply is a short answer and a list of record ids with a one-line reason each.'),
-    h('ul', null, h('li', null, 'Returned ids are checked against the database. Any id that does not exist is dropped, so the map can only show real records.'),
-      h('li', null, 'The answer states gaps (for example, which values are unavailable) instead of guessing.'),
-      h('li', null, 'It can still be wrong or incomplete. Open a place and check its sources before relying on a statement.'),
-      h('li', null, 'If AI search is unavailable or fails, the search box falls back to keyword matching, and says so.'),
-      h('li', null, 'There is no API key in this page. In this prototype the request runs through the viewer’s own Claude account. In a production build the key lives on the server, and a server route does the retrieval (filters and PostGIS queries) before calling the model.')));
-
-  sec('imagery', 'Imagery and resolution',
-    h('p', null, 'The globe and maps use global, low-resolution base maps. Marker positions are real; the surface behind them is not detailed enough to show a crater rim, a boulder field or a landing ellipse.'),
-    h('table', {class:'t'}, h('thead', null, h('tr', null, h('th', null, 'Body'), h('th', null, 'Base map'))), h('tbody', null, TT.BODY_ORDER.map(b => h('tr', null, h('td', null, TT.BODIES[b].name), h('td', {class:'small'}, TT.BODIES[b].tex + (b === 'earth' ? '. An elevation layer shows topography and bathymetry.' : '. The shading relief on the 3D globe is a visual aid, not elevation data.')))))),
-    h('p', null, 'Detail at the scale of a landing site needs tiled map services (for example the Moon Trek and Mars Trek portals), loaded through a server. That is part of the production plan, not of this prototype.'));
-
-  sec('coords', 'Coordinates and reference levels',
-    h('p', null, 'Coordinates are copied from the cited sources and converted to degrees north and east, with west and south negative. Latitude and longitude conventions (planetocentric or planetographic, east-positive or west-positive) differ between datasets and have not been harmonised across all sources, so treat positions as accurate to the precision shown at best. Elevations use each body’s own reference level, so they are only compared within one body.'));
-
-  sec('status2', 'What is real and what is a mockup',
-    h('table', {class:'t'}, h('thead', null, h('tr', null, h('th', null, 'Part'), h('th', null, 'In this prototype'))), h('tbody', null,
-      h('tr', null, h('td', null, 'Records'), h('td', {class:'small'}, 'Real figures from cited public sources, compiled by hand and not expert-reviewed. The Artemis III landing-region list used here dates from 2024 and may since have been superseded.')),
-      h('tr', null, h('td', null, 'Shared data and admin'), h('td', {class:'small'}, 'When published with a shared database, edits by the owner and editors update the public site immediately. Where no database is connected, the admin is a browser-only sandbox, clearly labelled.')),
-      h('tr', null, h('td', null, 'Sign-in and sign-out'), h('td', {class:'small'}, 'Handled by the Claude account of the viewer. The page cannot end that session, so the admin offers “Leave admin” instead of a logout button.')),
-      h('tr', null, h('td', null, 'Your points'), h('td', {class:'small'}, 'Stored in your browser only.')),
-      h('tr', null, h('td', null, 'Body constants'), h('td', {class:'small'}, 'Gravity, radius and mean temperature come from the NASA planetary fact sheets and were not re-fetched while building.')))));
-
-  sec('arch', 'Production plan',
-    h('p', null, 'This prototype is a static front end. A production version would use the stack below; the data model in the prototype maps onto it directly.'),
-    h('table', {class:'t'}, h('thead', null, h('tr', null, h('th', null, 'Layer'), h('th', null, 'Choice'))), h('tbody', null,
-      [['Front end', 'Next.js, React, TypeScript, Tailwind CSS'], ['3D and maps', 'three.js for the globe; tiled map services for local detail'], ['Database', 'PostgreSQL with PostGIS: locations (point geometry), parameters (value, unit, source, date, uncertainty, status), sources, assets, links between locations, users and roles'], ['Authentication', 'Email sign-in with owner, editor and viewer roles; protected admin routes'], ['Files', 'Object storage for images, with credit and license per file'], ['AI search', 'Server route: PostGIS and keyword retrieval, then a model call with the key held on the server']].map(r => h('tr', null, h('td', null, r[0]), h('td', {class:'small'}, r[1]))))));
-
-  sec('a11y', 'Accessibility',
-    h('p', null, 'Marker types differ by shape as well as colour. The globe and map can be driven from the keyboard (arrow keys to move, plus and minus to zoom), and every place is reachable from the list without using the map. Motion respects the reduced-motion setting. Colour pairs were chosen for contrast on the dark background.'));
-
-  const srcs = Object.values((window.TT_SEED && window.TT_SEED.sources) || {}).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-  sec('sources', 'Sources used in the sample data',
-    h('ul', null, srcs.map(s => h('li', {class:'small'}, s.url ? h('a', {href:s.url, target:'_blank', rel:'noopener noreferrer'}, s.title) : s.title, h('span', {class:'muted'}, ' — ' + [s.publisher, s.year].filter(Boolean).join(', '))))));
-
-  page.querySelectorAll('table.t').forEach(t => { const w = h('div', {class:'cmp-scroll'}); t.replaceWith(w); w.appendChild(t); });
-  if (TT.scrollTo){ const t = TT.scrollTo; TT.scrollTo = null; setTimeout(() => { const el = document.getElementById(t); el && el.scrollIntoView(); }, 30); }
-  return null;
+    h('h2', null, 'Team'),
+    h('div', {class:'team'}, TEAM.map(person)),
+    h('p', null, h('a', {class:'btn primary', href:'#finder'}, 'Open the Analog Finder')));
 };
 })();

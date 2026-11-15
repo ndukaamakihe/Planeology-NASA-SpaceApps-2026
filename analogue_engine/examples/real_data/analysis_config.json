@@ -1,0 +1,69 @@
+{
+  "_about": "Settings for run_config.py and the GUI. use: 1 = scored, 0 = ignored. weight: importance inside its dimension. tau: difference at which similarity reaches 0 (scalar parameters only). Defaults = Science P1-P10 recommendation (PROVISIONAL).",
+  "version": "1.0.0",
+
+  "target": "gale",
+  "_target_options": "gale | jezero | arcadia | {\"lat\": -5.5, \"lon\": 137.5} (a Mars cell centre)",
+
+  "earth_file": "earth_1deg.csv",
+
+  "parameters": {
+    "slope_deg":               {"use": 1, "weight": 1, "tau": 5,    "unit": "deg",   "science": "P1", "label": "Slope"},
+    "roughness_m":             {"use": 1, "weight": 1, "tau": 1500, "unit": "m",     "science": "P1", "label": "Roughness"},
+    "relief_m":                {"use": 1, "weight": 1, "tau": 4000, "unit": "m",     "science": "P1", "label": "Relief inside the cell"},
+    "regional_relief_m":       {"use": 0, "weight": 1, "tau": 3000, "unit": "m",     "science": "P1", "label": "Regional relief (3x3 cells, fallback)"},
+    "surface_temp_swing_K":    {"use": 1, "weight": 2, "tau": 100,  "unit": "K",     "science": "P2", "label": "Ground day-night swing"},
+    "surface_temp_min_K":      {"use": 1, "weight": 1, "tau": 100,  "unit": "K",     "science": "P2", "label": "Coldest ground night"},
+    "air_temp_swing_K":        {"use": 1, "weight": 1, "tau": 50,   "unit": "K",     "science": "P2", "label": "Air day-night swing"},
+    "ati_percentile":          {"use": 1, "weight": 1, "tau": 0.5,  "unit": "1",     "science": "P3", "label": "Thermal inertia (rank)"},
+    "albedo":                  {"use": 1, "weight": 1, "tau": 0.2,  "unit": "1",     "science": "P4", "label": "Albedo"},
+    "mineral_groups":          {"use": 1, "weight": 1,              "unit": "set",   "science": "P7", "label": "Mineral groups (proxy)"},
+    "rock_group":              {"use": 1, "weight": 1,              "unit": "class", "science": "P8", "label": "Rock type"},
+    "inside_impact_structure": {"use": 1, "weight": 1,              "unit": "yes/no","science": "P9", "label": "Inside an impact structure"},
+    "ground_ice_flag":         {"use": 1, "weight": 1,              "unit": "yes/no","science": "P10","label": "Ground ice"}
+  },
+
+  "dimension_weights": {
+    "terrain": 1,
+    "thermal": 1,
+    "thermophysical": 1,
+    "optical": 1,
+    "mineralogy": 0.5,
+    "geology": 0.5,
+    "craters": 1,
+    "water": 1
+  },
+
+  "not_scorable": {
+    "air_pressure_Pa":  "P5: 80-150x off for every Earth site, cannot rank them (Science). Shown as a limitation.",
+    "solar_and_uv":     "P5: no comparable Mars sunlight/UV data (Science).",
+    "dust_cover_index": "P6: no Earth dataset (Science)."
+  },
+
+  "earth_filter": {
+    "use": 1,
+    "_about": "Which Earth cells are candidates at all (dry, bare land). Empty values pass (e.g. NDVI in projected years).",
+    "max_precipitation_mm_yr": 500,
+    "max_ndvi": 0.2,
+    "max_aridity_index": null,
+    "exclude_rock_groups": ["ice", "water"]
+  },
+
+  "timeline": {
+    "use": 0,
+    "_about": "Year slider. Files come from prepare_future.py: <scenario>/earth_1deg_<year>.csv. The baseline is today's file.",
+    "scenario": "ssp245",
+    "_scenario_options": "ssp245 (middle of the road) | ssp585 (high emissions)",
+    "baseline_year": 1985,
+    "years": [2030, 2050, 2070, 2090],
+    "top_k": 20
+  },
+
+  "watch": {
+    "Atacama": [-24.5, -69.5],
+    "Arizaro": [-24.5, -67.5],
+    "Kara-Kul": [39.5, 73.5],
+    "Dry Valleys": [-77.5, 161.5],
+    "Devon Is. (Haughton)": [75.5, -89.5]
+  }
+}

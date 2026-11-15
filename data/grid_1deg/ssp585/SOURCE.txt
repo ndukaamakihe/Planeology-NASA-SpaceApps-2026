@@ -1,0 +1,4 @@
+Earth grid files for ssp585, one per 20-year period (file year = middle of the period).
+Climate columns = multi-model ensemble mean of WorldClim 2.1 CMIP6 projections (see
+data/earth/future/SOURCE.txt); all other columns as in ../../earth_1deg.csv (no projection).
+Built by prepare_future.py. Column list and rules: docstring of prepare_future.py.

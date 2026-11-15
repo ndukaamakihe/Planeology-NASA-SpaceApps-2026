@@ -5,9 +5,9 @@ const TT = window.TT, h = TT.h;
 const D2R = Math.PI / 180;
 
 const TEX = {
-  earth:{map:'tex/earth_nasa.jpg', spec:'tex/earth_specular_2048.jpg', clouds:'tex/earth_clouds_1024.png', topo:'tex/earth_topo.jpg', glow:0x6EA8E8},
+  earth:{map:'tex/earth_hd.jpg', bump:'tex/earth_bump.jpg', bumpScale:0.006, spec:'tex/earth_specular_2048.jpg', clouds:'tex/earth_clouds_1024.png', topo:'tex/earth_topo.jpg', glow:0x6EA8E8},
   moon:{map:'tex/moon_nasa.jpg', bump:'tex/moon_1024.jpg', bumpScale:0.012, glow:0x9FB0C8},
-  mars:{map:'tex/mars_nasa.jpg', bump:'tex/marsbump1k.jpg', bumpScale:0.02, glow:0xD18B55}
+  mars:{map:'tex/mars_hd.jpg', bump:'tex/mars_bump_hd.jpg', bumpScale:0.012, glow:0xD18B55}
 };
 TT.TEX = TEX;
 
@@ -42,14 +42,18 @@ function spriteMat(kind, dim, sel){
 function makePlanet(body, renderer, onLoad){
   const cfg = TEX[body], g = new THREE.Group(); g.name = body;
   const mat = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: body === 'earth' ? 14 : 2, specular: new THREE.Color(body === 'earth' ? 0x1c2736 : 0x050505)});
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 64), mat); g.add(mesh);
-  TT.loadImage(cfg.map).then(img => { mat.map = mkTex(img, true, renderer); mat.needsUpdate = true; onLoad && onLoad(body, 'map'); }).catch(e => onLoad && onLoad(body, 'error', e));
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(1, 192, 96), mat); g.add(mesh);
+  /* an optional 8k texture (tex/get_textures.py) replaces the built-in one when the graphics card can hold it */
+  const hi = (window.PLANALOGY_HI || {})[body], big = renderer && renderer.capabilities.maxTextureSize >= 8192;
+  const setMap = img => { mat.map = mkTex(img, true, renderer); mat.needsUpdate = true; onLoad && onLoad(body, 'map'); };
+  TT.loadImage(cfg.map).then(img => { if (!mat.map) setMap(img); }).catch(e => onLoad && onLoad(body, 'error', e));
+  if (hi && big) TT.loadImage(hi).then(setMap).catch(() => {});
   if (cfg.bump) TT.loadImage(cfg.bump).then(img => { mat.bumpMap = mkTex(img, false, renderer); mat.bumpScale = cfg.bumpScale; mat.needsUpdate = true; }).catch(() => {});
   if (cfg.spec) TT.loadImage(cfg.spec).then(img => { mat.specularMap = mkTex(img, false, renderer); mat.needsUpdate = true; }).catch(() => {});
   const glow = new THREE.Mesh(new THREE.SphereGeometry(1.14, 64, 32), new THREE.ShaderMaterial({
     uniforms: {c: {value: new THREE.Color(cfg.glow)}},
     vertexShader: 'varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: 'uniform vec3 c; varying vec3 vN; void main(){ float i = pow(max(0.0, 0.62 - dot(vN, vec3(0.0,0.0,1.0))), 3.0); gl_FragColor = vec4(c, 1.0) * i * 0.9; }',
+    fragmentShader: 'uniform vec3 c; varying vec3 vN; void main(){ float i = pow(max(0.0, 0.64 - dot(vN, vec3(0.0,0.0,1.0))), 3.2); gl_FragColor = vec4(c, 1.0) * i * 0.75; }',
     side: THREE.BackSide, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false}));
   g.add(glow);
   /* graticule */
@@ -93,10 +97,11 @@ TT.createGlobe = function(canvas, o){
   renderer.outputEncoding = THREE.sRGBEncoding;
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, 1, .02, 200);
   scene.add(camera, stars());
-  scene.add(new THREE.AmbientLight(0xb8c6e0, .62));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.05); sun.position.set(-2.2, 2.4, 3.2); camera.add(sun);
+  scene.add(new THREE.AmbientLight(0xaab6cc, .34));
+  const sun = new THREE.DirectionalLight(0xfff6ea, 1.32); sun.position.set(-3.2, 1.9, 2.4); camera.add(sun);
+  const fill = new THREE.DirectionalLight(0x6f86b0, .18); fill.position.set(3, -1, 1.2); camera.add(fill);
   const planets = {}; let cur = null, items = [], markerMap = new Map(), selId = null, hl = new Set(), W = 1, H = 1, alive = true, pinMode = false;
-  const view = {lat: -30, lon: 0, dist: o.dist}; let tween = null, auto = o.auto, drag = null, hover = null, raf = 0;
+  const view = {lat: -30, lon: 0, dist: o.dist}; const spin = {lat: 0, lon: 0}; let tween = null, auto = o.auto, drag = null, hover = null, raf = 0;
   const rings = {sel: null, hl: []};
   const ringMat = new THREE.SpriteMaterial({map: (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); x.strokeStyle = '#F4F6FA'; x.lineWidth = 6; x.beginPath(); x.arc(64, 64, 52, 0, 7); x.stroke(); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t; })(), transparent: true, depthWrite: false, sizeAttenuation: false, opacity: .95});
 
@@ -114,11 +119,12 @@ TT.createGlobe = function(canvas, o){
     setOverlay(body, cv){
       if (!planets[body]) { planets[body] = makePlanet(body, renderer, (b, what, e) => { o.onLoad && o.onLoad(b, what, e); }); planets[body].visible = planets[body] === cur; scene.add(planets[body]); }
       const u = planets[body].userData;
+      if (cv && u.overlay && u.overlayCv === cv){ u.overlay.material.map.needsUpdate = true; return; }  /* same canvas: only upload the new pixels */
       if (u.overlay){ planets[body].remove(u.overlay); u.overlay.material.map && u.overlay.material.map.dispose(); u.overlay.material.dispose(); u.overlay = null; }
       if (!cv) return;
       const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      const m = new THREE.Mesh(new THREE.SphereGeometry(1.0028, 128, 64), new THREE.MeshBasicMaterial({map: t, transparent: true, depthWrite: false}));
-      m.renderOrder = 3; planets[body].add(m); u.overlay = m;
+      const m = new THREE.Mesh(new THREE.SphereGeometry(1.0028, 128, 64), new THREE.MeshLambertMaterial({map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: .42, transparent: true, depthWrite: false}));
+      m.renderOrder = 3; planets[body].add(m); u.overlay = m; u.overlayCv = cv;
     },
     setMarkers(list, keep){
       items = list; if (!cur) return;
@@ -176,7 +182,7 @@ TT.createGlobe = function(canvas, o){
   const ptrs = new Map(); let pinch = 0, moved = 0, downT = 0;
   const degPerPx = () => Math.min(.3, 2 * (view.dist - 1) * Math.tan(camera.fov * D2R / 2) / H / D2R);
   canvas.addEventListener('pointerdown', e => {
-    canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, {x: e.offsetX, y: e.offsetY}); moved = 0; downT = performance.now(); tween = null;
+    canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, {x: e.offsetX, y: e.offsetY}); moved = 0; downT = performance.now(); tween = null; spin.lat = spin.lon = 0;
     if (ptrs.size === 2){ const [a, b] = [...ptrs.values()]; pinch = Math.hypot(a.x - b.x, a.y - b.y); }
     canvas.classList.add('grabbing');
   });
@@ -189,9 +195,11 @@ TT.createGlobe = function(canvas, o){
     const dx = e.offsetX - p.x, dy = e.offsetY - p.y; moved += Math.abs(dx) + Math.abs(dy); p.x = e.offsetX; p.y = e.offsetY;
     if (ptrs.size === 2){ const [a, b] = [...ptrs.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y); if (pinch) api.zoomBy(pinch / d); pinch = d; return; }
     const k = degPerPx(); view.lon -= dx * k; view.lat = Math.max(-89.5, Math.min(89.5, view.lat + dy * k)); auto = false;
+    spin.lon = spin.lon * .5 - dx * k * .5; spin.lat = spin.lat * .5 + dy * k * .5; p.t = performance.now();
   });
   const end = e => {
     const p = ptrs.get(e.pointerId); ptrs.delete(e.pointerId); pinch = 0; canvas.classList.remove('grabbing');
+    if (!p || !p.t || performance.now() - p.t > 90 || TT.reduced()) spin.lat = spin.lon = 0;
     if (p && moved < 6 && performance.now() - downT < 600 && ptrs.size === 0){
       const it = api.pickAt(e.offsetX, e.offsetY, e.pointerType === 'touch' ? 30 : 22);
       if (it) o.onPick && o.onPick(it);
@@ -220,6 +228,8 @@ TT.createGlobe = function(canvas, o){
       /* fly out a little in the middle of a long trip so the movement reads as travel */
       const arc = Math.abs(tween.b.lon - tween.a.lon) + Math.abs(tween.b.lat - tween.a.lat) > 40 ? Math.sin(Math.PI * e) * .5 : 0;
       view.dist = tween.a.dist + (tween.b.dist - tween.a.dist) * e + arc; if (t >= 1) tween = null; }
+    else if (!ptrs.size && (Math.abs(spin.lon) + Math.abs(spin.lat)) > .002){
+      const f = Math.pow(.04, dt); view.lon += spin.lon * dt * 60; view.lat = Math.max(-89.5, Math.min(89.5, view.lat + spin.lat * dt * 60)); spin.lon *= f; spin.lat *= f; }
     else if (auto && !TT.reduced()) view.lon += 4 * dt;
     view.dist = Math.max(o.minDist, Math.min(o.maxDist, view.dist));
     camera.position.copy(ll2v(view.lat, view.lon, view.dist)); camera.up.set(0, 1, 0); camera.lookAt(0, 0, 0);
