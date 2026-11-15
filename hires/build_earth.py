@@ -90,6 +90,16 @@ out["rock_group"] = parent("earth", filled(rock1, [""])).astype("U16")
 out["mineral_groups"] = parent("earth", filled(G["mineral_groups"], [""])).astype("U80")
 ice1 = np.where(G["is_land"] == 1, G["ground_ice_flag"], np.nan)
 out["ground_ice_flag"] = parent("earth", filled(ice1, None)).astype(np.float32)
+# 11 km rock type, mineral proxy and ground ice (build_fine_classes.py: GLiM vector, Obu 2019 1 km permafrost)
+fc = OUT / "earth_classes.npz"
+if fc.exists():
+    F = np.load(fc)
+    has = F["rock_group"] != ""
+    out["rock_group"] = np.where(has, F["rock_group"], out["rock_group"]).astype("U16")
+    out["mineral_groups"] = np.where(has, F["mineral_groups"], out["mineral_groups"]).astype("U80")
+    gi = F["ground_ice"]
+    out["ground_ice_flag"] = np.where(gi >= 0, gi.astype(np.float32), out["ground_ice_flag"]).astype(np.float32)
+    out["permafrost_prob"] = F["permafrost_prob"]
 
 # impact structures: centre of the cell inside the rim (radius at least half a cell)
 imp = json.loads((RAW / "impacts" / "impact_structures.json").read_text(encoding="utf-8"))

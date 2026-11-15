@@ -111,12 +111,12 @@ for name, lat, lon, preset in KNOWN_LOSERS:
     losers.append({"name": name, "where": f"{lat:.2f}°, {lon:.2f}°", "mission": LABEL[preset],
                    "trajectory": n["trajectory"], "mechanism": mechanism(n["trajectory"])})
 
-SIGNAL = [  # top ice-prospecting cells with the trained weights (>50 km from catalogued analogs); not new sites
-    ("North Baffin Island, Borden Peninsula (Nunavut)", 72.05, -82.45),
-    ("Northeast Greenland, 80.5 N", 80.45, -24.45),
-    ("Western Tibetan Plateau", 30.35, 83.95),
-    ("Western Tibetan Plateau (Ngari)", 31.35, 81.75),
-    ("Central Tibetan Plateau", 30.45, 87.85),
+SIGNAL = [  # top ice-prospecting cells (trained weights, >50 km from catalogued analogs); regional signal
+    ("Ashikule volcanic basin, West Kunlun (finalist)", 35.75, 81.65),
+    ("Northern Tibetan Plateau", 36.25, 88.85),
+    ("Northern Tibetan Plateau", 34.85, 89.15),
+    ("North Baffin Island (Nunavut)", 70.25, -84.75),
+    ("Mongolian Altai foreland", 46.65, 99.75),
 ]
 signal = []
 for name, lat, lon in SIGNAL:
@@ -131,23 +131,24 @@ land_cells = int((idx >= 0).sum())
 atlas = {
     "layers": layers,
     "finalists": fins,
-    "finalists_intro": ("Ten agents proposed 42 candidates. A first audit re-ran them, checked neighbouring cells and the literature "
-                        "(English, Chinese, Russian, Mongolian, Persian, Spanish) and kept four. After the mission profiles were trained "
-                        "at 11 km, a second audit re-checked the new top cells and confirmed three of them, added two sites, and kept "
-                        "the Uvs Nuur loss. None is a sure thing: each is the best-supported site in its group, with its caveats. "
-                        "All numbers use the trained weights; pins on the map match the numbers."),
+    "finalists_intro": ("Ten agents proposed 42 candidates; three audit rounds re-ran the engine on every candidate, checked "
+                        "neighbouring cells and searched the literature in several languages. The last round used 11 km rock type, "
+                        "ground ice, craters and re-trained weights. Four sites hold, one per mission, plus the clearest climate gain "
+                        "and the clearest climate loss. None is a sure thing; each card shows its caveats."),
+    "known_losers": losers,
+    "known_losers_intro": "Sites already used as Mars analogs, checked with the same 11 km grid. Ranks are among dry cells for that "
+                          "mission; 'not dry' means the site no longer meets Science's dry-land rule that year.",
+    "known": [{"name": k["name"], "lat": k["lat"], "lon": k["lon"]} for k in known],
     "candidates": [{"name": f["name"], "scout": "", "status": "finalist", "reason": text(f.get("verdict"))} for f in audit.get("finalists", [])]
                   + [{"name": r.get("name"), "scout": r.get("scout", ""), "status": "rejected", "reason": text(r.get("reason"))}
                      for r in audit.get("rejected", [])],
     "signal": signal,
-    "signal_intro": ("With ground ice as a hard requirement and the trained weights, the best Earth analogs for Arcadia Planitia "
-                     "are flat Arctic permafrost plains (north Baffin Island, northeast Greenland) and the volcanic permafrost "
-                     "plateau of western Tibet. They count as Mars-like only as cold deserts, and many stop counting by mid-century. "
-                     "The auditor found no ice site that fully qualifies: the north Baffin cell is 1 mm under the 250 mm limit "
-                     "today, so its loss is a threshold effect, and the Tibetan Plateau is already studied as a Mars analog "
-                     "region. Treat this as a regional signal."),
+    "signal_intro": ("With ground ice required (Obu 2019 permafrost at 1 km) and the trained weights, the best Earth analogs for "
+                     "Arcadia Planitia are high cold deserts on permafrost in the Kunlun and northern Tibet, plus Arctic Canada. "
+                     "They count as Mars-like only as cold deserts. The engine keeps permafrost as today in future years, so a thaw "
+                     "of the ground itself is not modelled; the table shows when each site stops meeting the cold-desert rule."),
     "stats": [[f"{land_cells/1e6:.2f} M", "Earth land cells at 11 km"], [f"{land_cells/25628:.0f}×", "more cells than the 1° grid"],
-              [f"{layers['dry_now']:,}", "cells count as Mars-like dry land today"], ["10 + 2", "search agents and audit rounds"], ["4", "mission profiles trained at 11 km"],
+              [f"{layers['dry_now']:,}", "cells count as Mars-like dry land today"], ["10 + 3", "search agents and audit rounds"], ["4", "mission profiles trained at 11 km"],
               [str(len(fins)), "audited finalists"]],
     "method": [
         {"title": "Data at 11 km", "items": [
@@ -156,10 +157,14 @@ atlas = {
             "Air temperature, rainfall and aridity (P / Hargreaves PET) from WorldClim 2.1 2.5′ monthly normals, 1970-2000.",
             "Ground day-night temperature from MODIS MOD11A2 1 km medians 2000-2017 (OpenLandMap); 1° values south of 62° S.",
             "Albedo from the MODIS blue-sky climatology at 0.05° (60° S-60° N); NDVI from 5 km MODIS/AVHRR 2019, gaps filled from neighbours; Natural Earth lakes masked out.",
-            "Mars albedo from the TES mosaic; Mars temperatures, and rock type, minerals and ground ice on both planets, from the Data team's 1° grid."]},
+            "Mars albedo from the TES mosaic; Mars temperatures from the Data team's 1° grid (the climate model is ~200 km).",
+            "Rock type and mineral proxy from the GLiM vector map (1.2 M polygons); Earth ground ice from Obu 2019 permafrost at 1 km (Northern Hemisphere).",
+            "Mars geology from the SIM 3292 vector map; Mars craters from Robbins & Hynek 2012 (384,343 craters, inside a rim); Mars ice from Odyssey GRS plus polar units.",
+            "TES thermal inertia is mapped but not scored: Earth has no physical thermal-inertia map, so both planets use the same apparent thermal inertia, (1 - albedo) / day-night swing."]},
         {"title": "Checked against the 1° grid", "items": [
             "Aggregated back to 1°, the new layers match the Data team's grid: air temperature and swing r = 1.000, rainfall r = 0.999, aridity r = 0.999 (dry class agrees on 99.97 % of cells).",
             "Ground swing r = 0.998, coldest night r = 1.000, NDVI r = 0.96 (rescaled to the 1° scale), albedo r = 0.955 between 60° S and 60° N.",
+            "Rock group agrees with the 1° grid on 92.5 % of land cells (Earth) and 96.9 % (Mars); permafrost r = 0.936.",
             "Terrain is scale dependent: at 11 km the similarity scales for slope, roughness and relief are rescaled by the measured ratio on both planets (provisional)."]},
         {"title": "Same engine, same rules", "items": [
             "Adapted Gower similarity with the app's mission profiles and weights.",
@@ -169,8 +174,9 @@ atlas = {
         {"title": "Mission profiles trained at 11 km", "items": [
             "Weights were re-trained on known analogs: Science's sites plus catalogued sites of the matching kind (rover test sites, evaporite basins, high or hyper-arid deserts, polar sites).",
             "A known site is a 20 km area, and it only has to reach the top 5 % of cells (a soft target), not beat every cell.",
-            "Training stays anchored to Science's weights and is accepted only if hidden known sites improve in leave-one-out validation: rover +16 % (19 sites), samples +49 % (33), thermal +27 % (17), ice +37 % (7).",
-            "Large shifts for Science to review: sample science nearly drops rock type (1° data), thermal and ice drop albedo, rover gives more weight to terrain."]},
+            "Training stays anchored to Science's weights and is accepted only if hidden known sites improve in leave-one-out validation: rover +8 % (19 sites), samples +33 % (32), thermal +26 % (17), ice +29 % (6).",
+            "The 11 km rock, ice and crater layers alone already rank the known analogs higher under Science's weights, before any training.",
+            "Large shifts for Science to review: sample science nearly drops rock type (the evaporite-basin labels are classed as evaporites, Jezero as sedimentary), ice relies on the coldest ground temperature and rock type."]},
         {"title": "Search and audit", "items": [
             "Ten agents each searched one slice (rover, samples and thermal by continent; ice for crewed missions; ESA's Oxia Planum; climate gains; climate losses).",
             "Each kept 3-5 candidates after web searches for prior Mars-analog use and checks of what is actually in the cell; candidates within 50 km of 245 catalogued analogs were dropped.",

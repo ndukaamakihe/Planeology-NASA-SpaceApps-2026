@@ -41,8 +41,10 @@ TARGET_POINTS = {  # where the rovers actually operate (landing sites); Arcadia 
 # Terrain statistics depend on cell and pixel size: the app's tau values were set for 110 km cells on
 # ~10 km pixels; here cells are 11 km on ~0.93 km pixels. Each terrain tau is multiplied by the ratio of
 # means (11 km / 1 degree) measured on both planets' data (provisional).
+USE_TES_TI = False  # see target_values
 TAU_SCALE = {"slope_deg": 2.59, "roughness_m": 0.373, "relief_m": 0.390}  # geometric mean of Earth (3.38, 0.380, 0.377) and Mars (1.98, 0.366, 0.401)
 DRY_MAX_ARIDITY, HYPER_ARID_BELOW, MAX_NDVI = 0.20, 0.05, 0.2
+MAX_LAKE_FRACTION = 0.10  # cells with 10 % or more lake water (Natural Earth) are not dry land
 COLD_T, COLD_P, COLD_ALB = 273.15, 250.0, 0.6
 SCEN = {"ssp245": "moderate (SSP2-4.5)", "ssp585": "high emissions (SSP5-8.5)"}
 TRAJ = ["now", "ssp245_2050", "ssp245_2090", "ssp585_2050", "ssp585_2090"]
@@ -77,6 +79,7 @@ def static():
     nd = np.asarray(S["ndvi"])
     # bare ground: NDVI < 0.2. Where no NDVI exists at all (after gap filling) only Antarctica counts as bare.
     S["bare"] = base & np.where(np.isfinite(nd), nd < MAX_NDVI, np.asarray(S["lat"]) < -60)
+    S["bare"] &= ~(np.asarray(S["water_frac"]) >= MAX_LAKE_FRACTION)  # lake shores (Caspian, Aral, salt lakes) are not dry land
     return S
 
 
@@ -106,14 +109,21 @@ def target_values(lat, lon):
     r, c = cell_of("mars", lat, lon)
     v = {f: float(M[f][r, c]) for f in ("slope_deg", "roughness_m", "relief_m", "surface_temp_swing_K",
                                          "surface_temp_min_K", "air_temp_swing_K", "albedo")}
-    a = M["apparent_thermal_inertia"].astype(np.float64)
-    tab = np.sort(a[np.isfinite(a)])
-    x = float(a[r, c])
-    v["ati_percentile"] = float(np.searchsorted(tab, x, side="right") / len(tab)) if math.isfinite(x) else None
+    # The scored thermal-inertia feature uses the same formula on both planets, (1 - albedo) / ground day-night swing:
+    # Earth has no physical thermal-inertia map, and a Mars TES percentile is not comparable with an Earth ATI
+    # percentile (on Earth ATI is almost the inverse of the swing). TES thermal inertia stays in the grid for display.
+    if USE_TES_TI and "ti_percentile" in M:
+        x = float(M["ti_percentile"][r, c])
+        v["ati_percentile"] = x if math.isfinite(x) else None
+    else:
+        a = M["apparent_thermal_inertia"].astype(np.float64)
+        tab = np.sort(a[np.isfinite(a)])
+        x = float(a[r, c])
+        v["ati_percentile"] = float(np.searchsorted(tab, x, side="right") / len(tab)) if math.isfinite(x) else None
     v["rock_group"] = str(M["rock_group"][r, c]) or None
     mg = str(M["mineral_groups"][r, c])
     v["mineral_groups"] = sorted(mg.split("|")) if mg else None
-    v["inside_impact_structure"] = bool(M["crater_count_1deg"][r, c] > 0)
+    v["inside_impact_structure"] = bool(M["inside_crater"][r, c]) if "inside_crater" in M else bool(M["crater_count_1deg"][r, c] > 0)
     v["ground_ice_flag"] = bool(M["ground_ice_flag"][r, c] >= 0.5)
     la, lo = centres("mars")
     v["_cell"] = (round(float(la[r]), 4), round(float(lo[c]), 4))

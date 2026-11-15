@@ -315,7 +315,7 @@ TT.pages.finder = function(root){
       status.textContent = 'Loading Mars data…';
       const mars = await load(st.m.files.mars);
       const cell = st.m.compact
-        ? window.PlanalogyCompact.marsCell(st.m, PS, mars, await load(st.m.compact.mars_fine[0]), await load(st.m.compact.mars_fine[1]), lat, lon)
+        ? window.PlanalogyCompact.marsCell(st.m, PS, mars, await Promise.all(st.m.compact.mars_fine.map(load)), lat, lon)
         : PS.marsCell(st.m, mars, lat, lon);
       if (!cell){ TT.toast('No Mars data for that point.', true); drawStatus(); return; }
       st.custom = {key:'custom', lat:cell.lat, lon:cell.lon, values:cell.values, name: label || ('Mars ' + TT.fmtCoord(cell.lat, cell.lon, 1))};

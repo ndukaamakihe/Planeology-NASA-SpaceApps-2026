@@ -107,7 +107,7 @@
   }
 
   /** Mars target values at 11 km: terrain, albedo and ATI from the fine grid, the rest from the 1° table. */
-  function marsCell(manifest, PS, mars1, fineA, fineB, lat, lon) {
+  function marsCell(manifest, PS, mars1, fines, lat, lon) {
     const g = manifest.grid.mars, c = PS.containingCell(g, lat, lon);
     if (!c) return null;
     const one = { grid: { mars: { lat_step: 1, lon_step: 1, lat0: -89.5, lon0: -179.5, n_lat: 180, n_lon: 360, decimals: 1 } }, features: manifest.features };
@@ -115,9 +115,14 @@
     if (!coarse) return null;
     const values = Object.assign({}, coarse.values);
     const r = Math.round((90 - c.lat) / g.lat_step - 0.5), col = Math.round((c.lon + 180) / g.lon_step - 0.5), k = r * g.n_lon + col;
-    for (const F of [fineA, fineB]) {
+    for (const F of fines) {
       if (!F._arr) { F._arr = {}; for (const [name, s] of Object.entries(F.cols)) F._arr[name] = b64(s, 'u16'); }
-      for (const [name, arr] of Object.entries(F._arr)) { const v = arr[k]; values[name] = v === 65535 ? null : v / F.scale[name]; }
+      for (const [name, arr] of Object.entries(F._arr)) {
+        const v = arr[k], kind = (F.kinds || {})[name];
+        if (kind === 'rock') values[name] = v ? F.rocks[v] : null;          // 11 km geologic unit -> rock group
+        else if (kind === 'bool') values[name] = v === 1;                    // 11 km ground ice / inside a crater
+        else values[name] = v === 65535 ? null : v / F.scale[name];
+      }
     }
     return { lat: c.lat, lon: c.lon, values };
   }

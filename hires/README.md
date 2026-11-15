@@ -68,7 +68,8 @@ TES, impact and lake files are small direct downloads (URLs below).
 | Lakes | [Natural Earth](https://www.naturalearthdata.com/) 10 m lakes and reservoirs, with the North America and Europe supplements | vector | 4 MB | water mask |
 | Impact structures | Wikipedia "List of impact structures on Earth" (88 with coordinates and diameter), plus Kara-Kul | points | - | inside an impact structure |
 | Future climate | The Data team's 1° CMIP6 projections (`data/grid_1deg/ssp245`, `ssp585`, 2030-2090) | 1° | - | change applied to the 11 km climate (delta method) |
-| Rock type, minerals, ground ice | The Data team's 1° grid (GLiM, Obu et al. 2019 permafrost) | 1° | - | inherited from the parent 1° cell |
+| Rock type (+ mineral proxy) | GLiM vector map (Hartmann & Moosdorf 2012), [original GIS data](https://www.geo.uni-hamburg.de/geologie/forschung/aquatische-geochemie/glim.html) | 1,235,259 polygons, ~1:3.75 M | 1.1 GB | rock group and mineral groups (the Data team's class mapping) |
+| Ground ice | Permafrost probability, Northern Hemisphere (Obu et al. 2019, [PANGAEA 888600](https://doi.pangaea.de/10.1594/PANGAEA.888600)) | 1 km | 106 MB zip | ground ice = probability ≥ 0.5 or glacier; south of the equator the 1° flag is kept |
 
 ### Mars
 
@@ -76,7 +77,14 @@ TES, impact and lake files are small direct downloads (URLs below).
 |---|---|---|---|
 | Elevation | MOLA global DEM mosaic, [USGS Astrogeology](https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif) (2.1 GB) | 463 m, averaged 2×2 to 926 m | slope, roughness, relief |
 | Albedo | TES bolometric albedo mosaic, [USGS Astrogeology](https://planetarymaps.usgs.gov/mosaic/Mars_MGS_TES_Albedo_mosaic_global_7410m.tif) | 7.4 km | albedo, apparent thermal inertia |
-| Temperatures, rock, minerals, ice, craters | The Data team's 1° grid (MCD v6 climate model, SIM 3292 geology, TES minerals, Odyssey GRS, Robbins craters) | 1° (the climate model itself is ~200 km) | bilinear (temperatures) or parent cell |
+| Geology | Geologic Map of Mars, [SIM 3292](https://pubs.usgs.gov/sim/3292/) (Tanaka et al. 2014), vector | 1:20 M | rock group; polar units for ground ice |
+| Craters | Robbins & Hynek 2012 database, 384,343 craters ≥ 1 km, via the [USGS Astrogeology API](https://astrogeology.usgs.gov/pygeoapi/collections/mars/robbinsv1) | points + diameters | inside a crater rim |
+| Thermal inertia | TES night map 2007 (Putzig & Mellon), [PDS Geosciences](https://pds-geosciences.wustl.edu/missions/mgs/tes-timap.html) | 20 ppd (~3 km) | stored and shown, **not scored** (see Engine) |
+| Temperatures, minerals, GRS hydrogen | The Data team's 1° grid (MCD v6 climate model, TES minerals, Odyssey GRS) | 1° (the climate model itself is ~200 km) | bilinear (temperatures) or parent cell |
+
+The Mars ice maps of SWIM (swim.psi.edu) were planned but the site was down on 15 Nov 2026 (HTTP 523) with no
+mirror; Mars ground ice uses Odyssey GRS (≥ 10 wt% H2O) plus the SIM 3292 polar units instead. Every source,
+with exact file URLs and status, is listed in [`SOURCES.md`](SOURCES.md).
 
 ## Build pipeline
 
@@ -90,9 +98,10 @@ Run in this order. Each step writes to `hires_data/grid_11km/`.
 | 4 | `build_albedo.py` | Mean of 12 mid-month days of the historical (with snow) blue-sky albedo. |
 | 5 | `build_ndvi.py` | 2019 mean of the monthly NDVI over the months with data. |
 | 6 | `build_water.py` | Natural Earth lakes rasterised at 0.02° and averaged to a water fraction per 0.1° cell. |
-| 7 | `build_earth.py` | Assembles the Earth grid. Rules below. |
-| 8 | `build_mars.py` | Assembles the Mars grid: fine terrain and TES albedo; temperatures bilinear from 1°; rock, minerals, ice and craters from the parent cell; ATI = (1 - albedo) / ground swing. |
-| 9 | `build_table.py` | Memory-mapped search table over Earth land cells (one `.npy` per column) with today's climate and every projected year precomputed. |
+| 7 | `build_fine_classes.py` | Earth rock type and mineral proxy from GLiM (rasterised at 0.02°, majority class per cell) and ground ice from Obu 2019 (5×5 samples per cell); Mars rock group from SIM 3292 (majority unit; impact units keep the 1° group), crater flag from Robbins (cell centre inside a rim, radius at least half a cell) and TES thermal inertia. |
+| 8 | `build_earth.py` | Assembles the Earth grid. Rules below. |
+| 9 | `build_mars.py` | Assembles the Mars grid: fine terrain, TES albedo, SIM rock group, Robbins craters, ice = GRS ≥ 10 wt% or a polar unit; temperatures bilinear from 1°; minerals from the parent cell; ATI = (1 - albedo) / ground swing. |
+| 10 | `build_table.py` | Memory-mapped search table over Earth land cells (one `.npy` per column) with today's climate and every projected year precomputed. |
 
 Rules in `build_earth.py`:
 
@@ -103,7 +112,8 @@ Rules in `build_earth.py`:
   - Rescaled to the 1° grid's NDVI scale (fit 1° = 0.865 × fine + 0.010; it is a monthly 90th percentile, so it runs high).
   - Gaps are filled from neighbouring cells (3×3, then 5×5), then from the 1° grid.
   - The source is kept per cell in `ndvi_source` (0 own, 1 neighbours, 2 one-degree, 3 none).
-- **Rock type, minerals and ground ice:** from the parent 1° cell. Coastal cells whose parent is sea take the nearest land parent.
+- **Rock type and minerals:** GLiM at 11 km; where GLiM has no class, the parent 1° cell (coastal cells take the nearest land parent).
+- **Ground ice:** Obu 2019 permafrost (probability ≥ 0.5) or the GLiM glacier class in the Northern Hemisphere; the 1° flag in the south.
 - **Inside an impact structure:** the cell centre is within the rim (radius at least half a cell).
 
 Future years (`build_table.py`, and the same formula in the browser), delta method as in the app:
@@ -127,6 +137,10 @@ Each new layer was averaged back to 1° and compared with the Data team's grid o
 | NDVI | 0.957 | after rescaling; class < 0.2 agrees on 96 % |
 | Albedo (60° S-60° N) | 0.955 | detail gain: Salar de Uyuni 0.50 at 11 km vs 0.36 at 1° |
 | Mars albedo | 0.991 | |
+| Earth permafrost probability (Obu) | 0.936 | |
+| Earth rock group (GLiM) | 92.5 % agree | 1° majority of the 11 km cells |
+| Mars rock group (SIM 3292) | 96.9 % agree | |
+| Mars thermal inertia (TES 2007) | 0.80 | vs the older TES map (Mellon 2000) in the 1° grid |
 
 Terrain does not match one-to-one, as expected: it depends on cell and pixel size. Slope on 0.93 km
 pixels is larger than on ~10 km pixels; relief inside an 11 km cell is smaller than inside a 110 km cell.
@@ -140,7 +154,8 @@ pixels is larger than on ~10 km pixels; relief inside an 11 km cell is smaller t
   - Octavia E. Butler in Jezero (18.44, 77.45);
   - Arcadia Planitia (46.5, -167.5);
   - optionally Oxia Planum (18.16, -24.33, ESA Rosalind Franklin) and Deuteronilus Mensae (43.9, 24.4).
-- **Dry land (Science's rule v2):** not ice or water, bare ground (NDVI < 0.2), and either aridity ≤ 0.20 or a cold desert (mean air temperature < 0 °C, precipitation < 250 mm/yr, albedo < 0.6). Where no NDVI exists even after gap filling, only Antarctica counts as bare.
+- **Dry land (Science's rule v2):** not ice or water, bare ground (NDVI < 0.2), and either aridity ≤ 0.20 or a cold desert (mean air temperature < 0 °C, precipitation < 250 mm/yr, albedo < 0.6). Where no NDVI exists even after gap filling, only Antarctica counts as bare. Cells with 10 % or more lake water are not dry land (lake shores).
+- **Thermal inertia:** scored with the same formula on both planets, apparent thermal inertia = (1 - albedo) / ground day-night swing, as a percentile within each planet. TES physical thermal inertia was tried for Mars and rejected by the third audit: Earth has no physical map, and on Earth the ATI percentile is almost the inverse of the swing (r = -0.91), so a high Mars percentile (Gale is at the 92nd) rewarded polar cells and lake shores with tiny swings.
 
 ## Training the mission profiles at 11 km
 
@@ -174,10 +189,14 @@ The app's mission weights are Science's starting weights; only the rover profile
 
 | Mission | Sites | Method kept | Hidden sites, mean rank | Improved | Sites in top 5 % |
 |---|---|---|---|---|---|
-| Rover navigation (Gale) | 19 | shared features | 52,802 → 44,549 (+16 %) | 10 / 19 | 9 → 10 |
-| Sample science (Jezero) | 33 | soft rank | 113,054 → 57,369 (+49 %) | 20 / 33 | 5 → 7 |
-| Thermal testing (Gale) | 17 | soft rank | 74,832 → 54,752 (+27 %) | 12 / 17 | 5 → 10 |
-| Ground-ice ISRU (Arcadia) | 7 | soft rank | 17,204 → 10,905 (+37 %) | 7 / 7 | 0 → 0 |
+| Rover navigation (Gale) | 19 | soft rank | 37,941 → 34,845 (+8 %) | 12 / 19 | 11 → 12 |
+| Sample science (Jezero) | 32 | soft rank | 78,438 → 52,213 (+33 %) | 17 / 32 | 8 → 8 |
+| Thermal testing (Gale) | 17 | soft rank | 74,649 → 55,100 (+26 %) | 12 / 17 | 5 → 10 |
+| Ground-ice ISRU (Arcadia) | 6 | soft rank | 15,147 → 10,693 (+29 %) | 5 / 6 | 0 → 0 |
+
+These are the weights trained on the final data (11 km rock, ice and craters). On the first 11 km build, with
+rock and ice still at 1°, Science's weights put the hidden rover sites at a mean rank of 52,802; the 11 km
+layers alone bring that to 37,941 before any training.
 
 The trained weights are in `presets_trained_11km.json`; Science's starting weights are in
 `science_presets.json`. The tool uses the trained weights by default (`--weights app` for the 1° app
@@ -185,9 +204,9 @@ weights), and the 11 km app shows them as "Calibrated on known analogs".
 
 Large shifts for Science to review:
 
-- **Sample science nearly drops rock type** (0.27 → 0.01): rock type is 1° data, too coarse to separate evaporite basins.
-- **Thermal and ice drop albedo.** Thermal relies on the day-night swing and cold nights; ice on the coldest ground temperature and rock type.
-- **Rover gives more weight to terrain** (relief, roughness) and albedo.
+- **Sample science nearly drops rock type** (0.27 → 0.02), even with GLiM at 11 km: its labels (evaporite basins) are classed as evaporites while Jezero is sedimentary, so rock type does not help separate them.
+- **Ice relies on the coldest ground temperature and rock type**, and drops slope and albedo.
+- **Thermal** keeps the day-night swing as its main feature.
 
 The labels come from the unverified catalog, so the trained weights are evidence of consistency with sites
 already in use, not scientific validation.
@@ -229,15 +248,15 @@ in **compact mode**:
 
 | File | Size | Content |
 |---|---|---|
-| `cells.json` | 12.5 MB | the 268,375 cells that are Mars-like dry land in at least one year, as base64 typed arrays (`export_web.py`) |
+| `cells.json` | 12.4 MB | the 266,044 cells that are Mars-like dry land in at least one year, as base64 typed arrays (`export_web.py`) |
 | `deltas.json` | 6.9 MB | the 1° climate changes for each projected year |
-| `mars_fine_a.json`, `mars_fine_b.json` | 24.6 MB | Mars 11 km slope, roughness, relief, albedo and ATI percentile |
+| `mars_fine_a.json`, `mars_fine_b.json`, `mars_fine_c.json` | 39 MB | Mars 11 km slope, roughness, relief, albedo, ATI percentile, rock group, ground ice and crater flag |
 | `mars.json` | 8.8 MB | the 1° Mars table for everything else |
 | `manifest.json` | | 11 km grids, scaled terrain τ, landing-site targets plus Oxia Planum, known analogs as 11 km cell ids, and a `compact` block (`export_app.py`) |
 
 - `web/app/js/compact.js` rebuilds the Finder's usual `{columns, rows}` tables from these files, and future years with the same bilinear delta method as the tool. It keeps a small cache of year tables (~100 MB each).
-- `finder.js` has three hooks: the base table, the yearly tables, and picking a Mars point (11 km terrain and albedo over the 1° table).
-- Checked in the browser against the tool: 259,212 dry cells today, 256,810 in 2090 (SSP2-4.5); Kuqa ranks #1 for rover navigation; picking Bradbury Landing gives the same values as the tool.
+- `finder.js` has three hooks: the base table, the yearly tables, and picking a Mars point (11 km terrain, albedo, rock, ice and craters over the 1° table).
+- Checked in the browser against the tool: 257,208 dry cells today; picking Bradbury Landing gives the same values as the tool.
 
 To build:
 
@@ -288,72 +307,75 @@ tests), useful for a real mission, and ideally gaining or losing analog status w
    - looked for the best concrete site per mission and for robust climate stories;
    - rejected 20 more candidates.
    - A climate story counts as robust only if it happens by 2050 in both scenarios with a clear margin.
+5. **A third audit, on the 11 km rock, ice and crater layers and re-trained weights:**
+   - re-checked the new top cells and every previous finalist;
+   - found the thermal-inertia problem (TES vs apparent thermal inertia, see Engine), which was fixed before the results below;
+   - rejected 26 more candidates; 74 rejections in total, all with reasons.
 
 ## Results
 
-Numbers from the corrected tool. Ranks are among the dry cells for that mission (259,212 today). Ranks
-change a lot from one cell to the next: read a finalist as the peak of a good area, not a unique spot.
+Final numbers (11 km rock, ice and craters; trained weights; thermal-inertia fix). Ranks are among the dry
+cells for that mission (257,208 today). Ranks change a lot from one cell to the next: read a finalist as the
+peak of a good area, not a unique spot.
 
-**Audited finalists** (trained weights; auditor confidence out of 10):
+**Audited finalists** (auditor confidence out of 10):
 
 | Site | Mission | Today | Future | Confidence |
 |---|---|---|---|---|
-| Yanshuigou / Qiulitag anticlines north of Kuqa, Xinjiang, China (41.85, 82.95) | Rover navigation, Gale | #1, score 86.0 | #2 in 2050 in both scenarios; #2 / #5 in 2090 | 6 |
-| Golfo San Jorge pampa, Chubut, Argentina (-45.35, -67.65) | Sample science, Jezero | not dry (aridity 0.203) | **gain:** dry from 2050 in both scenarios (about #550); rainfall falls, neighbours gain too | 5 |
-| Paso Zapaleri plateau, Altiplano, Chile (-22.85, -67.15) | Thermal testing, Gale | #9 | #5 in 2050 in both scenarios, #4-#5 in 2090 | 5 |
-| Uvs Nuur basin floor, Mongolia (50.25, 93.35) | Sample science, Jezero | #80, dry only as a cold desert | **loss:** not dry from 2050 in both scenarios, basin-wide (mean air temperature passes 0 °C; small margin in 2050, large by 2090) | 4 |
-| Zhamanshin impact crater, Kazakhstan (48.40, 60.97) | Sample science, Jezero | #77 | stable to 2090 | 4 |
-| Mehriz-Taft piedmont south of Yazd, Iran (31.65, 54.45) | Rover navigation, Gale | #2 | #3 in 2050, #3 / #6 in 2090 | 4 |
+| Yanshuigou / Qiulitag anticlines north of Kuqa, Xinjiang, China (41.85, 82.95) | Rover navigation, Gale | #69 | #66-#71 to 2090 in both scenarios | 6 |
+| Western slopes of Cerro Zapaleri, Altiplano, Chile (-22.85, -67.25) | Thermal testing, Gale | #410 | improves: about #260 in 2050, #189-#230 in 2090 | 5 |
+| Zhamanshin impact crater, Kazakhstan (48.40, 60.97) | Sample science, Jezero | #61 | #59-#60 to 2090 | 4 |
+| Ashikule volcanic basin, West Kunlun, Xinjiang, China (35.75, 81.65) | Ground-ice ISRU, Arcadia | #1 of 22,369 | #1 in every scenario to 2090 | 4 |
+| Golfo San Jorge pampa, Chubut, Argentina (-45.35, -67.65) | Sample science, Jezero | not dry (aridity 0.203) | **gain:** dry from 2050 in both scenarios (about #570); rainfall falls | 5 |
+| Northern Qilian Shan foothills, Subei County, Gansu, China (39.65, 97.25) | Rover navigation, Gale | #199 | **loss:** not dry from 2050 in both scenarios (mean temperature -0.6 → +2.0 / +2.6 °C); cannot return (aridity > 0.25) | 4 |
 
-Caveats per finalist:
+Caveats:
 
 - **Kuqa:** layered red beds and salts, a stand-in for Curiosity's clay-to-sulfate traverse. Access to Xinjiang is the weak point.
-- **Golfo San Jorge:** a tourist "Valle de Marte" trail lies 25-35 km away; oil fields nearby.
-- **Zapaleri:** the largest ground day-night swing among the top thermal cells (34.8 K) at 4,650 m, reachable by road from San Pedro de Atacama. Ten catalogued analogs lie within 250 km.
+- **Zapaleri:** a 34 K ground day-night swing at about 4,650 m, reachable by road from San Pedro de Atacama. Ten catalogued analogs lie within 250 km.
 - **Zhamanshin:** fits Jezero if its centre really holds lake sediments over impactites (to be checked). NASA GSFC is studying the crater, so it is new as a sampling analog, not unstudied.
-- **Yazd:** a single-cell peak, with very limited access.
+- **Ashikule:** a volcanic field with lava flows and salt lakes at about 4,700 m. The engine keeps permafrost as today, so a thaw of the ground is not modelled. Very hard access. The ice profile was trained on only 6 sites.
+- **Golfo San Jorge:** today it is only 0.003 above the aridity limit; a tourist "Valle de Marte" trail lies 25-35 km away.
+- **Qilian foothills:** all nearby cold-desert cells drop out too.
 
-No site fully qualified for ground ice. The best lead, a flat permafrost plain on the southern Borden
-Peninsula, north Baffin Island (72.05, -82.45, #1 of 28,493), loses status only because its precipitation
-is 1 mm under the 250 mm limit today: a rule-boundary effect, not a robust climate story.
+Did not hold in the last round: Yazd (now a single-cell peak far down the list), the Uvs Nuur basin (one cell
+is half lake), and the north Baffin Island ice lead (1 mm under the precipitation limit).
 
-No Mars-analog use was found for any finalist. That is not proof of absence. No candidate in the United
-States was both new and robust: Utah candidates are within ~50 km of published analog work, and the best
-US gain (Pahsimeroi Valley, Idaho, #1 for Gale in 2090 under SSP5-8.5) happens only in that scenario and
-by a small margin.
+Other robust climate gain: the Maghreb is drying. Of the 22 clusters worldwide with at least 3 robust-gain
+cells, 21 are in Morocco or Algeria, for example around Ain Oussera / Chott Zahrez Chergui, Algeria, with
+aridity 0.216 → 0.18 by 2050. Their analog ranks are low, and the Ouarzazate area is already an ESA ExoMars
+test region.
+
+No Mars-analog use was found for the finalists. That is not proof of absence. No candidate in the United
+States was both new and robust.
 
 **Known analogs that lose dry-land status** (mean air temperature passes 0 °C):
 
-| Site | Today | Lost |
+| Site | Today (rank, mission) | Lost |
 |---|---|---|
-| Kara-Kul crater, Pamir | rover #1,418 | 2050 in both scenarios (back as arid land in 2090 under SSP5-8.5) |
-| Tso Moriri, Ladakh | thermal #4,254 | 2050 in both scenarios |
-| Tso Kar, Ladakh (region of ISRO's HOPE analog station) | rover #7,608 | 2050 under SSP5-8.5; 2090 in both |
+| Kara-Kul crater, Pamir | #2,527, rover | 2050 in both scenarios (back as arid land in 2090 under SSP5-8.5) |
+| Tso Moriri, Ladakh | #8,438, thermal | 2050 in both scenarios |
+| Tso Kar, Ladakh (region of ISRO's HOPE analog station) | #140,049, rover | 2050 under SSP5-8.5; 2090 in both |
 
-Claims that Dallol, the Samail ophiolite and Haughton crater lose status did not survive the audit (bug side
-effects or single marginal cells).
+**Ground ice:** with ground ice required, the best Earth analogs for Arcadia Planitia are high cold deserts on
+permafrost in the Kunlun and northern Tibet, plus Arctic Canada. Ice-prospecting candidates fall from 22,369
+cells today to 19,924 in 2050 (SSP2-4.5) and 15,388 in 2090 (SSP5-8.5).
 
-**Ground ice:** with ground ice required, the best Earth analogs for Arcadia Planitia are flat Arctic
-permafrost plains (north Baffin Island, northeast Greenland) and the volcanic permafrost plateau of western
-Tibet. They count as Mars-like only as cold deserts, and many stop counting by mid-century; ice-prospecting
-candidates fall from 28,493 cells today to 19,946 in 2090 under SSP5-8.5. With the 1° app weights the top
-cells are on the Tibetan Plateau; with the trained weights, north Baffin Island ranks first. The Tibetan
-Plateau is already studied as a Mars analog region (Qaidam Basin), so this is a regional climate signal,
-not a new site.
-
-**Dry land worldwide:** 259,212 cells today.
+**Dry land worldwide:** 257,208 cells today.
 
 | Year, scenario | Dry cells | Gained | Lost |
 |---|---|---|---|
-| 2050, SSP2-4.5 | 257,322 | 4,245 | 6,135 |
-| 2050, SSP5-8.5 | 256,655 | 4,994 | 7,551 |
-| 2090, SSP2-4.5 | 256,810 | 5,840 | 8,242 |
-| 2090, SSP5-8.5 | 254,119 | 9,071 | 14,164 |
+| 2050, SSP2-4.5 | 255,307 | 4,004 | 5,905 |
+| 2050, SSP5-8.5 | 254,664 | 4,734 | 7,278 |
+| 2090, SSP2-4.5 | 254,860 | 5,572 | 7,920 |
+| 2090, SSP5-8.5 | 252,267 | 8,744 | 13,685 |
 
 ## Limitations and open questions
 
-- Rock type, minerals and ground ice come from 1° data and do not vary inside a 110 km block.
+- Minerals are a proxy from the rock class on Earth (GLiM) and from TES (~20 km) on Mars; Earth surface minerals (EMIT 60 m, ASTER GED 100 m) need a NASA Earthdata login and are not in yet.
+- Earth ground ice south of the equator and Mars hydrogen (GRS) are still 1° data; SWIM Mars ice maps were unavailable.
 - Mars temperatures come from a ~200 km climate model.
+- Permafrost and vegetation stay as today in future years.
 - Terrain scales (τ) at 11 km are provisional.
 - The trained weights rely on labels from the unverified catalog; the large shifts (rock type for sample science, albedo for thermal and ice) need Science's review.
 - The cold-desert albedo check (< 0.6) is ours; to confirm with Science.

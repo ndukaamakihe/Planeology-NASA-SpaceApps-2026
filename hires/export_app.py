@@ -72,7 +72,7 @@ for p in m["presets"]:
 m["files"] = {"earth": {"now": "cells.json"}, "mars": "mars.json"}
 for sc in m.get("scenarios", []):
     sc["files"] = {str(y): f"compact:{sc['id']}_{y}" for y in sc["years"]}
-m["compact"] = {"cells": "cells.json", "deltas": "deltas.json", "mars_fine": ["mars_fine_a.json", "mars_fine_b.json"],
+m["compact"] = {"cells": "cells.json", "deltas": "deltas.json", "mars_fine": ["mars_fine_a.json", "mars_fine_b.json", "mars_fine_c.json"],
                 "note": "Earth: only cells that are Mars-like dry land in at least one year (268,375 of 2.13 M land cells)."}
 m["common_limitations"] = [x for x in m["common_limitations"] if not x.startswith("Resolution")] + [
     "Resolution: 11 km cells on both planets (Earth 0.1 deg, Mars 0.1875 deg). Rock type, minerals and ground ice still come "
@@ -83,11 +83,14 @@ m["resolution_note"] = "11 km grid built from WorldClim 2.1, MODIS (OpenLandMap)
 
 # Mars fine fields
 M = H.mars()
-a = M["apparent_thermal_inertia"].astype(np.float64)
-tab = np.sort(a[np.isfinite(a)])
-pct = np.full(a.shape, np.nan)
-ok = np.isfinite(a)
-pct[ok] = np.searchsorted(tab, a[ok], side="right") / len(tab)
+if H.USE_TES_TI and "ti_percentile" in M:
+    pct = M["ti_percentile"].astype(np.float64)
+else:
+    a = M["apparent_thermal_inertia"].astype(np.float64)
+    tab = np.sort(a[np.isfinite(a)])
+    pct = np.full(a.shape, np.nan)
+    ok = np.isfinite(a)
+    pct[ok] = np.searchsorted(tab, a[ok], side="right") / len(tab)
 
 
 def q(x, s):
@@ -102,5 +105,15 @@ fb = {"shape": [960, 1920], "scale": {"albedo": 10000, "ati_percentile": 10000},
       "cols": {"albedo": enc(q(M["albedo"], 10000)), "ati_percentile": enc(q(pct, 10000))}}
 (D / "mars_fine_a.json").write_text(json.dumps(fa, separators=(",", ":")), encoding="utf-8")
 (D / "mars_fine_b.json").write_text(json.dumps(fb, separators=(",", ":")), encoding="utf-8")
+# 11 km rock group, ground ice and crater flag for picked Mars points
+ROCKS = ["", "volcanic", "ancient_crust", "sedimentary", "evaporite_salt", "ice", "impact", "water"]
+rc = np.zeros(M["rock_group"].shape, "<u2")
+for i, nm in enumerate(ROCKS):
+    rc[M["rock_group"] == nm] = i
+crat = (M["inside_crater"] if "inside_crater" in M else (M["crater_count_1deg"] > 0)).astype("<u2")
+fc_ = {"shape": [960, 1920], "kinds": {"rock_group": "rock", "ground_ice_flag": "bool", "inside_impact_structure": "bool"},
+       "rocks": ROCKS, "cols": {"rock_group": enc(rc), "ground_ice_flag": enc((M["ground_ice_flag"] >= 0.5).astype("<u2")),
+                                "inside_impact_structure": enc(crat)}}
+(D / "mars_fine_c.json").write_text(json.dumps(fc_, separators=(",", ":")), encoding="utf-8")
 for f in sorted(D.iterdir()):
     print(f.name, round(f.stat().st_size / 1e6, 2), "MB")
