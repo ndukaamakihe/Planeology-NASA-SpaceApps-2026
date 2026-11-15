@@ -1,594 +1,634 @@
 {
-  "schema": "planalogy.web.v3",
-  "model": "analogue_engine.adapted_gower@0.2.0",
-  "data_mode": "real",
-  "grid": {
-    "earth": {
-      "lat_step": 1.0,
-      "lon_step": 1.0,
-      "lat0": -89.5,
-      "lon0": -179.5,
-      "n_lat": 180,
-      "n_lon": 360,
-      "decimals": 1,
-      "cell_km": 111.2
-    },
-    "mars": {
-      "lat_step": 1.0,
-      "lon_step": 1.0,
-      "lat0": -89.5,
-      "lon0": -179.5,
-      "n_lat": 180,
-      "n_lon": 360,
-      "decimals": 1,
-      "cell_km": 59.2
-    },
-    "spatial_support": "grid_1deg_v1"
+ "schema": "planalogy.web.v3",
+ "model": "analogue_engine.adapted_gower@0.2.0",
+ "data_mode": "real",
+ "grid": {
+  "earth": {
+   "lat_step": 0.1,
+   "lon_step": 0.1,
+   "lat0": -89.95,
+   "lon0": -179.95,
+   "n_lat": 1800,
+   "n_lon": 3600,
+   "decimals": 2,
+   "cell_km": 11.1
   },
-  "features": [
-    {
-      "id": "slope_deg",
-      "label": "Slope",
-      "category": "terrain",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "deg",
-      "tau": 5
-    },
-    {
-      "id": "roughness_m",
-      "label": "Roughness",
-      "category": "terrain",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "m",
-      "tau": 1500
-    },
-    {
-      "id": "relief_m",
-      "label": "Relief inside the cell",
-      "category": "terrain",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "m",
-      "tau": 4000
-    },
-    {
-      "id": "surface_temp_swing_K",
-      "label": "Day–night ground temperature swing",
-      "category": "thermal",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "K",
-      "tau": 100
-    },
-    {
-      "id": "surface_temp_min_K",
-      "label": "Coldest ground temperature",
-      "category": "thermal",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "K",
-      "tau": 100
-    },
-    {
-      "id": "air_temp_swing_K",
-      "label": "Day–night air temperature swing",
-      "category": "thermal",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "K",
-      "tau": 50
-    },
-    {
-      "id": "ati_percentile",
-      "label": "Thermal inertia (rank within planet)",
-      "category": "thermophysical",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "1",
-      "tau": 0.5
-    },
-    {
-      "id": "albedo",
-      "label": "Albedo",
-      "category": "optical",
-      "kind": "scalar",
-      "comparator": "clipped_linear_v1",
-      "unit": "1",
-      "tau": 0.2
-    },
-    {
-      "id": "mineral_groups",
-      "label": "Mineral groups (proxy)",
-      "category": "mineralogy",
-      "kind": "set",
-      "comparator": "jaccard_v1",
-      "unit": "set",
-      "categories": [
-        "basaltic",
-        "felsic",
-        "clays_hydrated",
-        "sulfates_salts",
-        "carbonates",
-        "iron_oxides"
-      ]
-    },
-    {
-      "id": "rock_group",
-      "label": "Rock type",
-      "category": "geology",
-      "kind": "categorical",
-      "comparator": "categorical_match_v1",
-      "unit": "class",
-      "categories": [
-        "volcanic",
-        "ancient_crust",
-        "sedimentary",
-        "evaporite_salt",
-        "ice",
-        "impact",
-        "water"
-      ]
-    },
-    {
-      "id": "inside_impact_structure",
-      "label": "Impact structure",
-      "category": "craters",
-      "kind": "boolean",
-      "comparator": "boolean_match_v1",
-      "unit": "boolean"
-    },
-    {
-      "id": "ground_ice_flag",
-      "label": "Ground ice",
-      "category": "water",
-      "kind": "boolean",
-      "comparator": "boolean_match_v1",
-      "unit": "boolean"
-    }
-  ],
-  "categories": [
-    {
-      "id": "terrain",
-      "label": "Terrain"
-    },
-    {
-      "id": "thermal",
-      "label": "Day–night temperature"
-    },
-    {
-      "id": "thermophysical",
-      "label": "Thermal inertia"
-    },
-    {
-      "id": "optical",
-      "label": "Albedo"
-    },
-    {
-      "id": "mineralogy",
-      "label": "Mineral groups"
-    },
-    {
-      "id": "geology",
-      "label": "Rock type"
-    },
-    {
-      "id": "craters",
-      "label": "Impact structure"
-    },
-    {
-      "id": "water",
-      "label": "Ground ice"
-    }
-  ],
-  "targets": [
-    {
-      "key": "gale",
-      "name": "Gale Crater (Curiosity)",
-      "lat": -5.5,
-      "lon": 137.5,
-      "point": {
-        "lat": -5.4,
-        "lon": 137.8
-      },
-      "values": {
-        "slope_deg": 3.1618,
-        "roughness_m": 962.708,
-        "relief_m": 3978.7849,
-        "surface_temp_swing_K": 85.3348,
-        "surface_temp_min_K": 184.1475,
-        "air_temp_swing_K": 43.9538,
-        "ati_percentile": 0.2264969135802469,
-        "albedo": 0.2181,
-        "mineral_groups": [
-          "basaltic",
-          "clays_hydrated"
-        ],
-        "rock_group": "sedimentary",
-        "inside_impact_structure": true,
-        "ground_ice_flag": false
-      }
-    },
-    {
-      "key": "jezero",
-      "name": "Jezero Crater (Perseverance)",
-      "lat": 18.5,
-      "lon": 77.5,
-      "point": {
-        "lat": 18.38,
-        "lon": 77.58
-      },
-      "values": {
-        "slope_deg": 1.0819,
-        "roughness_m": 252.8946,
-        "relief_m": 833.7354,
-        "surface_temp_swing_K": 77.0714,
-        "surface_temp_min_K": 191.1525,
-        "air_temp_swing_K": 37.3403,
-        "ati_percentile": 0.4034104938271605,
-        "albedo": 0.1746,
-        "mineral_groups": [
-          "basaltic",
-          "clays_hydrated"
-        ],
-        "rock_group": "sedimentary",
-        "inside_impact_structure": true,
-        "ground_ice_flag": false
-      }
-    },
-    {
-      "key": "arcadia",
-      "name": "Arcadia Planitia (approx.)",
-      "lat": 46.5,
-      "lon": -167.5,
-      "point": {
-        "lat": 46.5,
-        "lon": -167.5
-      },
-      "values": {
-        "slope_deg": 0.0344,
-        "roughness_m": 5.6957,
-        "relief_m": 23.0967,
-        "surface_temp_swing_K": 62.0172,
-        "surface_temp_min_K": 155.3111,
-        "air_temp_swing_K": 32.114,
-        "ati_percentile": 0.4765277777777778,
-        "albedo": 0.2485,
-        "mineral_groups": [
-          "basaltic",
-          "clays_hydrated"
-        ],
-        "rock_group": "volcanic",
-        "inside_impact_structure": false,
-        "ground_ice_flag": false
-      }
-    }
-  ],
-  "presets": [
-    {
-      "id": "rover_navigation",
-      "name": "Rover navigation and mobility",
-      "mission": "Curiosity-type rover driving and route planning",
-      "why": "Terrain decides mobility; surface material (thermal inertia, albedo) separates dunes, gravel and bedrock.",
-      "target": "gale",
-      "category_weights": {
-        "terrain": 0.3754117739001206,
-        "thermal": 0.09657933254730926,
-        "thermophysical": 0.11060657473088502,
-        "optical": 0.20372632160094925,
-        "mineralogy": 0.02613060923907829,
-        "geology": 0.017658755030396794,
-        "craters": 0.07980685547477347,
-        "water": 0.09007977747648725
-      },
-      "feature_weights": {
-        "slope_deg": 0.13419841427118653,
-        "roughness_m": 0.12242510139116804,
-        "relief_m": 0.11878825823776604,
-        "surface_temp_swing_K": 0.05148982437132437,
-        "surface_temp_min_K": 0.022151651966203386,
-        "air_temp_swing_K": 0.0229378562097815,
-        "ati_percentile": 0.11060657473088502,
-        "albedo": 0.20372632160094925,
-        "mineral_groups": 0.02613060923907829,
-        "rock_group": 0.017658755030396794,
-        "inside_impact_structure": 0.07980685547477347,
-        "ground_ice_flag": 0.09007977747648725
-      },
-      "requirements": [],
-      "required_features": [],
-      "weights_used": "calibrated",
-      "verdict": "accepted",
-      "verdict_reason": "hidden analogs: mean rank 504 -> 446 (+11.6%), 2/2 improved; threshold 5% and half improved",
-      "known_analogs": [
-        {
-          "name": "Atacama",
-          "id": "earth_-24.5_-069.5"
-        },
-        {
-          "name": "Arizaro",
-          "id": "earth_-24.5_-067.5"
-        },
-        {
-          "name": "Kara-Kul",
-          "id": "earth_+39.5_+073.5"
-        }
-      ],
-      "declared_limitations": [
-        "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
-        "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
-        "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
-        "Gravity and radiation are not reproduced on Earth.",
-        "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
-      ]
-    },
-    {
-      "id": "sample_science",
-      "name": "Sample science and geology",
-      "mission": "Perseverance-type sampling of water-formed sediments",
-      "why": "Rock type and surface material record the water history (Science P7/P8); dry lake beds and salt flats match best.",
-      "target": "jezero",
-      "category_weights": {
-        "craters": 0.5,
-        "geology": 2.0,
-        "mineralogy": 1.0,
-        "optical": 1.0,
-        "terrain": 1.0,
-        "thermal": 0.5,
-        "thermophysical": 1.0,
-        "water": 0.5
-      },
-      "feature_weights": {
-        "slope_deg": 1.0,
-        "roughness_m": 1.0,
-        "relief_m": 1.0,
-        "surface_temp_swing_K": 2.0,
-        "surface_temp_min_K": 1.0,
-        "air_temp_swing_K": 1.0,
-        "ati_percentile": 1.0,
-        "albedo": 1.0,
-        "mineral_groups": 1.0,
-        "rock_group": 1.0,
-        "inside_impact_structure": 1.0,
-        "ground_ice_flag": 1.0
-      },
-      "requirements": [],
-      "required_features": [],
-      "weights_used": "science (start)",
-      "verdict": "rejected",
-      "verdict_reason": "hidden analogs: mean rank 1563 -> 1527 (+2.3%), 2/2 improved; threshold 5% and half improved",
-      "known_analogs": [
-        {
-          "name": "Atacama",
-          "id": "earth_-24.5_-069.5"
-        },
-        {
-          "name": "Arizaro",
-          "id": "earth_-24.5_-067.5"
-        }
-      ],
-      "declared_limitations": [
-        "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
-        "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
-        "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
-        "Gravity and radiation are not reproduced on Earth.",
-        "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
-      ]
-    },
-    {
-      "id": "thermal_environment",
-      "name": "Thermal environment testing",
-      "mission": "Instrument and thermal-management tests in a Mars-like day-night cycle",
-      "why": "The day-night swing is the clearest Mars-like signal (Science P2); cold minima matter for survival heating.",
-      "target": "gale",
-      "category_weights": {
-        "craters": 0.0,
-        "geology": 0.0,
-        "mineralogy": 0.0,
-        "optical": 1.0,
-        "terrain": 0.25,
-        "thermal": 3.0,
-        "thermophysical": 1.0,
-        "water": 0.5
-      },
-      "feature_weights": {
-        "slope_deg": 1.0,
-        "roughness_m": 1.0,
-        "relief_m": 1.0,
-        "surface_temp_swing_K": 2.0,
-        "surface_temp_min_K": 1.0,
-        "air_temp_swing_K": 1.0,
-        "ati_percentile": 1.0,
-        "albedo": 1.0,
-        "mineral_groups": 1.0,
-        "rock_group": 1.0,
-        "inside_impact_structure": 1.0,
-        "ground_ice_flag": 1.0
-      },
-      "requirements": [],
-      "required_features": [],
-      "weights_used": "science (start)",
-      "verdict": "rejected",
-      "verdict_reason": "hidden analogs: mean rank 813 -> 844 (-3.8%), 1/3 improved; threshold 5% and half improved",
-      "known_analogs": [
-        {
-          "name": "Atacama",
-          "id": "earth_-24.5_-069.5"
-        },
-        {
-          "name": "Dry Valleys",
-          "id": "earth_-77.5_+161.5"
-        },
-        {
-          "name": "Arizaro",
-          "id": "earth_-24.5_-067.5"
-        }
-      ],
-      "declared_limitations": [
-        "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
-        "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
-        "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
-        "Gravity and radiation are not reproduced on Earth.",
-        "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
-      ]
-    },
-    {
-      "id": "ice_prospecting",
-      "name": "Ground-ice prospecting (ISRU)",
-      "mission": "Drilling and extraction tests for shallow ground ice",
-      "why": "Ice is a hard requirement for the Earth site. Similarity then favours cold, flat plains.",
-      "target": "arcadia",
-      "category_weights": {
-        "craters": 0.0,
-        "geology": 0.5,
-        "mineralogy": 0.0,
-        "optical": 0.5,
-        "terrain": 1.0,
-        "thermal": 2.0,
-        "thermophysical": 0.5,
-        "water": 0.0
-      },
-      "feature_weights": {
-        "slope_deg": 1.0,
-        "roughness_m": 1.0,
-        "relief_m": 1.0,
-        "surface_temp_swing_K": 2.0,
-        "surface_temp_min_K": 1.0,
-        "air_temp_swing_K": 1.0,
-        "ati_percentile": 1.0,
-        "albedo": 1.0,
-        "mineral_groups": 1.0,
-        "rock_group": 1.0,
-        "inside_impact_structure": 1.0,
-        "ground_ice_flag": 0.0
-      },
-      "requirements": [
-        {
-          "feature": "ground_ice_flag",
-          "equals": true,
-          "id": "earth_site_has_ground_ice"
-        }
-      ],
-      "required_features": [
-        "ground_ice_flag"
-      ],
-      "weights_used": "science (start)",
-      "verdict": "not_validated",
-      "verdict_reason": "leave-one-out was not run (it needs at least 2 usable known analogs); keep the starting weights",
-      "known_analogs": [
-        {
-          "name": "Devon Island (Haughton)",
-          "id": "earth_+75.5_-089.5"
-        },
-        {
-          "name": "Dry Valleys",
-          "id": "earth_-77.5_+161.5"
-        }
-      ],
-      "declared_limitations": [
-        "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
-        "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
-        "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
-        "Gravity and radiation are not reproduced on Earth.",
-        "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain.",
-        "Mars ice flag in this grid needs >= 10 wt% H2O; Arcadia shows about 5 wt% so it is flagged 0 although Science reports ice centimetres below the surface. Ice is used as a requirement on Earth sites instead.",
-        "Earth ice data covers northern-hemisphere permafrost only (Antarctic sites show no ice)."
-      ]
-    }
-  ],
-  "years": [
-    "now",
-    2030,
-    2050,
-    2070,
-    2090
-  ],
-  "baseline_year": 1985,
-  "scenario": "ssp245",
-  "scenarios": [
-    {
-      "id": "ssp245",
-      "label": "SSP2-4.5 · middle of the road",
-      "short": "Moderate",
-      "code": "SSP2-4.5",
-      "years": [
-        2030,
-        2050,
-        2070,
-        2090
-      ],
-      "files": {
-        "2030": "earth_ssp245_2030.json",
-        "2050": "earth_ssp245_2050.json",
-        "2070": "earth_ssp245_2070.json",
-        "2090": "earth_ssp245_2090.json"
-      }
-    },
-    {
-      "id": "ssp585",
-      "label": "SSP5-8.5 · high emissions",
-      "short": "High emissions",
-      "code": "SSP5-8.5",
-      "years": [
-        2030,
-        2050,
-        2070,
-        2090
-      ],
-      "files": {
-        "2030": "earth_ssp585_2030.json",
-        "2050": "earth_ssp585_2050.json",
-        "2070": "earth_ssp585_2070.json",
-        "2090": "earth_ssp585_2090.json"
-      }
-    }
-  ],
-  "scenarios_available": [
-    "ssp245",
-    "ssp585"
-  ],
-  "future_note": "Future years: CMIP6 multi-model mean (WorldClim 2.1). Changed: air temperature incl. the day-night air swing, precipitation and aridity (dry-land filter). NDVI (vegetation: no global projection exists), ground temperature, terrain, rock type, craters and albedo stay as today (no projection). The app interpolates linearly between the projected years.",
-  "year_columns": [
-    "surface_temp_swing_K",
-    "surface_temp_min_K",
-    "air_temp_swing_K",
-    "ati_percentile",
-    "ground_ice_flag",
-    "dry_bare"
-  ],
-  "files": {
-    "earth": {
-      "now": "earth.json",
-      "2030": "earth_ssp245_2030.json",
-      "2050": "earth_ssp245_2050.json",
-      "2070": "earth_ssp245_2070.json",
-      "2090": "earth_ssp245_2090.json"
-    },
-    "mars": "mars.json"
+  "mars": {
+   "lat_step": 0.1875,
+   "lon_step": 0.1875,
+   "lat0": -89.90625,
+   "lon0": -179.90625,
+   "n_lat": 960,
+   "n_lon": 1920,
+   "decimals": 4,
+   "cell_km": 11.1
   },
-  "compression": "none",
-  "dry_bare_rule": "NDVI < 0.2 (bare ground), not ice or water, and aridity index <= 0.2 (arid + hyper-arid) or a cold desert (mean air temperature < 0 degC, precipitation < 250 mm/yr, albedo < 0.6) (Science)",
-  "dry_land": {
-    "has_aridity": true,
-    "max_aridity": 0.2,
-    "hyper_arid_below": 0.05,
-    "max_ndvi": 0.2,
-    "cold_desert": {
-      "max_air_temp_C": 0.0,
-      "max_precip_mm_yr": 250.0,
-      "max_albedo": 0.6
+  "spatial_support": "grid_11km_v1"
+ },
+ "features": [
+  {
+   "id": "slope_deg",
+   "label": "Slope",
+   "category": "terrain",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "deg",
+   "tau": 12.95,
+   "tau_note": "scaled for 11 km cells on ~0.93 km pixels (provisional)"
+  },
+  {
+   "id": "roughness_m",
+   "label": "Roughness",
+   "category": "terrain",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "m",
+   "tau": 559.5,
+   "tau_note": "scaled for 11 km cells on ~0.93 km pixels (provisional)"
+  },
+  {
+   "id": "relief_m",
+   "label": "Relief inside the cell",
+   "category": "terrain",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "m",
+   "tau": 1560.0,
+   "tau_note": "scaled for 11 km cells on ~0.93 km pixels (provisional)"
+  },
+  {
+   "id": "surface_temp_swing_K",
+   "label": "Day–night ground temperature swing",
+   "category": "thermal",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "K",
+   "tau": 100
+  },
+  {
+   "id": "surface_temp_min_K",
+   "label": "Coldest ground temperature",
+   "category": "thermal",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "K",
+   "tau": 100
+  },
+  {
+   "id": "air_temp_swing_K",
+   "label": "Day–night air temperature swing",
+   "category": "thermal",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "K",
+   "tau": 50
+  },
+  {
+   "id": "ati_percentile",
+   "label": "Thermal inertia (rank within planet)",
+   "category": "thermophysical",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "1",
+   "tau": 0.5
+  },
+  {
+   "id": "albedo",
+   "label": "Albedo",
+   "category": "optical",
+   "kind": "scalar",
+   "comparator": "clipped_linear_v1",
+   "unit": "1",
+   "tau": 0.2
+  },
+  {
+   "id": "mineral_groups",
+   "label": "Mineral groups (proxy)",
+   "category": "mineralogy",
+   "kind": "set",
+   "comparator": "jaccard_v1",
+   "unit": "set",
+   "categories": [
+    "basaltic",
+    "felsic",
+    "clays_hydrated",
+    "sulfates_salts",
+    "carbonates",
+    "iron_oxides"
+   ]
+  },
+  {
+   "id": "rock_group",
+   "label": "Rock type",
+   "category": "geology",
+   "kind": "categorical",
+   "comparator": "categorical_match_v1",
+   "unit": "class",
+   "categories": [
+    "volcanic",
+    "ancient_crust",
+    "sedimentary",
+    "evaporite_salt",
+    "ice",
+    "impact",
+    "water"
+   ]
+  },
+  {
+   "id": "inside_impact_structure",
+   "label": "Impact structure",
+   "category": "craters",
+   "kind": "boolean",
+   "comparator": "boolean_match_v1",
+   "unit": "boolean"
+  },
+  {
+   "id": "ground_ice_flag",
+   "label": "Ground ice",
+   "category": "water",
+   "kind": "boolean",
+   "comparator": "boolean_match_v1",
+   "unit": "boolean"
+  }
+ ],
+ "categories": [
+  {
+   "id": "terrain",
+   "label": "Terrain"
+  },
+  {
+   "id": "thermal",
+   "label": "Day–night temperature"
+  },
+  {
+   "id": "thermophysical",
+   "label": "Thermal inertia"
+  },
+  {
+   "id": "optical",
+   "label": "Albedo"
+  },
+  {
+   "id": "mineralogy",
+   "label": "Mineral groups"
+  },
+  {
+   "id": "geology",
+   "label": "Rock type"
+  },
+  {
+   "id": "craters",
+   "label": "Impact structure"
+  },
+  {
+   "id": "water",
+   "label": "Ground ice"
+  }
+ ],
+ "targets": [
+  {
+   "key": "gale",
+   "name": "Gale Crater (Curiosity)",
+   "lat": -4.5938,
+   "lon": 137.5312,
+   "point": {
+    "lat": -4.5938,
+    "lon": 137.5312
+   },
+   "values": {
+    "slope_deg": 4.061502456665039,
+    "roughness_m": 221.0052032470703,
+    "relief_m": 1076.5,
+    "surface_temp_swing_K": 84.7886962890625,
+    "surface_temp_min_K": 184.7270965576172,
+    "air_temp_swing_K": 43.77383041381836,
+    "albedo": 0.23486259579658508,
+    "ati_percentile": 0.20748046875,
+    "rock_group": "sedimentary",
+    "mineral_groups": [
+     "clays_hydrated",
+     "felsic"
+    ],
+    "inside_impact_structure": true,
+    "ground_ice_flag": false
+   },
+   "note": "Gale crater, Curiosity landing site (Bradbury Landing)"
+  },
+  {
+   "key": "jezero",
+   "name": "Jezero Crater (Perseverance)",
+   "lat": 18.4688,
+   "lon": 77.5312,
+   "point": {
+    "lat": 18.4688,
+    "lon": 77.5312
+   },
+   "values": {
+    "slope_deg": 0.8409265875816345,
+    "roughness_m": 37.0139274597168,
+    "relief_m": 170.5,
+    "surface_temp_swing_K": 77.08279418945312,
+    "surface_temp_min_K": 191.1548614501953,
+    "air_temp_swing_K": 37.341609954833984,
+    "albedo": 0.17649009823799133,
+    "ati_percentile": 0.3962646484375,
+    "rock_group": "sedimentary",
+    "mineral_groups": [
+     "basaltic",
+     "clays_hydrated"
+    ],
+    "inside_impact_structure": true,
+    "ground_ice_flag": false
+   },
+   "note": "Jezero crater, Perseverance landing site (Octavia E. Butler)"
+  },
+  {
+   "key": "arcadia",
+   "name": "Arcadia Planitia (approx.)",
+   "lat": 46.4062,
+   "lon": -167.5312,
+   "point": {
+    "lat": 46.4062,
+    "lon": -167.5312
+   },
+   "values": {
+    "slope_deg": 0.17884773015975952,
+    "roughness_m": 3.5557518005371094,
+    "relief_m": 20.75,
+    "surface_temp_swing_K": 62.194610595703125,
+    "surface_temp_min_K": 155.47068786621094,
+    "air_temp_swing_K": 32.20640182495117,
+    "albedo": 0.24862729012966156,
+    "ati_percentile": 0.4743012152777778,
+    "rock_group": "volcanic",
+    "mineral_groups": [
+     "basaltic",
+     "clays_hydrated"
+    ],
+    "inside_impact_structure": false,
+    "ground_ice_flag": false
+   },
+   "note": "Arcadia Planitia (approx., shallow ground ice)"
+  },
+  {
+   "key": "oxia",
+   "name": "Oxia Planum (Rosalind Franklin)",
+   "lat": 18.0938,
+   "lon": -24.2812,
+   "point": {
+    "lat": 18.16,
+    "lon": -24.33
+   },
+   "values": {
+    "slope_deg": 0.6779956221580505,
+    "roughness_m": 20.460111618041992,
+    "relief_m": 110.0,
+    "surface_temp_swing_K": 72.61052703857422,
+    "surface_temp_min_K": 192.13597106933594,
+    "air_temp_swing_K": 36.65646743774414,
+    "albedo": 0.19101950526237488,
+    "ati_percentile": 0.4326519097222222,
+    "rock_group": "ancient_crust",
+    "mineral_groups": [
+     "clays_hydrated"
+    ],
+    "inside_impact_structure": true,
+    "ground_ice_flag": false
+   },
+   "note": "Oxia Planum, ESA Rosalind Franklin landing site"
+  }
+ ],
+ "presets": [
+  {
+   "id": "rover_navigation",
+   "name": "Rover navigation and mobility",
+   "mission": "Curiosity-type rover driving and route planning",
+   "why": "Terrain decides mobility; surface material (thermal inertia, albedo) separates dunes, gravel and bedrock.",
+   "target": "gale",
+   "category_weights": {
+    "terrain": 0.3754117739001206,
+    "thermal": 0.09657933254730926,
+    "thermophysical": 0.11060657473088502,
+    "optical": 0.20372632160094925,
+    "mineralogy": 0.02613060923907829,
+    "geology": 0.017658755030396794,
+    "craters": 0.07980685547477347,
+    "water": 0.09007977747648725
+   },
+   "feature_weights": {
+    "slope_deg": 0.13419841427118653,
+    "roughness_m": 0.12242510139116804,
+    "relief_m": 0.11878825823776604,
+    "surface_temp_swing_K": 0.05148982437132437,
+    "surface_temp_min_K": 0.022151651966203386,
+    "air_temp_swing_K": 0.0229378562097815,
+    "ati_percentile": 0.11060657473088502,
+    "albedo": 0.20372632160094925,
+    "mineral_groups": 0.02613060923907829,
+    "rock_group": 0.017658755030396794,
+    "inside_impact_structure": 0.07980685547477347,
+    "ground_ice_flag": 0.09007977747648725
+   },
+   "requirements": [],
+   "required_features": [],
+   "weights_used": "calibrated",
+   "verdict": "accepted",
+   "verdict_reason": "hidden analogs: mean rank 504 -> 446 (+11.6%), 2/2 improved; threshold 5% and half improved",
+   "known_analogs": [
+    {
+     "name": "Atacama",
+     "id": "c1140_1100"
+    },
+    {
+     "name": "Arizaro",
+     "id": "c1147_1122"
+    },
+    {
+     "name": "Kara-Kul",
+     "id": "c509_2534"
     }
-  },
-  "thresholds": {
-    "strong_at_least": 75,
-    "weak_at_most": 40
-  },
-  "common_limitations": [
+   ],
+   "declared_limitations": [
     "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
     "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
     "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
     "Gravity and radiation are not reproduced on Earth.",
     "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
-  ]
+   ]
+  },
+  {
+   "id": "sample_science",
+   "name": "Sample science and geology",
+   "mission": "Perseverance-type sampling of water-formed sediments",
+   "why": "Rock type and surface material record the water history (Science P7/P8); dry lake beds and salt flats match best.",
+   "target": "jezero",
+   "category_weights": {
+    "craters": 0.5,
+    "geology": 2.0,
+    "mineralogy": 1.0,
+    "optical": 1.0,
+    "terrain": 1.0,
+    "thermal": 0.5,
+    "thermophysical": 1.0,
+    "water": 0.5
+   },
+   "feature_weights": {
+    "slope_deg": 1.0,
+    "roughness_m": 1.0,
+    "relief_m": 1.0,
+    "surface_temp_swing_K": 2.0,
+    "surface_temp_min_K": 1.0,
+    "air_temp_swing_K": 1.0,
+    "ati_percentile": 1.0,
+    "albedo": 1.0,
+    "mineral_groups": 1.0,
+    "rock_group": 1.0,
+    "inside_impact_structure": 1.0,
+    "ground_ice_flag": 1.0
+   },
+   "requirements": [],
+   "required_features": [],
+   "weights_used": "science (start)",
+   "verdict": "rejected",
+   "verdict_reason": "hidden analogs: mean rank 1563 -> 1527 (+2.3%), 2/2 improved; threshold 5% and half improved",
+   "known_analogs": [
+    {
+     "name": "Atacama",
+     "id": "c1140_1100"
+    },
+    {
+     "name": "Arizaro",
+     "id": "c1147_1122"
+    }
+   ],
+   "declared_limitations": [
+    "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
+    "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
+    "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
+    "Gravity and radiation are not reproduced on Earth.",
+    "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
+   ]
+  },
+  {
+   "id": "thermal_environment",
+   "name": "Thermal environment testing",
+   "mission": "Instrument and thermal-management tests in a Mars-like day-night cycle",
+   "why": "The day-night swing is the clearest Mars-like signal (Science P2); cold minima matter for survival heating.",
+   "target": "gale",
+   "category_weights": {
+    "craters": 0.0,
+    "geology": 0.0,
+    "mineralogy": 0.0,
+    "optical": 1.0,
+    "terrain": 0.25,
+    "thermal": 3.0,
+    "thermophysical": 1.0,
+    "water": 0.5
+   },
+   "feature_weights": {
+    "slope_deg": 1.0,
+    "roughness_m": 1.0,
+    "relief_m": 1.0,
+    "surface_temp_swing_K": 2.0,
+    "surface_temp_min_K": 1.0,
+    "air_temp_swing_K": 1.0,
+    "ati_percentile": 1.0,
+    "albedo": 1.0,
+    "mineral_groups": 1.0,
+    "rock_group": 1.0,
+    "inside_impact_structure": 1.0,
+    "ground_ice_flag": 1.0
+   },
+   "requirements": [],
+   "required_features": [],
+   "weights_used": "science (start)",
+   "verdict": "rejected",
+   "verdict_reason": "hidden analogs: mean rank 813 -> 844 (-3.8%), 1/3 improved; threshold 5% and half improved",
+   "known_analogs": [
+    {
+     "name": "Atacama",
+     "id": "c1140_1100"
+    },
+    {
+     "name": "Dry Valleys",
+     "id": "c1675_3418"
+    },
+    {
+     "name": "Arizaro",
+     "id": "c1147_1122"
+    }
+   ],
+   "declared_limitations": [
+    "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
+    "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
+    "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
+    "Gravity and radiation are not reproduced on Earth.",
+    "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain."
+   ]
+  },
+  {
+   "id": "ice_prospecting",
+   "name": "Ground-ice prospecting (ISRU)",
+   "mission": "Drilling and extraction tests for shallow ground ice",
+   "why": "Ice is a hard requirement for the Earth site. Similarity then favours cold, flat plains.",
+   "target": "arcadia",
+   "category_weights": {
+    "craters": 0.0,
+    "geology": 0.5,
+    "mineralogy": 0.0,
+    "optical": 0.5,
+    "terrain": 1.0,
+    "thermal": 2.0,
+    "thermophysical": 0.5,
+    "water": 0.0
+   },
+   "feature_weights": {
+    "slope_deg": 1.0,
+    "roughness_m": 1.0,
+    "relief_m": 1.0,
+    "surface_temp_swing_K": 2.0,
+    "surface_temp_min_K": 1.0,
+    "air_temp_swing_K": 1.0,
+    "ati_percentile": 1.0,
+    "albedo": 1.0,
+    "mineral_groups": 1.0,
+    "rock_group": 1.0,
+    "inside_impact_structure": 1.0,
+    "ground_ice_flag": 0.0
+   },
+   "requirements": [
+    {
+     "feature": "ground_ice_flag",
+     "equals": true,
+     "id": "earth_site_has_ground_ice"
+    }
+   ],
+   "required_features": [
+    "ground_ice_flag"
+   ],
+   "weights_used": "science (start)",
+   "verdict": "not_validated",
+   "verdict_reason": "leave-one-out was not run (it needs at least 2 usable known analogs); keep the starting weights",
+   "known_analogs": [
+    {
+     "name": "Devon Island (Haughton)",
+     "id": "c146_903"
+    },
+    {
+     "name": "Dry Valleys",
+     "id": "c1675_3418"
+    }
+   ],
+   "declared_limitations": [
+    "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
+    "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
+    "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
+    "Gravity and radiation are not reproduced on Earth.",
+    "Resolution: 1-degree cells (about 110 km) are far coarser than rover-scale terrain.",
+    "Mars ice flag in this grid needs >= 10 wt% H2O; Arcadia shows about 5 wt% so it is flagged 0 although Science reports ice centimetres below the surface. Ice is used as a requirement on Earth sites instead.",
+    "Earth ice data covers northern-hemisphere permafrost only (Antarctic sites show no ice)."
+   ]
+  }
+ ],
+ "years": [
+  "now",
+  2030,
+  2050,
+  2070,
+  2090
+ ],
+ "baseline_year": 1985,
+ "scenario": "ssp245",
+ "scenarios": [
+  {
+   "id": "ssp245",
+   "label": "SSP2-4.5 · middle of the road",
+   "short": "Moderate",
+   "code": "SSP2-4.5",
+   "years": [
+    2030,
+    2050,
+    2070,
+    2090
+   ],
+   "files": {
+    "2030": "compact:ssp245_2030",
+    "2050": "compact:ssp245_2050",
+    "2070": "compact:ssp245_2070",
+    "2090": "compact:ssp245_2090"
+   }
+  },
+  {
+   "id": "ssp585",
+   "label": "SSP5-8.5 · high emissions",
+   "short": "High emissions",
+   "code": "SSP5-8.5",
+   "years": [
+    2030,
+    2050,
+    2070,
+    2090
+   ],
+   "files": {
+    "2030": "compact:ssp585_2030",
+    "2050": "compact:ssp585_2050",
+    "2070": "compact:ssp585_2070",
+    "2090": "compact:ssp585_2090"
+   }
+  }
+ ],
+ "scenarios_available": [
+  "ssp245",
+  "ssp585"
+ ],
+ "future_note": "Future years: CMIP6 multi-model mean (WorldClim 2.1). Changed: air temperature incl. the day-night air swing, precipitation and aridity (dry-land filter). NDVI (vegetation: no global projection exists), ground temperature, terrain, rock type, craters and albedo stay as today (no projection). The app interpolates linearly between the projected years.",
+ "year_columns": [
+  "surface_temp_swing_K",
+  "surface_temp_min_K",
+  "air_temp_swing_K",
+  "ati_percentile",
+  "ground_ice_flag",
+  "dry_bare"
+ ],
+ "files": {
+  "earth": {
+   "now": "cells.json"
+  },
+  "mars": "mars.json"
+ },
+ "compression": "none",
+ "dry_bare_rule": "NDVI < 0.2 (bare ground), not ice or water, and aridity index <= 0.2 (arid + hyper-arid) or a cold desert (mean air temperature < 0 degC, precipitation < 250 mm/yr, albedo < 0.6) (Science)",
+ "dry_land": {
+  "has_aridity": true,
+  "max_aridity": 0.2,
+  "hyper_arid_below": 0.05,
+  "max_ndvi": 0.2,
+  "cold_desert": {
+   "max_air_temp_C": 0.0,
+   "max_precip_mm_yr": 250.0,
+   "max_albedo": 0.6
+  }
+ },
+ "thresholds": {
+  "strong_at_least": 75,
+  "weak_at_most": 40
+ },
+ "common_limitations": [
+  "Pressure: every Earth site has roughly 80-150x Mars' air pressure (P5, not scored).",
+  "Sunlight and UV: no comparable data; Mars has no ozone layer (P5, not scored).",
+  "Dust: no Earth equivalent of the Martian dust layer (P6, not scored).",
+  "Gravity and radiation are not reproduced on Earth.",
+  "Resolution: 11 km cells on both planets (Earth 0.1 deg, Mars 0.1875 deg). Rock type, minerals and ground ice still come from 1-degree data; Mars temperatures come from a ~200 km climate model.",
+  "Only cells that are Mars-like dry land in some year are included, so 'dry land only' cannot be switched off at 11 km."
+ ],
+ "compact": {
+  "cells": "cells.json",
+  "deltas": "deltas.json",
+  "mars_fine": [
+   "mars_fine_a.json",
+   "mars_fine_b.json"
+  ],
+  "note": "Earth: only cells that are Mars-like dry land in at least one year (268,375 of 2.13 M land cells)."
+ },
+ "resolution_note": "11 km grid built from WorldClim 2.1, MODIS (OpenLandMap), MOLA and TES; see the Analog Atlas for the method."
 }

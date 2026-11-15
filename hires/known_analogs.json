@@ -1,0 +1,2452 @@
+[
+ {
+  "name": "Mars Desert Research Station (MDRS)",
+  "lat": 38.406,
+  "lon": -110.792,
+  "country": "USA",
+  "kind": "station",
+  "analog_for": "Mars Society crew habitat simulation, Utah desert",
+  "source": "https://en.wikipedia.org/wiki/Mars_Desert_Research_Station",
+  "approx": false
+ },
+ {
+  "name": "Flashline Mars Arctic Research Station (FMARS)",
+  "lat": 75.43,
+  "lon": -89.82,
+  "country": "Canada",
+  "kind": "station",
+  "analog_for": "Mars Society Arctic habitat, Devon Island",
+  "source": "https://en.wikipedia.org/wiki/Flashline_Mars_Arctic_Research_Station",
+  "approx": false
+ },
+ {
+  "name": "Haughton impact crater / Haughton-Mars Project",
+  "lat": 75.38,
+  "lon": -89.68,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Impact crater, polar desert, HMP field station",
+  "source": "https://en.wikipedia.org/wiki/Haughton_crater",
+  "approx": false
+ },
+ {
+  "name": "HI-SEAS habitat (Mauna Loa)",
+  "lat": 19.6,
+  "lon": -155.48,
+  "country": "USA",
+  "kind": "station",
+  "analog_for": "NASA crew isolation study, basaltic Mars-like terrain",
+  "source": "https://en.wikipedia.org/wiki/Hawaii_Space_Exploration_Analog_and_Simulation",
+  "approx": false
+ },
+ {
+  "name": "Black Point Lava Flow (NASA Desert RATS)",
+  "lat": 36.15,
+  "lon": -111.45,
+  "country": "USA",
+  "kind": "field_test",
+  "analog_for": "NASA Desert RATS rover/EVA tests",
+  "source": "https://en.wikipedia.org/wiki/Desert_RATS",
+  "approx": true
+ },
+ {
+  "name": "SP Crater",
+  "lat": 35.58,
+  "lon": -111.64,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Cinder cone and lava flow, NASA Desert RATS/rover tests",
+  "source": "https://en.wikipedia.org/wiki/SP_Mountain",
+  "approx": false
+ },
+ {
+  "name": "Sunset Crater",
+  "lat": 35.36,
+  "lon": -111.5,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Cinder cone, Apollo training, Mars volcanic analog",
+  "source": "https://en.wikipedia.org/wiki/Sunset_Crater",
+  "approx": false
+ },
+ {
+  "name": "Meteor Crater (Barringer)",
+  "lat": 35.03,
+  "lon": -111.02,
+  "country": "USA",
+  "kind": "impact",
+  "analog_for": "Simple impact crater",
+  "source": "https://en.wikipedia.org/wiki/Meteor_Crater",
+  "approx": false
+ },
+ {
+  "name": "Amboy Crater",
+  "lat": 34.54,
+  "lon": -115.78,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Mojave basalt flow, rover tests",
+  "source": "https://en.wikipedia.org/wiki/Amboy_Crater",
+  "approx": false
+ },
+ {
+  "name": "Pisgah Crater",
+  "lat": 34.75,
+  "lon": -116.37,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Mojave lava flow, rover tests",
+  "source": "https://en.wikipedia.org/wiki/Pisgah_Crater",
+  "approx": false
+ },
+ {
+  "name": "Dumont Dunes",
+  "lat": 35.68,
+  "lon": -116.25,
+  "country": "USA",
+  "kind": "field_test",
+  "analog_for": "Dune field, JPL/rover tests",
+  "source": "https://en.wikipedia.org/wiki/Dumont_Dunes",
+  "approx": false
+ },
+ {
+  "name": "Kelso Dunes",
+  "lat": 34.9,
+  "lon": -115.7,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Aeolian dune analog",
+  "source": "https://en.wikipedia.org/wiki/Kelso_Dunes",
+  "approx": false
+ },
+ {
+  "name": "JPL Mars Yard",
+  "lat": 34.2,
+  "lon": -118.17,
+  "country": "USA",
+  "kind": "field_test",
+  "analog_for": "JPL rover testbed (Mars Yard)",
+  "source": "https://en.wikipedia.org/wiki/Jet_Propulsion_Laboratory",
+  "approx": false
+ },
+ {
+  "name": "NEEMO Aquarius underwater habitat",
+  "lat": 24.95,
+  "lon": -80.45,
+  "country": "USA",
+  "kind": "station",
+  "analog_for": "NASA undersea analog mission",
+  "source": "https://en.wikipedia.org/wiki/NASA_Extreme_Environment_Mission_Operations",
+  "approx": false
+ },
+ {
+  "name": "HERA habitat (Johnson Space Center)",
+  "lat": 29.55,
+  "lon": -95.09,
+  "country": "USA",
+  "kind": "station",
+  "analog_for": "NASA Human Exploration Research Analog",
+  "source": "https://en.wikipedia.org/wiki/Human_Exploration_Research_Analog",
+  "approx": false
+ },
+ {
+  "name": "Lava Beds National Monument",
+  "lat": 41.71,
+  "lon": -121.51,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Lava tubes, basalt, Mars cave analog",
+  "source": "https://en.wikipedia.org/wiki/Lava_Beds_National_Monument",
+  "approx": false
+ },
+ {
+  "name": "Craters of the Moon (Idaho)",
+  "lat": 43.42,
+  "lon": -113.52,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "NASA BASALT, basaltic lava fields",
+  "source": "https://en.wikipedia.org/wiki/Craters_of_the_Moon_National_Monument_and_Preserve",
+  "approx": false
+ },
+ {
+  "name": "Kilauea (Hawaii)",
+  "lat": 19.42,
+  "lon": -155.29,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Basaltic volcanism, ISRU tests",
+  "source": "https://en.wikipedia.org/wiki/Kilauea",
+  "approx": false
+ },
+ {
+  "name": "Mauna Kea (Hawaii)",
+  "lat": 19.82,
+  "lon": -155.47,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Palagonite, Mars soil simulant, PISCES",
+  "source": "https://en.wikipedia.org/wiki/Mauna_Kea",
+  "approx": false
+ },
+ {
+  "name": "Puu Oo / Kau Desert (Hawaii)",
+  "lat": 19.39,
+  "lon": -155.1,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Mars volcanic analog",
+  "source": "https://en.wikipedia.org/wiki/Pu%CA%BBu_%CA%BB%C5%8C%CA%BB%C5%8D",
+  "approx": false
+ },
+ {
+  "name": "Valles Caldera",
+  "lat": 35.87,
+  "lon": -106.5,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Caldera, hydrothermal systems",
+  "source": "https://en.wikipedia.org/wiki/Valles_Caldera",
+  "approx": false
+ },
+ {
+  "name": "Valley of Ten Thousand Smokes",
+  "lat": 58.4,
+  "lon": -155.3,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Ignimbrite / fumaroles",
+  "source": "https://en.wikipedia.org/wiki/Valley_of_Ten_Thousand_Smokes",
+  "approx": false
+ },
+ {
+  "name": "Yellowstone (Grand Prismatic Spring)",
+  "lat": 44.53,
+  "lon": -110.84,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Hot springs, silica sinter (Home Plate analog)",
+  "source": "https://en.wikipedia.org/wiki/Grand_Prismatic_Spring",
+  "approx": false
+ },
+ {
+  "name": "Mono Lake",
+  "lat": 38.0,
+  "lon": -119.0,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Alkaline hypersaline lake, tufa",
+  "source": "https://en.wikipedia.org/wiki/Mono_Lake",
+  "approx": false
+ },
+ {
+  "name": "Searles Lake",
+  "lat": 35.7,
+  "lon": -117.35,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Evaporite basin, brines",
+  "source": "https://en.wikipedia.org/wiki/Searles_Lake",
+  "approx": false
+ },
+ {
+  "name": "Badwater Basin (Death Valley)",
+  "lat": 36.23,
+  "lon": -116.77,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Salt pan, evaporites",
+  "source": "https://en.wikipedia.org/wiki/Badwater_Basin",
+  "approx": false
+ },
+ {
+  "name": "Ubehebe Crater (Death Valley)",
+  "lat": 36.97,
+  "lon": -117.45,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Maar crater, phreatomagmatic",
+  "source": "https://en.wikipedia.org/wiki/Ubehebe_Crater",
+  "approx": false
+ },
+ {
+  "name": "Racetrack Playa",
+  "lat": 36.68,
+  "lon": -117.56,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Playa, sliding rocks",
+  "source": "https://en.wikipedia.org/wiki/Racetrack_Playa",
+  "approx": false
+ },
+ {
+  "name": "Zabriskie Point / Death Valley badlands",
+  "lat": 36.42,
+  "lon": -116.81,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Mars-like badlands, fans",
+  "source": "https://en.wikipedia.org/wiki/Zabriskie_Point",
+  "approx": false
+ },
+ {
+  "name": "Green River (Utah)",
+  "lat": 38.99,
+  "lon": -110.16,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Cold-water geysers, concretions (Blueberry analog)",
+  "source": "https://en.wikipedia.org/wiki/Green_River,_Utah",
+  "approx": false
+ },
+ {
+  "name": "Moab (Utah)",
+  "lat": 38.57,
+  "lon": -109.55,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Navajo sandstone concretions",
+  "source": "https://en.wikipedia.org/wiki/Moab,_Utah",
+  "approx": false
+ },
+ {
+  "name": "Goblin Valley State Park",
+  "lat": 38.57,
+  "lon": -110.7,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Hoodoos, Mars-like erosional terrain",
+  "source": "https://en.wikipedia.org/wiki/Goblin_Valley_State_Park",
+  "approx": false
+ },
+ {
+  "name": "San Rafael Swell",
+  "lat": 38.8,
+  "lon": -110.7,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Mars-like canyons and mesas",
+  "source": "https://en.wikipedia.org/wiki/San_Rafael_Swell",
+  "approx": false
+ },
+ {
+  "name": "Capitol Reef / Hanksville badlands",
+  "lat": 38.2,
+  "lon": -111.17,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Morrison Fm, Mars-like badlands",
+  "source": "https://en.wikipedia.org/wiki/Capitol_Reef_National_Park",
+  "approx": false
+ },
+ {
+  "name": "Upheaval Dome",
+  "lat": 38.44,
+  "lon": -109.9,
+  "country": "USA",
+  "kind": "impact",
+  "analog_for": "Complex impact structure",
+  "source": "https://en.wikipedia.org/wiki/Upheaval_Dome",
+  "approx": false
+ },
+ {
+  "name": "Channeled Scablands",
+  "lat": 47.0,
+  "lon": -118.5,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Catastrophic flood channels (outflow channels)",
+  "source": "https://en.wikipedia.org/wiki/Channeled_Scablands",
+  "approx": true
+ },
+ {
+  "name": "Great Salt Lake",
+  "lat": 41.2,
+  "lon": -112.6,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Hypersaline lake",
+  "source": "https://en.wikipedia.org/wiki/Great_Salt_Lake",
+  "approx": false
+ },
+ {
+  "name": "Bonneville Salt Flats",
+  "lat": 40.76,
+  "lon": -113.8,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Salt flat, playa",
+  "source": "https://en.wikipedia.org/wiki/Bonneville_Salt_Flats",
+  "approx": false
+ },
+ {
+  "name": "Black Rock Desert",
+  "lat": 40.9,
+  "lon": -119.0,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Playa",
+  "source": "https://en.wikipedia.org/wiki/Black_Rock_Desert_(Nevada)",
+  "approx": false
+ },
+ {
+  "name": "White Sands (New Mexico)",
+  "lat": 32.78,
+  "lon": -106.17,
+  "country": "USA",
+  "kind": "evaporite",
+  "analog_for": "Gypsum dunes",
+  "source": "https://en.wikipedia.org/wiki/White_Sands_National_Park",
+  "approx": false
+ },
+ {
+  "name": "Great Sand Dunes (Colorado)",
+  "lat": 37.73,
+  "lon": -105.51,
+  "country": "USA",
+  "kind": "other",
+  "analog_for": "Dune field",
+  "source": "https://en.wikipedia.org/wiki/Great_Sand_Dunes_National_Park_and_Preserve",
+  "approx": false
+ },
+ {
+  "name": "Zuni-Bandera volcanic field",
+  "lat": 34.97,
+  "lon": -108.0,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Lava tubes, basalt",
+  "source": "https://en.wikipedia.org/wiki/Zuni-Bandera_volcanic_field",
+  "approx": false
+ },
+ {
+  "name": "Salton Sea mud pots",
+  "lat": 33.2,
+  "lon": -115.6,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Geothermal mud volcanoes",
+  "source": "https://en.wikipedia.org/wiki/Salton_Sea_Geothermal_Field",
+  "approx": true
+ },
+ {
+  "name": "Lassen Volcanic Park",
+  "lat": 40.49,
+  "lon": -121.5,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Hydrothermal acid springs",
+  "source": "https://en.wikipedia.org/wiki/Lassen_Volcanic_National_Park",
+  "approx": false
+ },
+ {
+  "name": "Mount St. Helens",
+  "lat": 46.2,
+  "lon": -122.18,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "Volcano-ice interaction",
+  "source": "https://en.wikipedia.org/wiki/Mount_St._Helens",
+  "approx": false
+ },
+ {
+  "name": "Chesapeake Bay impact crater",
+  "lat": 37.3,
+  "lon": -76.0,
+  "country": "USA",
+  "kind": "impact",
+  "analog_for": "Buried marine-target impact",
+  "source": "https://en.wikipedia.org/wiki/Chesapeake_Bay_impact_crater",
+  "approx": false
+ },
+ {
+  "name": "Mauna Loa saddle region",
+  "lat": 19.6,
+  "lon": -155.55,
+  "country": "USA",
+  "kind": "volcanic",
+  "analog_for": "High-elevation basalt field",
+  "source": "https://en.wikipedia.org/wiki/Mauna_Loa",
+  "approx": false
+ },
+ {
+  "name": "Spotted Lake",
+  "lat": 49.08,
+  "lon": -119.57,
+  "country": "Canada",
+  "kind": "evaporite",
+  "analog_for": "Mg-sulfate lake, Mars salt analog",
+  "source": "https://en.wikipedia.org/wiki/Spotted_Lake",
+  "approx": false
+ },
+ {
+  "name": "Pavilion Lake",
+  "lat": 50.87,
+  "lon": -121.74,
+  "country": "Canada",
+  "kind": "scientific",
+  "analog_for": "Microbialites, NASA analog (DOMES/PLRP)",
+  "source": "https://en.wikipedia.org/wiki/Pavilion_Lake",
+  "approx": false
+ },
+ {
+  "name": "Gypsum Hill spring (Axel Heiberg)",
+  "lat": 79.38,
+  "lon": -90.72,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "Cold saline springs, gypsum",
+  "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island",
+  "approx": false
+ },
+ {
+  "name": "Colour Peak spring (Axel Heiberg)",
+  "lat": 79.4,
+  "lon": -90.8,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "Cold saline springs",
+  "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island",
+  "approx": true
+ },
+ {
+  "name": "Lost Hammer spring (Axel Heiberg)",
+  "lat": 79.12,
+  "lon": -90.2,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "Hypersaline methane-rich cold spring",
+  "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island",
+  "approx": true
+ },
+ {
+  "name": "Expedition Fiord (Axel Heiberg)",
+  "lat": 79.4,
+  "lon": -91.0,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "Permafrost, glaciers",
+  "source": "https://en.wikipedia.org/wiki/Axel_Heiberg_Island",
+  "approx": true
+ },
+ {
+  "name": "Lake Hazen (Ellesmere)",
+  "lat": 81.8,
+  "lon": -71.3,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "High-Arctic lake/glacier",
+  "source": "https://en.wikipedia.org/wiki/Lake_Hazen",
+  "approx": false
+ },
+ {
+  "name": "Bylot Island",
+  "lat": 73.25,
+  "lon": -79.5,
+  "country": "Canada",
+  "kind": "polar",
+  "analog_for": "Permafrost, ice-wedge polygons",
+  "source": "https://en.wikipedia.org/wiki/Bylot_Island",
+  "approx": false
+ },
+ {
+  "name": "Mistastin Lake crater",
+  "lat": 55.53,
+  "lon": -63.3,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Impact melt, lunar/Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Mistastin_crater",
+  "approx": false
+ },
+ {
+  "name": "Sudbury Basin",
+  "lat": 46.6,
+  "lon": -81.2,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Large impact basin, shatter cones",
+  "source": "https://en.wikipedia.org/wiki/Sudbury_Basin",
+  "approx": false
+ },
+ {
+  "name": "Manicouagan crater",
+  "lat": 51.4,
+  "lon": -68.7,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Large impact structure",
+  "source": "https://en.wikipedia.org/wiki/Manicouagan_Reservoir",
+  "approx": false
+ },
+ {
+  "name": "Pingualuit crater",
+  "lat": 61.28,
+  "lon": -73.68,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Young impact crater lake",
+  "source": "https://en.wikipedia.org/wiki/Pingualuit_crater",
+  "approx": false
+ },
+ {
+  "name": "Clearwater Lakes (twin craters)",
+  "lat": 56.1,
+  "lon": -74.5,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Double impact craters",
+  "source": "https://en.wikipedia.org/wiki/Clearwater_Lakes",
+  "approx": false
+ },
+ {
+  "name": "Brent crater",
+  "lat": 46.08,
+  "lon": -78.48,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Eroded simple crater",
+  "source": "https://en.wikipedia.org/wiki/Brent_Crater",
+  "approx": false
+ },
+ {
+  "name": "Wanapitei crater",
+  "lat": 46.75,
+  "lon": -80.75,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Impact lake",
+  "source": "https://en.wikipedia.org/wiki/Wanapitei_crater",
+  "approx": false
+ },
+ {
+  "name": "Slate Islands",
+  "lat": 48.65,
+  "lon": -87.0,
+  "country": "Canada",
+  "kind": "impact",
+  "analog_for": "Central uplift, shatter cones",
+  "source": "https://en.wikipedia.org/wiki/Slate_Islands",
+  "approx": false
+ },
+ {
+  "name": "Isua Greenstone Belt",
+  "lat": 65.2,
+  "lon": -49.8,
+  "country": "Greenland",
+  "kind": "scientific",
+  "analog_for": "Earliest life/Noachian rocks analog",
+  "source": "https://en.wikipedia.org/wiki/Isua_Greenstone_Belt",
+  "approx": false
+ },
+ {
+  "name": "Kaunertal Glacier (AMADEE-15)",
+  "lat": 46.87,
+  "lon": 10.73,
+  "country": "Austria",
+  "kind": "field_test",
+  "analog_for": "OeWF AMADEE-15 mission simulation",
+  "source": "https://en.wikipedia.org/wiki/Kaunertal_Glacier",
+  "approx": false
+ },
+ {
+  "name": "Bletterbach Gorge",
+  "lat": 46.35,
+  "lon": 11.37,
+  "country": "Italy",
+  "kind": "field_test",
+  "analog_for": "ESA PANGAEA, sedimentary stratigraphy",
+  "source": "https://en.wikipedia.org/wiki/Bletterbach",
+  "approx": false
+ },
+ {
+  "name": "Mount Etna",
+  "lat": 37.75,
+  "lon": 15.0,
+  "country": "Italy",
+  "kind": "volcanic",
+  "analog_for": "Basaltic volcanism, caves",
+  "source": "https://en.wikipedia.org/wiki/Mount_Etna",
+  "approx": false
+ },
+ {
+  "name": "Stromboli",
+  "lat": 38.79,
+  "lon": 15.21,
+  "country": "Italy",
+  "kind": "volcanic",
+  "analog_for": "Explosive basaltic volcanism",
+  "source": "https://en.wikipedia.org/wiki/Stromboli",
+  "approx": false
+ },
+ {
+  "name": "Campi Flegrei / Solfatara",
+  "lat": 40.83,
+  "lon": 14.14,
+  "country": "Italy",
+  "kind": "volcanic",
+  "analog_for": "Acid fumaroles, hydrothermal",
+  "source": "https://en.wikipedia.org/wiki/Solfatara_(volcano)",
+  "approx": false
+ },
+ {
+  "name": "Sardinia caves (ESA CAVES)",
+  "lat": 40.0,
+  "lon": 9.4,
+  "country": "Italy",
+  "kind": "field_test",
+  "analog_for": "ESA CAVES training",
+  "source": "https://en.wikipedia.org/wiki/ESA_CAVES",
+  "approx": true
+ },
+ {
+  "name": "Ries impact crater (Noerdlinger Ries)",
+  "lat": 48.88,
+  "lon": 10.57,
+  "country": "Germany",
+  "kind": "impact",
+  "analog_for": "ESA PANGAEA, impact ejecta, suevite",
+  "source": "https://en.wikipedia.org/wiki/N%C3%B6rdlinger_Ries",
+  "approx": false
+ },
+ {
+  "name": "Steinheim crater",
+  "lat": 48.69,
+  "lon": 10.07,
+  "country": "Germany",
+  "kind": "impact",
+  "analog_for": "Complex crater with central peak",
+  "source": "https://en.wikipedia.org/wiki/Steinheim_crater",
+  "approx": false
+ },
+ {
+  "name": "Rochechouart impact structure",
+  "lat": 45.83,
+  "lon": 0.78,
+  "country": "France",
+  "kind": "impact",
+  "analog_for": "Eroded impact structure",
+  "source": "https://en.wikipedia.org/wiki/Rochechouart_impact_structure",
+  "approx": false
+ },
+ {
+  "name": "Timanfaya / Lanzarote (ESA PANGAEA)",
+  "lat": 29.0,
+  "lon": -13.75,
+  "country": "Spain",
+  "kind": "field_test",
+  "analog_for": "ESA PANGAEA, basaltic lava fields",
+  "source": "https://en.wikipedia.org/wiki/Timanfaya_National_Park",
+  "approx": false
+ },
+ {
+  "name": "Teide / Las Canadas (Tenerife)",
+  "lat": 28.27,
+  "lon": -16.64,
+  "country": "Spain",
+  "kind": "field_test",
+  "analog_for": "ExoMars rover tests, volcanic Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Teide",
+  "approx": false
+ },
+ {
+  "name": "Cumbre Vieja (La Palma)",
+  "lat": 28.6,
+  "lon": -17.85,
+  "country": "Spain",
+  "kind": "volcanic",
+  "analog_for": "Basaltic volcanism",
+  "source": "https://en.wikipedia.org/wiki/Cumbre_Vieja",
+  "approx": false
+ },
+ {
+  "name": "Rio Tinto",
+  "lat": 37.72,
+  "lon": -6.55,
+  "country": "Spain",
+  "kind": "scientific",
+  "analog_for": "Acidic iron-sulfate (jarosite, hematite) analog; MARTE",
+  "source": "https://en.wikipedia.org/wiki/Rio_Tinto_(river)",
+  "approx": false
+ },
+ {
+  "name": "Laguna de Tirez",
+  "lat": 39.5,
+  "lon": -3.05,
+  "country": "Spain",
+  "kind": "evaporite",
+  "analog_for": "Sulfate evaporitic playa lake",
+  "source": "https://en.wikipedia.org/wiki/Laguna_de_Tirez",
+  "approx": true
+ },
+ {
+  "name": "Bardenas Reales",
+  "lat": 42.18,
+  "lon": -1.5,
+  "country": "Spain",
+  "kind": "other",
+  "analog_for": "Badlands, Mars-like landscapes",
+  "source": "https://en.wikipedia.org/wiki/Bardenas_Reales",
+  "approx": false
+ },
+ {
+  "name": "Cabo de Gata",
+  "lat": 36.8,
+  "lon": -2.1,
+  "country": "Spain",
+  "kind": "volcanic",
+  "analog_for": "Volcanic arc, evaporites",
+  "source": "https://en.wikipedia.org/wiki/Cabo_de_Gata-N%C3%ADjar_Natural_Park",
+  "approx": false
+ },
+ {
+  "name": "Tabernas Desert",
+  "lat": 37.0,
+  "lon": -2.4,
+  "country": "Spain",
+  "kind": "other",
+  "analog_for": "Badlands, desert",
+  "source": "https://en.wikipedia.org/wiki/Tabernas_Desert",
+  "approx": false
+ },
+ {
+  "name": "Jaroso Ravine (Sierra Almagrera)",
+  "lat": 37.35,
+  "lon": -1.8,
+  "country": "Spain",
+  "kind": "scientific",
+  "analog_for": "Jarosite type locality",
+  "source": "https://en.wikipedia.org/wiki/Jarosite",
+  "approx": true
+ },
+ {
+  "name": "Santorini",
+  "lat": 36.4,
+  "lon": 25.4,
+  "country": "Greece",
+  "kind": "volcanic",
+  "analog_for": "Caldera, hydrothermal",
+  "source": "https://en.wikipedia.org/wiki/Santorini",
+  "approx": false
+ },
+ {
+  "name": "Milos island",
+  "lat": 36.7,
+  "lon": 24.4,
+  "country": "Greece",
+  "kind": "volcanic",
+  "analog_for": "Hydrothermal sulfur deposits",
+  "source": "https://en.wikipedia.org/wiki/Milos",
+  "approx": false
+ },
+ {
+  "name": "Kaali crater",
+  "lat": 58.37,
+  "lon": 22.67,
+  "country": "Estonia",
+  "kind": "impact",
+  "analog_for": "Small impact crater field",
+  "source": "https://en.wikipedia.org/wiki/Kaali_crater",
+  "approx": false
+ },
+ {
+  "name": "Lappajarvi crater",
+  "lat": 63.15,
+  "lon": 23.7,
+  "country": "Finland",
+  "kind": "impact",
+  "analog_for": "Impact melt structure",
+  "source": "https://en.wikipedia.org/wiki/Lappaj%C3%A4rvi_crater",
+  "approx": false
+ },
+ {
+  "name": "Siljan Ring",
+  "lat": 61.0,
+  "lon": 14.9,
+  "country": "Sweden",
+  "kind": "impact",
+  "analog_for": "Large eroded impact",
+  "source": "https://en.wikipedia.org/wiki/Siljan_Ring",
+  "approx": false
+ },
+ {
+  "name": "Dellen crater",
+  "lat": 61.8,
+  "lon": 16.65,
+  "country": "Sweden",
+  "kind": "impact",
+  "analog_for": "Impact lake",
+  "source": "https://en.wikipedia.org/wiki/Dellen",
+  "approx": false
+ },
+ {
+  "name": "Holuhraun lava field",
+  "lat": 64.85,
+  "lon": -16.8,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "2014 basalt lava flood, Mars flood basalt",
+  "source": "https://en.wikipedia.org/wiki/Holuhraun",
+  "approx": false
+ },
+ {
+  "name": "Askja caldera",
+  "lat": 65.03,
+  "lon": -16.75,
+  "country": "Iceland",
+  "kind": "field_test",
+  "analog_for": "Apollo astronaut training; Mars/lunar analog",
+  "source": "https://en.wikipedia.org/wiki/Askja",
+  "approx": false
+ },
+ {
+  "name": "Kverkfjoll",
+  "lat": 64.65,
+  "lon": -16.7,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Sub-glacial volcanism, ice caves",
+  "source": "https://en.wikipedia.org/wiki/Kverkfj%C3%B6ll",
+  "approx": false
+ },
+ {
+  "name": "Namafjall geothermal area",
+  "lat": 65.64,
+  "lon": -16.82,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Acid fumaroles, solfataras",
+  "source": "https://en.wikipedia.org/wiki/N%C3%A1mafjall",
+  "approx": false
+ },
+ {
+  "name": "Krafla",
+  "lat": 65.7,
+  "lon": -16.78,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Geothermal caldera, Viti crater",
+  "source": "https://en.wikipedia.org/wiki/Krafla",
+  "approx": false
+ },
+ {
+  "name": "Fagradalsfjall (Reykjanes)",
+  "lat": 63.89,
+  "lon": -22.27,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Fresh basaltic eruption site",
+  "source": "https://en.wikipedia.org/wiki/Fagradalsfjall",
+  "approx": false
+ },
+ {
+  "name": "Krysuvik / Seltun",
+  "lat": 63.88,
+  "lon": -22.07,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Acid hydrothermal field",
+  "source": "https://en.wikipedia.org/wiki/Kr%C3%BDsuv%C3%ADk",
+  "approx": false
+ },
+ {
+  "name": "Hekla",
+  "lat": 63.99,
+  "lon": -19.67,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Volcano",
+  "source": "https://en.wikipedia.org/wiki/Hekla",
+  "approx": false
+ },
+ {
+  "name": "Laki fissure (Skaftareldar)",
+  "lat": 64.07,
+  "lon": -18.23,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Flood basalt fissure",
+  "source": "https://en.wikipedia.org/wiki/Laki",
+  "approx": false
+ },
+ {
+  "name": "Vatnajokull",
+  "lat": 64.4,
+  "lon": -16.8,
+  "country": "Iceland",
+  "kind": "polar",
+  "analog_for": "Glacier-volcano interaction",
+  "source": "https://en.wikipedia.org/wiki/Vatnaj%C3%B6kull",
+  "approx": false
+ },
+ {
+  "name": "Langjokull",
+  "lat": 64.65,
+  "lon": -20.2,
+  "country": "Iceland",
+  "kind": "polar",
+  "analog_for": "Glacier, ice cave",
+  "source": "https://en.wikipedia.org/wiki/Langj%C3%B6kull",
+  "approx": false
+ },
+ {
+  "name": "Myrdalsjokull / Katla",
+  "lat": 63.63,
+  "lon": -19.05,
+  "country": "Iceland",
+  "kind": "polar",
+  "analog_for": "Subglacial volcano, jokulhlaups",
+  "source": "https://en.wikipedia.org/wiki/M%C3%BDrdalsj%C3%B6kull",
+  "approx": false
+ },
+ {
+  "name": "Lake Myvatn",
+  "lat": 65.6,
+  "lon": -17.0,
+  "country": "Iceland",
+  "kind": "volcanic",
+  "analog_for": "Pseudocraters (rootless cones)",
+  "source": "https://en.wikipedia.org/wiki/M%C3%BDvatn",
+  "approx": false
+ },
+ {
+  "name": "Svalbard Bockfjord volcanic complex (AMASE)",
+  "lat": 79.4,
+  "lon": 13.6,
+  "country": "Norway",
+  "kind": "polar",
+  "analog_for": "AMASE; carbonates (ALH84001 analog)",
+  "source": "https://en.wikipedia.org/wiki/Bockfjorden",
+  "approx": false
+ },
+ {
+  "name": "Sverrefjellet volcano",
+  "lat": 79.43,
+  "lon": 13.4,
+  "country": "Norway",
+  "kind": "polar",
+  "analog_for": "Carbonate globules in basalt xenoliths",
+  "source": "https://en.wikipedia.org/wiki/Sverrefjellet",
+  "approx": false
+ },
+ {
+  "name": "Longyearbyen / Adventdalen (Svalbard)",
+  "lat": 78.22,
+  "lon": 15.65,
+  "country": "Norway",
+  "kind": "polar",
+  "analog_for": "Permafrost, pingos",
+  "source": "https://en.wikipedia.org/wiki/Longyearbyen",
+  "approx": false
+ },
+ {
+  "name": "Jan Mayen (Beerenberg)",
+  "lat": 71.08,
+  "lon": -8.17,
+  "country": "Norway",
+  "kind": "volcanic",
+  "analog_for": "Arctic volcano",
+  "source": "https://en.wikipedia.org/wiki/Beerenberg",
+  "approx": false
+ },
+ {
+  "name": "Concordia Station (Dome C)",
+  "lat": -75.1,
+  "lon": 123.33,
+  "country": "Antarctica",
+  "kind": "station",
+  "analog_for": "ESA isolation analog",
+  "source": "https://en.wikipedia.org/wiki/Concordia_Station",
+  "approx": false
+ },
+ {
+  "name": "Don Juan Pond",
+  "lat": -77.56,
+  "lon": 161.19,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "CaCl2 brine, liquid water on Mars",
+  "source": "https://en.wikipedia.org/wiki/Don_Juan_Pond",
+  "approx": false
+ },
+ {
+  "name": "Beacon Valley",
+  "lat": -77.83,
+  "lon": 160.65,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Buried ice, ancient ice, polygons",
+  "source": "https://en.wikipedia.org/wiki/Beacon_Valley",
+  "approx": false
+ },
+ {
+  "name": "University Valley",
+  "lat": -77.87,
+  "lon": 160.7,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Ultra-cold ice-cemented soils",
+  "source": "https://en.wikipedia.org/wiki/University_Valley",
+  "approx": true
+ },
+ {
+  "name": "Lake Vida",
+  "lat": -77.39,
+  "lon": 161.93,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Hypersaline ice-covered lake brine",
+  "source": "https://en.wikipedia.org/wiki/Lake_Vida",
+  "approx": false
+ },
+ {
+  "name": "Wright Valley",
+  "lat": -77.53,
+  "lon": 161.8,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Dry valley, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Wright_Valley",
+  "approx": false
+ },
+ {
+  "name": "Taylor Valley",
+  "lat": -77.62,
+  "lon": 163.0,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Dry valley lakes",
+  "source": "https://en.wikipedia.org/wiki/Taylor_Valley",
+  "approx": false
+ },
+ {
+  "name": "Victoria Valley",
+  "lat": -77.35,
+  "lon": 161.5,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Dry valley, dunes",
+  "source": "https://en.wikipedia.org/wiki/Victoria_Valley",
+  "approx": true
+ },
+ {
+  "name": "Lake Vanda",
+  "lat": -77.53,
+  "lon": 161.58,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Perennially ice-covered lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Vanda",
+  "approx": false
+ },
+ {
+  "name": "Lake Bonney",
+  "lat": -77.72,
+  "lon": 162.4,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Ice-covered lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Bonney_(Antarctica)",
+  "approx": false
+ },
+ {
+  "name": "Lake Fryxell",
+  "lat": -77.6,
+  "lon": 163.2,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Ice-covered lake, microbial mats",
+  "source": "https://en.wikipedia.org/wiki/Lake_Fryxell",
+  "approx": false
+ },
+ {
+  "name": "Lake Hoare",
+  "lat": -77.63,
+  "lon": 162.9,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Ice-covered lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Hoare",
+  "approx": false
+ },
+ {
+  "name": "Lake Joyce",
+  "lat": -77.72,
+  "lon": 161.6,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Ice-covered lake",
+  "source": "https://en.wikipedia.org/wiki/McMurdo_Dry_Valleys",
+  "approx": true
+ },
+ {
+  "name": "Blood Falls",
+  "lat": -77.72,
+  "lon": 162.27,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Subglacial brine, iron-rich",
+  "source": "https://en.wikipedia.org/wiki/Blood_Falls",
+  "approx": false
+ },
+ {
+  "name": "Garwood Valley",
+  "lat": -78.03,
+  "lon": 163.9,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Buried glacial ice, thermokarst",
+  "source": "https://en.wikipedia.org/wiki/Garwood_Valley",
+  "approx": true
+ },
+ {
+  "name": "Mount Erebus",
+  "lat": -77.53,
+  "lon": 167.15,
+  "country": "Antarctica",
+  "kind": "volcanic",
+  "analog_for": "Active volcano, fumarole ice caves",
+  "source": "https://en.wikipedia.org/wiki/Mount_Erebus",
+  "approx": false
+ },
+ {
+  "name": "Lake Untersee",
+  "lat": -71.35,
+  "lon": 13.45,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Perennially ice-covered anoxic lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Untersee",
+  "approx": false
+ },
+ {
+  "name": "Lake Vostok",
+  "lat": -77.5,
+  "lon": 106.0,
+  "country": "Antarctica",
+  "kind": "polar",
+  "analog_for": "Subglacial lake (Europa/Mars polar analog)",
+  "source": "https://en.wikipedia.org/wiki/Lake_Vostok",
+  "approx": false
+ },
+ {
+  "name": "Deception Island",
+  "lat": -62.97,
+  "lon": -60.65,
+  "country": "Antarctica",
+  "kind": "volcanic",
+  "analog_for": "Caldera, volcano-ice interaction",
+  "source": "https://en.wikipedia.org/wiki/Deception_Island",
+  "approx": false
+ },
+ {
+  "name": "Arkaroola / Mars-Oz",
+  "lat": -30.32,
+  "lon": 139.33,
+  "country": "Australia",
+  "kind": "field_test",
+  "analog_for": "Mars Society Australia Mars-Oz habitat",
+  "source": "https://en.wikipedia.org/wiki/Arkaroola_Wilderness_Sanctuary",
+  "approx": false
+ },
+ {
+  "name": "Dresser Mine / Pilbara (North Pole)",
+  "lat": -21.15,
+  "lon": 119.45,
+  "country": "Australia",
+  "kind": "scientific",
+  "analog_for": "3.5 Ga stromatolites, early-life analog",
+  "source": "https://en.wikipedia.org/wiki/North_Pole,_Western_Australia",
+  "approx": false
+ },
+ {
+  "name": "Marble Bar (Pilbara)",
+  "lat": -21.18,
+  "lon": 119.75,
+  "country": "Australia",
+  "kind": "scientific",
+  "analog_for": "Archean chert, Strelley Pool",
+  "source": "https://en.wikipedia.org/wiki/Marble_Bar,_Western_Australia",
+  "approx": false
+ },
+ {
+  "name": "Hamelin Pool (Shark Bay)",
+  "lat": -26.4,
+  "lon": 114.2,
+  "country": "Australia",
+  "kind": "scientific",
+  "analog_for": "Living stromatolites",
+  "source": "https://en.wikipedia.org/wiki/Hamelin_Pool_Marine_Nature_Reserve",
+  "approx": false
+ },
+ {
+  "name": "Lake Tyrrell",
+  "lat": -35.3,
+  "lon": 142.8,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Acid saline lake, Mars evaporite",
+  "source": "https://en.wikipedia.org/wiki/Lake_Tyrrell",
+  "approx": false
+ },
+ {
+  "name": "Lake Gilmore (acid lakes WA)",
+  "lat": -32.6,
+  "lon": 121.6,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Acid-saline lakes, jarosite",
+  "source": "https://en.wikipedia.org/wiki/Lake_Gilmore",
+  "approx": true
+ },
+ {
+  "name": "Lake Brown (WA acid lake)",
+  "lat": -31.0,
+  "lon": 117.0,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Acid-saline lake, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Lake_Brown",
+  "approx": true
+ },
+ {
+  "name": "Lake Magic (WA acid lake)",
+  "lat": -32.4,
+  "lon": 121.1,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Acid-saline lake, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Lake_Magic",
+  "approx": true
+ },
+ {
+  "name": "Lake Eyre",
+  "lat": -28.4,
+  "lon": 137.3,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Playa, ancient-flooding analog",
+  "source": "https://en.wikipedia.org/wiki/Lake_Eyre",
+  "approx": false
+ },
+ {
+  "name": "Lake Gairdner",
+  "lat": -31.6,
+  "lon": 136.7,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Salt lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Gairdner",
+  "approx": false
+ },
+ {
+  "name": "Lake Hillier",
+  "lat": -34.1,
+  "lon": 123.2,
+  "country": "Australia",
+  "kind": "evaporite",
+  "analog_for": "Pink saline lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Hillier",
+  "approx": false
+ },
+ {
+  "name": "Gosses Bluff",
+  "lat": -23.82,
+  "lon": 132.3,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Eroded complex impact",
+  "source": "https://en.wikipedia.org/wiki/Gosses_Bluff_crater",
+  "approx": false
+ },
+ {
+  "name": "Wolfe Creek crater",
+  "lat": -19.17,
+  "lon": 127.8,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Simple impact crater",
+  "source": "https://en.wikipedia.org/wiki/Wolfe_Creek_Crater",
+  "approx": false
+ },
+ {
+  "name": "Henbury craters",
+  "lat": -24.57,
+  "lon": 133.15,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Crater field",
+  "source": "https://en.wikipedia.org/wiki/Henbury_craters",
+  "approx": false
+ },
+ {
+  "name": "Spider impact structure",
+  "lat": -16.7,
+  "lon": 126.1,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Eroded impact",
+  "source": "https://en.wikipedia.org/wiki/Spider_crater",
+  "approx": false
+ },
+ {
+  "name": "Shoemaker crater (Teague)",
+  "lat": -25.87,
+  "lon": 120.88,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Impact with central uplift",
+  "source": "https://en.wikipedia.org/wiki/Shoemaker_crater",
+  "approx": false
+ },
+ {
+  "name": "Acraman crater",
+  "lat": -32.0,
+  "lon": 135.45,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Large old impact",
+  "source": "https://en.wikipedia.org/wiki/Lake_Acraman",
+  "approx": false
+ },
+ {
+  "name": "Strangways crater",
+  "lat": -15.2,
+  "lon": 133.6,
+  "country": "Australia",
+  "kind": "impact",
+  "analog_for": "Eroded impact",
+  "source": "https://en.wikipedia.org/wiki/Strangways_crater",
+  "approx": false
+ },
+ {
+  "name": "Waiotapu (Rotorua)",
+  "lat": -38.36,
+  "lon": 176.37,
+  "country": "New Zealand",
+  "kind": "volcanic",
+  "analog_for": "Hydrothermal silica sinter",
+  "source": "https://en.wikipedia.org/wiki/Wai-O-Tapu",
+  "approx": false
+ },
+ {
+  "name": "White Island (Whakaari)",
+  "lat": -37.52,
+  "lon": 177.18,
+  "country": "New Zealand",
+  "kind": "volcanic",
+  "analog_for": "Acid crater lake",
+  "source": "https://en.wikipedia.org/wiki/Whakaari_/_White_Island",
+  "approx": false
+ },
+ {
+  "name": "Kawah Ijen",
+  "lat": -8.06,
+  "lon": 114.24,
+  "country": "Indonesia",
+  "kind": "volcanic",
+  "analog_for": "Acid crater lake, sulfur",
+  "source": "https://en.wikipedia.org/wiki/Ijen",
+  "approx": false
+ },
+ {
+  "name": "Yungay (Atacama)",
+  "lat": -24.08,
+  "lon": -69.98,
+  "country": "Chile",
+  "kind": "scientific",
+  "analog_for": "Hyper-arid Mars soil analog",
+  "source": "https://en.wikipedia.org/wiki/Atacama_Desert",
+  "approx": true
+ },
+ {
+  "name": "Salar Grande",
+  "lat": -20.9,
+  "lon": -69.95,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "Halite salar, hyperarid",
+  "source": "https://en.wikipedia.org/wiki/Salar_Grande",
+  "approx": false
+ },
+ {
+  "name": "Pampa del Tamarugal",
+  "lat": -20.6,
+  "lon": -69.7,
+  "country": "Chile",
+  "kind": "scientific",
+  "analog_for": "Nitrate-rich hyperarid terrain",
+  "source": "https://en.wikipedia.org/wiki/Pampa_del_Tamarugal",
+  "approx": true
+ },
+ {
+  "name": "Salar de Pajonales",
+  "lat": -25.7,
+  "lon": -68.8,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "Salar, Mars lake/evaporite analog",
+  "source": "https://en.wikipedia.org/wiki/Salar_de_Pajonales",
+  "approx": true
+ },
+ {
+  "name": "Laguna Lejia",
+  "lat": -23.5,
+  "lon": -67.7,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "High-altitude saline lake",
+  "source": "https://en.wikipedia.org/wiki/Laguna_Lej%C3%ADa",
+  "approx": false
+ },
+ {
+  "name": "Licancabur volcano and lake",
+  "lat": -22.83,
+  "lon": -67.88,
+  "country": "Chile",
+  "kind": "volcanic",
+  "analog_for": "High-altitude crater lake, UV",
+  "source": "https://en.wikipedia.org/wiki/Licancabur",
+  "approx": false
+ },
+ {
+  "name": "Salar de Atacama",
+  "lat": -23.5,
+  "lon": -68.3,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "Salt flat, brine",
+  "source": "https://en.wikipedia.org/wiki/Salar_de_Atacama",
+  "approx": false
+ },
+ {
+  "name": "El Tatio geysers",
+  "lat": -22.33,
+  "lon": -68.0,
+  "country": "Chile",
+  "kind": "volcanic",
+  "analog_for": "Geothermal field, early-life analog",
+  "source": "https://en.wikipedia.org/wiki/El_Tatio",
+  "approx": false
+ },
+ {
+  "name": "Laguna Miscanti",
+  "lat": -23.75,
+  "lon": -67.77,
+  "country": "Chile",
+  "kind": "scientific",
+  "analog_for": "Altiplanic lake",
+  "source": "https://en.wikipedia.org/wiki/Laguna_Miscanti",
+  "approx": false
+ },
+ {
+  "name": "Laguna Tuyajto",
+  "lat": -23.9,
+  "lon": -67.5,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "Altiplanic saline lake",
+  "source": "https://en.wikipedia.org/wiki/Atacama_Desert",
+  "approx": true
+ },
+ {
+  "name": "Llullaillaco",
+  "lat": -24.72,
+  "lon": -68.54,
+  "country": "Chile",
+  "kind": "volcanic",
+  "analog_for": "High-altitude volcano",
+  "source": "https://en.wikipedia.org/wiki/Llullaillaco",
+  "approx": false
+ },
+ {
+  "name": "Laguna Brava",
+  "lat": -26.0,
+  "lon": -68.7,
+  "country": "Chile",
+  "kind": "evaporite",
+  "analog_for": "Salar, altiplano lake",
+  "source": "https://en.wikipedia.org/wiki/Atacama_Desert",
+  "approx": true
+ },
+ {
+  "name": "Nomad/Zoe rover test site (Atacama)",
+  "lat": -24.1,
+  "lon": -69.9,
+  "country": "Chile",
+  "kind": "field_test",
+  "analog_for": "Rover life-detection field tests (Atacama)",
+  "source": "https://en.wikipedia.org/wiki/Atacama_Desert",
+  "approx": true
+ },
+ {
+  "name": "Salar de Uyuni",
+  "lat": -20.2,
+  "lon": -67.5,
+  "country": "Bolivia",
+  "kind": "evaporite",
+  "analog_for": "Largest salt flat, Mars evaporites",
+  "source": "https://en.wikipedia.org/wiki/Salar_de_Uyuni",
+  "approx": false
+ },
+ {
+  "name": "Laguna Colorada",
+  "lat": -22.2,
+  "lon": -67.8,
+  "country": "Bolivia",
+  "kind": "evaporite",
+  "analog_for": "Red saline lake",
+  "source": "https://en.wikipedia.org/wiki/Laguna_Colorada",
+  "approx": false
+ },
+ {
+  "name": "Laguna Verde (Bolivia)",
+  "lat": -22.8,
+  "lon": -67.8,
+  "country": "Bolivia",
+  "kind": "evaporite",
+  "analog_for": "Altiplano volcanic lake",
+  "source": "https://en.wikipedia.org/wiki/Laguna_Verde_(Bolivia)",
+  "approx": false
+ },
+ {
+  "name": "Salar de Antofalla",
+  "lat": -25.6,
+  "lon": -67.7,
+  "country": "Argentina",
+  "kind": "evaporite",
+  "analog_for": "Puna salar",
+  "source": "https://en.wikipedia.org/wiki/Salar_de_Antofalla",
+  "approx": false
+ },
+ {
+  "name": "Salar del Hombre Muerto",
+  "lat": -25.4,
+  "lon": -66.9,
+  "country": "Argentina",
+  "kind": "evaporite",
+  "analog_for": "Puna salar",
+  "source": "https://en.wikipedia.org/wiki/Salar_del_Hombre_Muerto",
+  "approx": false
+ },
+ {
+  "name": "Salar de Arizaro",
+  "lat": -24.6,
+  "lon": -67.8,
+  "country": "Argentina",
+  "kind": "evaporite",
+  "analog_for": "Puna salar, dunes",
+  "source": "https://en.wikipedia.org/wiki/Salar_de_Arizaro",
+  "approx": false
+ },
+ {
+  "name": "Laguna Socompa",
+  "lat": -24.4,
+  "lon": -68.2,
+  "country": "Argentina",
+  "kind": "volcanic",
+  "analog_for": "Socompa volcano, microbialites",
+  "source": "https://en.wikipedia.org/wiki/Socompa",
+  "approx": true
+ },
+ {
+  "name": "Campo del Cielo",
+  "lat": -27.63,
+  "lon": -61.7,
+  "country": "Argentina",
+  "kind": "impact",
+  "analog_for": "Meteorite crater field",
+  "source": "https://en.wikipedia.org/wiki/Campo_del_Cielo",
+  "approx": true
+ },
+ {
+  "name": "Rio Cuarto craters",
+  "lat": -32.87,
+  "lon": -64.23,
+  "country": "Argentina",
+  "kind": "impact",
+  "analog_for": "Elongated impact depressions",
+  "source": "https://en.wikipedia.org/wiki/R%C3%ADo_Cuarto_craters",
+  "approx": true
+ },
+ {
+  "name": "Cuatro Cienegas",
+  "lat": 26.98,
+  "lon": -102.07,
+  "country": "Mexico",
+  "kind": "scientific",
+  "analog_for": "Oligotrophic springs, ancient microbes",
+  "source": "https://en.wikipedia.org/wiki/Cuatroci%C3%A9negas_Basin",
+  "approx": false
+ },
+ {
+  "name": "Naica crystal caves",
+  "lat": 27.85,
+  "lon": -105.5,
+  "country": "Mexico",
+  "kind": "scientific",
+  "analog_for": "Giant gypsum crystals",
+  "source": "https://en.wikipedia.org/wiki/Cave_of_the_Crystals",
+  "approx": false
+ },
+ {
+  "name": "Chicxulub crater",
+  "lat": 21.4,
+  "lon": -89.5,
+  "country": "Mexico",
+  "kind": "impact",
+  "analog_for": "Peak-ring impact, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Chicxulub_crater",
+  "approx": false
+ },
+ {
+  "name": "Dallol (Danakil)",
+  "lat": 14.24,
+  "lon": 40.3,
+  "country": "Ethiopia",
+  "kind": "evaporite",
+  "analog_for": "Hyperacid hydrothermal, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Dallol,_Ethiopia",
+  "approx": false
+ },
+ {
+  "name": "Erta Ale",
+  "lat": 13.6,
+  "lon": 40.67,
+  "country": "Ethiopia",
+  "kind": "volcanic",
+  "analog_for": "Lava lake",
+  "source": "https://en.wikipedia.org/wiki/Erta_Ale",
+  "approx": false
+ },
+ {
+  "name": "Lake Afdera",
+  "lat": 13.25,
+  "lon": 40.85,
+  "country": "Ethiopia",
+  "kind": "evaporite",
+  "analog_for": "Hypersaline lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Afdera",
+  "approx": false
+ },
+ {
+  "name": "Lake Natron",
+  "lat": -2.4,
+  "lon": 36.0,
+  "country": "Tanzania",
+  "kind": "evaporite",
+  "analog_for": "Alkaline soda lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Natron",
+  "approx": false
+ },
+ {
+  "name": "Ol Doinyo Lengai",
+  "lat": -2.76,
+  "lon": 35.91,
+  "country": "Tanzania",
+  "kind": "volcanic",
+  "analog_for": "Carbonatite volcano",
+  "source": "https://en.wikipedia.org/wiki/Ol_Doinyo_Lengai",
+  "approx": false
+ },
+ {
+  "name": "Lake Magadi",
+  "lat": -1.9,
+  "lon": 36.3,
+  "country": "Kenya",
+  "kind": "evaporite",
+  "analog_for": "Trona soda lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Magadi",
+  "approx": false
+ },
+ {
+  "name": "Lake Bogoria",
+  "lat": 0.27,
+  "lon": 36.1,
+  "country": "Kenya",
+  "kind": "evaporite",
+  "analog_for": "Alkaline hot springs",
+  "source": "https://en.wikipedia.org/wiki/Lake_Bogoria",
+  "approx": false
+ },
+ {
+  "name": "Lake Bosumtwi",
+  "lat": 6.5,
+  "lon": -1.4,
+  "country": "Ghana",
+  "kind": "impact",
+  "analog_for": "Young impact crater lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Bosumtwi",
+  "approx": false
+ },
+ {
+  "name": "Merzouga / Erg Chebbi",
+  "lat": 31.1,
+  "lon": -4.01,
+  "country": "Morocco",
+  "kind": "field_test",
+  "analog_for": "OeWF MARS2013 / ExoMars test dunes",
+  "source": "https://en.wikipedia.org/wiki/Erg_Chebbi",
+  "approx": false
+ },
+ {
+  "name": "Kess Kess mounds",
+  "lat": 31.4,
+  "lon": -4.3,
+  "country": "Morocco",
+  "kind": "scientific",
+  "analog_for": "Carbonate mud mounds, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Kess-Kess",
+  "approx": true
+ },
+ {
+  "name": "Erfoud region (MARS2013)",
+  "lat": 31.43,
+  "lon": -4.23,
+  "country": "Morocco",
+  "kind": "field_test",
+  "analog_for": "OeWF MARS2013 field simulation",
+  "source": "https://en.wikipedia.org/wiki/Erfoud",
+  "approx": false
+ },
+ {
+  "name": "Chott el Djerid",
+  "lat": 33.7,
+  "lon": 8.4,
+  "country": "Tunisia",
+  "kind": "evaporite",
+  "analog_for": "Salt flat",
+  "source": "https://en.wikipedia.org/wiki/Chott_el_Djerid",
+  "approx": false
+ },
+ {
+  "name": "Tin Bider crater",
+  "lat": 27.6,
+  "lon": 5.1,
+  "country": "Algeria",
+  "kind": "impact",
+  "analog_for": "Impact structure",
+  "source": "https://en.wikipedia.org/wiki/Tin_Bider",
+  "approx": false
+ },
+ {
+  "name": "Amguid crater",
+  "lat": 26.0,
+  "lon": 4.4,
+  "country": "Algeria",
+  "kind": "impact",
+  "analog_for": "Small impact crater",
+  "source": "https://en.wikipedia.org/wiki/Amguid_crater",
+  "approx": false
+ },
+ {
+  "name": "Richat Structure",
+  "lat": 21.12,
+  "lon": -11.4,
+  "country": "Mauritania",
+  "kind": "other",
+  "analog_for": "Eroded dome, circular structure",
+  "source": "https://en.wikipedia.org/wiki/Richat_Structure",
+  "approx": false
+ },
+ {
+  "name": "Tenoumer crater",
+  "lat": 22.9,
+  "lon": -10.4,
+  "country": "Mauritania",
+  "kind": "impact",
+  "analog_for": "Impact crater",
+  "source": "https://en.wikipedia.org/wiki/Tenoumer_crater",
+  "approx": false
+ },
+ {
+  "name": "Aorounga crater",
+  "lat": 19.1,
+  "lon": 19.25,
+  "country": "Chad",
+  "kind": "impact",
+  "analog_for": "Eroded impact",
+  "source": "https://en.wikipedia.org/wiki/Aorounga_crater",
+  "approx": false
+ },
+ {
+  "name": "Emi Koussi (Tibesti)",
+  "lat": 19.8,
+  "lon": 18.55,
+  "country": "Chad",
+  "kind": "volcanic",
+  "analog_for": "Volcano, Tibesti",
+  "source": "https://en.wikipedia.org/wiki/Emi_Koussi",
+  "approx": false
+ },
+ {
+  "name": "Trou au Natron",
+  "lat": 20.97,
+  "lon": 16.58,
+  "country": "Chad",
+  "kind": "volcanic",
+  "analog_for": "Volcanic caldera with evaporites",
+  "source": "https://en.wikipedia.org/wiki/Trou_au_Natron",
+  "approx": false
+ },
+ {
+  "name": "Waw an Namus",
+  "lat": 24.95,
+  "lon": 17.75,
+  "country": "Libya",
+  "kind": "volcanic",
+  "analog_for": "Volcanic caldera in Sahara",
+  "source": "https://en.wikipedia.org/wiki/Waw_an_Namus",
+  "approx": false
+ },
+ {
+  "name": "Kamil crater",
+  "lat": 22.02,
+  "lon": 26.09,
+  "country": "Egypt",
+  "kind": "impact",
+  "analog_for": "Young small impact crater",
+  "source": "https://en.wikipedia.org/wiki/Kamil_Crater",
+  "approx": false
+ },
+ {
+  "name": "Gilf Kebir",
+  "lat": 23.3,
+  "lon": 26.0,
+  "country": "Egypt",
+  "kind": "other",
+  "analog_for": "Sahara plateau, Mars-like landscapes",
+  "source": "https://en.wikipedia.org/wiki/Gilf_Kebir",
+  "approx": false
+ },
+ {
+  "name": "White Desert (Farafra)",
+  "lat": 27.3,
+  "lon": 28.2,
+  "country": "Egypt",
+  "kind": "other",
+  "analog_for": "Yardangs",
+  "source": "https://en.wikipedia.org/wiki/White_Desert_(Egypt)",
+  "approx": false
+ },
+ {
+  "name": "Black Desert (Egypt)",
+  "lat": 27.8,
+  "lon": 28.8,
+  "country": "Egypt",
+  "kind": "other",
+  "analog_for": "Basalt-capped hills",
+  "source": "https://en.wikipedia.org/wiki/Black_Desert_(Egypt)",
+  "approx": false
+ },
+ {
+  "name": "Siwa Oasis",
+  "lat": 29.2,
+  "lon": 25.5,
+  "country": "Egypt",
+  "kind": "evaporite",
+  "analog_for": "Salt lakes, Sahara",
+  "source": "https://en.wikipedia.org/wiki/Siwa_Oasis",
+  "approx": false
+ },
+ {
+  "name": "Roter Kamm crater",
+  "lat": -27.8,
+  "lon": 16.3,
+  "country": "Namibia",
+  "kind": "impact",
+  "analog_for": "Impact crater in Namib",
+  "source": "https://en.wikipedia.org/wiki/Roter_Kamm",
+  "approx": false
+ },
+ {
+  "name": "Sossusvlei (Namib sand sea)",
+  "lat": -24.73,
+  "lon": 15.29,
+  "country": "Namibia",
+  "kind": "other",
+  "analog_for": "Giant linear dunes",
+  "source": "https://en.wikipedia.org/wiki/Sossusvlei",
+  "approx": false
+ },
+ {
+  "name": "Etosha Pan",
+  "lat": -18.8,
+  "lon": 16.0,
+  "country": "Namibia",
+  "kind": "evaporite",
+  "analog_for": "Salt pan",
+  "source": "https://en.wikipedia.org/wiki/Etosha_pan",
+  "approx": false
+ },
+ {
+  "name": "Makgadikgadi Pans",
+  "lat": -20.7,
+  "lon": 25.5,
+  "country": "Botswana",
+  "kind": "evaporite",
+  "analog_for": "Salt pans",
+  "source": "https://en.wikipedia.org/wiki/Makgadikgadi_Pan",
+  "approx": false
+ },
+ {
+  "name": "Vredefort Dome",
+  "lat": -27.0,
+  "lon": 27.5,
+  "country": "South Africa",
+  "kind": "impact",
+  "analog_for": "Largest known terrestrial impact structure",
+  "source": "https://en.wikipedia.org/wiki/Vredefort_impact_structure",
+  "approx": false
+ },
+ {
+  "name": "Tswaing crater",
+  "lat": -25.4,
+  "lon": 28.05,
+  "country": "South Africa",
+  "kind": "impact",
+  "analog_for": "Saline impact crater",
+  "source": "https://en.wikipedia.org/wiki/Tswaing_impact_crater",
+  "approx": false
+ },
+ {
+  "name": "Wadi Rum",
+  "lat": 29.57,
+  "lon": 35.42,
+  "country": "Jordan",
+  "kind": "other",
+  "analog_for": "Sandstone desert, Mars-like (filming location)",
+  "source": "https://en.wikipedia.org/wiki/Wadi_Rum",
+  "approx": false
+ },
+ {
+  "name": "Mount Sodom / Dead Sea",
+  "lat": 31.08,
+  "lon": 35.39,
+  "country": "Israel",
+  "kind": "evaporite",
+  "analog_for": "Hypersaline, salt diapir",
+  "source": "https://en.wikipedia.org/wiki/Mount_Sodom",
+  "approx": false
+ },
+ {
+  "name": "Ramon crater (AMADEE-20)",
+  "lat": 30.6,
+  "lon": 34.8,
+  "country": "Israel",
+  "kind": "field_test",
+  "analog_for": "OeWF AMADEE-20 simulation, Negev",
+  "source": "https://en.wikipedia.org/wiki/Makhtesh_Ramon",
+  "approx": false
+ },
+ {
+  "name": "Dhofar desert (AMADEE-18)",
+  "lat": 18.2,
+  "lon": 54.3,
+  "country": "Oman",
+  "kind": "field_test",
+  "analog_for": "OeWF AMADEE-18 mission simulation",
+  "source": "https://en.wikipedia.org/wiki/Dhofar",
+  "approx": true
+ },
+ {
+  "name": "Samail Ophiolite",
+  "lat": 23.1,
+  "lon": 58.2,
+  "country": "Oman",
+  "kind": "scientific",
+  "analog_for": "Serpentinization, carbonation, mantle rocks",
+  "source": "https://en.wikipedia.org/wiki/Semail_Ophiolite",
+  "approx": false
+ },
+ {
+  "name": "Wahiba Sands",
+  "lat": 21.8,
+  "lon": 58.8,
+  "country": "Oman",
+  "kind": "other",
+  "analog_for": "Dune field",
+  "source": "https://en.wikipedia.org/wiki/Wahiba_Sands",
+  "approx": false
+ },
+ {
+  "name": "Rub al Khali",
+  "lat": 21.0,
+  "lon": 51.0,
+  "country": "Saudi Arabia",
+  "kind": "other",
+  "analog_for": "Giant dune sea",
+  "source": "https://en.wikipedia.org/wiki/Rub_al_Khali",
+  "approx": true
+ },
+ {
+  "name": "Lake Salda",
+  "lat": 37.55,
+  "lon": 29.68,
+  "country": "Turkey",
+  "kind": "scientific",
+  "analog_for": "Hydromagnesite, Jezero delta analog",
+  "source": "https://en.wikipedia.org/wiki/Lake_Salda",
+  "approx": false
+ },
+ {
+  "name": "Cappadocia",
+  "lat": 38.65,
+  "lon": 34.85,
+  "country": "Turkey",
+  "kind": "other",
+  "analog_for": "Volcanic tuff, erosional terrain",
+  "source": "https://en.wikipedia.org/wiki/Cappadocia",
+  "approx": false
+ },
+ {
+  "name": "Dasht-e Lut",
+  "lat": 30.5,
+  "lon": 59.0,
+  "country": "Iran",
+  "kind": "other",
+  "analog_for": "Yardangs, hottest surface",
+  "source": "https://en.wikipedia.org/wiki/Dasht-e_Lut",
+  "approx": true
+ },
+ {
+  "name": "Dasht-e Kavir",
+  "lat": 34.5,
+  "lon": 52.0,
+  "country": "Iran",
+  "kind": "evaporite",
+  "analog_for": "Salt desert",
+  "source": "https://en.wikipedia.org/wiki/Dasht-e_Kavir",
+  "approx": true
+ },
+ {
+  "name": "Karahunj area (Armenia mission simulation)",
+  "lat": 39.55,
+  "lon": 46.03,
+  "country": "Armenia",
+  "kind": "field_test",
+  "analog_for": "OeWF Armenia Mars analog mission",
+  "source": "https://en.wikipedia.org/wiki/Carahunge",
+  "approx": true
+ },
+ {
+  "name": "Lonar crater",
+  "lat": 19.98,
+  "lon": 76.51,
+  "country": "India",
+  "kind": "impact",
+  "analog_for": "Basalt-hosted impact crater lake",
+  "source": "https://en.wikipedia.org/wiki/Lonar_crater",
+  "approx": false
+ },
+ {
+  "name": "Matanomadh (Kutch)",
+  "lat": 23.55,
+  "lon": 68.9,
+  "country": "India",
+  "kind": "scientific",
+  "analog_for": "Jarosite in Kachchh, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Kutch_district",
+  "approx": true
+ },
+ {
+  "name": "Rann of Kutch",
+  "lat": 24.0,
+  "lon": 70.0,
+  "country": "India",
+  "kind": "evaporite",
+  "analog_for": "Salt marsh, playa",
+  "source": "https://en.wikipedia.org/wiki/Rann_of_Kutch",
+  "approx": false
+ },
+ {
+  "name": "Puga Valley (Ladakh)",
+  "lat": 33.2,
+  "lon": 78.3,
+  "country": "India",
+  "kind": "scientific",
+  "analog_for": "Hot springs, borax, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Puga_Valley",
+  "approx": true
+ },
+ {
+  "name": "Tso Kar (Ladakh)",
+  "lat": 33.3,
+  "lon": 78.0,
+  "country": "India",
+  "kind": "evaporite",
+  "analog_for": "Salt lake, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Tso_Kar",
+  "approx": false
+ },
+ {
+  "name": "Tso Moriri",
+  "lat": 32.9,
+  "lon": 78.3,
+  "country": "India",
+  "kind": "scientific",
+  "analog_for": "High-altitude lake",
+  "source": "https://en.wikipedia.org/wiki/Tso_Moriri",
+  "approx": false
+ },
+ {
+  "name": "Pangong Tso region",
+  "lat": 33.75,
+  "lon": 78.6,
+  "country": "India",
+  "kind": "scientific",
+  "analog_for": "High-altitude lake",
+  "source": "https://en.wikipedia.org/wiki/Pangong_Tso",
+  "approx": false
+ },
+ {
+  "name": "ISRO HOPE station (Pang, Ladakh)",
+  "lat": 33.67,
+  "lon": 77.99,
+  "country": "India",
+  "kind": "station",
+  "analog_for": "ISRO Human Analog Mission for Mars",
+  "source": "https://en.wikipedia.org/wiki/Ladakh",
+  "approx": true
+ },
+ {
+  "name": "Sambhar Lake",
+  "lat": 26.9,
+  "lon": 75.2,
+  "country": "India",
+  "kind": "evaporite",
+  "analog_for": "Salt lake",
+  "source": "https://en.wikipedia.org/wiki/Sambhar_Lake",
+  "approx": false
+ },
+ {
+  "name": "Barren Island",
+  "lat": 12.28,
+  "lon": 93.86,
+  "country": "India",
+  "kind": "volcanic",
+  "analog_for": "Active volcano",
+  "source": "https://en.wikipedia.org/wiki/Barren_Island",
+  "approx": false
+ },
+ {
+  "name": "Dalangtan playa (Qaidam Basin)",
+  "lat": 38.2,
+  "lon": 91.9,
+  "country": "China",
+  "kind": "evaporite",
+  "analog_for": "Mars-like salt playa, yardangs",
+  "source": "https://en.wikipedia.org/wiki/Qaidam_Basin",
+  "approx": true
+ },
+ {
+  "name": "CNSA Mars base (Lenghu, Qaidam)",
+  "lat": 38.9,
+  "lon": 93.4,
+  "country": "China",
+  "kind": "station",
+  "analog_for": "China Mars base / Mars Village",
+  "source": "https://en.wikipedia.org/wiki/Lenghu",
+  "approx": true
+ },
+ {
+  "name": "Qaidam Basin yardangs",
+  "lat": 37.8,
+  "lon": 93.0,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Yardang fields",
+  "source": "https://en.wikipedia.org/wiki/Yardang",
+  "approx": true
+ },
+ {
+  "name": "Zabuye Lake (Tibet)",
+  "lat": 31.3,
+  "lon": 84.1,
+  "country": "China",
+  "kind": "evaporite",
+  "analog_for": "Tibetan salt lake, Mars analog",
+  "source": "https://en.wikipedia.org/wiki/Zabuye_Salt_Lake",
+  "approx": true
+ },
+ {
+  "name": "Yangbajing geothermal field",
+  "lat": 30.1,
+  "lon": 90.5,
+  "country": "China",
+  "kind": "volcanic",
+  "analog_for": "Tibet hot springs",
+  "source": "https://en.wikipedia.org/wiki/Yangbajing",
+  "approx": true
+ },
+ {
+  "name": "Lop Nur",
+  "lat": 40.4,
+  "lon": 90.5,
+  "country": "China",
+  "kind": "evaporite",
+  "analog_for": "Dry salt lake, yardangs",
+  "source": "https://en.wikipedia.org/wiki/Lop_Nur",
+  "approx": false
+ },
+ {
+  "name": "Turpan Depression",
+  "lat": 42.9,
+  "lon": 89.3,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Hot desert basin",
+  "source": "https://en.wikipedia.org/wiki/Turpan_Depression",
+  "approx": false
+ },
+ {
+  "name": "Badain Jaran Desert",
+  "lat": 39.8,
+  "lon": 102.4,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Mega-dunes",
+  "source": "https://en.wikipedia.org/wiki/Badain_Jaran_Desert",
+  "approx": false
+ },
+ {
+  "name": "Dunhuang yardangs",
+  "lat": 40.5,
+  "lon": 93.8,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Yardang national park",
+  "source": "https://en.wikipedia.org/wiki/Yardang",
+  "approx": true
+ },
+ {
+  "name": "Zhangye Danxia",
+  "lat": 38.9,
+  "lon": 100.1,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Colored badlands",
+  "source": "https://en.wikipedia.org/wiki/Zhangye_National_Geopark",
+  "approx": true
+ },
+ {
+  "name": "Taklamakan Desert",
+  "lat": 39.0,
+  "lon": 83.0,
+  "country": "China",
+  "kind": "other",
+  "analog_for": "Large dune desert",
+  "source": "https://en.wikipedia.org/wiki/Taklamakan_Desert",
+  "approx": true
+ },
+ {
+  "name": "Mutnovsky volcano",
+  "lat": 52.45,
+  "lon": 158.2,
+  "country": "Russia",
+  "kind": "volcanic",
+  "analog_for": "Fumaroles, acid hydrothermal",
+  "source": "https://en.wikipedia.org/wiki/Mutnovsky",
+  "approx": false
+ },
+ {
+  "name": "Tolbachik",
+  "lat": 55.8,
+  "lon": 160.3,
+  "country": "Russia",
+  "kind": "volcanic",
+  "analog_for": "Basaltic fissure eruptions, jarosite",
+  "source": "https://en.wikipedia.org/wiki/Tolbachik",
+  "approx": false
+ },
+ {
+  "name": "Valley of Geysers (Kamchatka)",
+  "lat": 54.43,
+  "lon": 160.14,
+  "country": "Russia",
+  "kind": "volcanic",
+  "analog_for": "Geothermal field",
+  "source": "https://en.wikipedia.org/wiki/Valley_of_Geysers",
+  "approx": false
+ },
+ {
+  "name": "Lake Elton",
+  "lat": 49.2,
+  "lon": 46.7,
+  "country": "Russia",
+  "kind": "evaporite",
+  "analog_for": "Hypersaline lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Elton",
+  "approx": false
+ },
+ {
+  "name": "Lake Baskunchak",
+  "lat": 48.2,
+  "lon": 46.7,
+  "country": "Russia",
+  "kind": "evaporite",
+  "analog_for": "Salt lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_Baskunchak",
+  "approx": false
+ },
+ {
+  "name": "Popigai crater",
+  "lat": 71.6,
+  "lon": 111.2,
+  "country": "Russia",
+  "kind": "impact",
+  "analog_for": "Large impact structure",
+  "source": "https://en.wikipedia.org/wiki/Popigai_crater",
+  "approx": false
+ },
+ {
+  "name": "Lake Elgygytgyn",
+  "lat": 67.5,
+  "lon": 172.0,
+  "country": "Russia",
+  "kind": "impact",
+  "analog_for": "Arctic impact crater lake",
+  "source": "https://en.wikipedia.org/wiki/Lake_El%27gygytgyn",
+  "approx": false
+ },
+ {
+  "name": "IBMP isolation facility (Mars-500)",
+  "lat": 55.78,
+  "lon": 37.58,
+  "country": "Russia",
+  "kind": "station",
+  "analog_for": "Mars-500, SIRIUS isolation experiments",
+  "source": "https://en.wikipedia.org/wiki/Mars-500",
+  "approx": false
+ },
+ {
+  "name": "LUNARES Research Station",
+  "lat": 53.15,
+  "lon": 16.74,
+  "country": "Poland",
+  "kind": "station",
+  "analog_for": "Polish analog habitat",
+  "source": "https://en.wikipedia.org/wiki/Lunares_Research_Station",
+  "approx": true
+ },
+ {
+  "name": "Kara-Kul crater",
+  "lat": 39.0,
+  "lon": 73.4,
+  "country": "Tajikistan",
+  "kind": "impact",
+  "analog_for": "Impact crater lake",
+  "source": "https://en.wikipedia.org/wiki/Karakul_crater",
+  "approx": false
+ },
+ {
+  "name": "Airbus rover Mars Yard (Stevenage)",
+  "lat": 51.9,
+  "lon": -0.2,
+  "country": "United Kingdom",
+  "kind": "field_test",
+  "analog_for": "ExoMars rover test yard",
+  "source": "https://en.wikipedia.org/wiki/Rosalind_Franklin_(rover)",
+  "approx": true
+ }
+]

@@ -8,6 +8,8 @@ A data-driven planetary analogue identification platform using NASA and partner 
 | `analogue_engine/` | Similarity model (pure Python): comparators, weights, calibration on known analogs, year slider, site cards. See its README and `docs/`. |
 | `backend/` | App backend: data interface, geospatial helpers, mission profiles, integration, and `engine_service.py`, which connects the engine to the data. |
 | `data/grid_1deg/` | Data team's 1°×1° Earth/Mars grid (`earth_1deg.csv`, `mars_1deg.csv`, `parameters.csv`). It comes from branch `data-grid-1deg`. |
+| `hires/` | The 11 km grid (Earth 0.1°, Mars 0.1875°) built from public sources, a local search tool, the app's compact 11 km data, and the agent search for new analogs. See [`hires/README.md`](hires/README.md). |
+| `web/app/` | The web app (3D globe and Analog Finder). On this branch it runs on the 11 km grid. |
 
 ## Install
 
@@ -111,6 +113,11 @@ year slider, run:
 python -m backend.web_export                     # years from data/grid_1deg/ssp245/
 python -m backend.web_export --scenario ssp585   # or the high-emission scenario
 ```
+
+**11 km mode (this branch):** `web/app/data/planalogy` holds the 11 km data in a compact format
+(`cells.json`, `deltas.json`, `mars_fine_*.json`), read by `web/app/js/compact.js`. It is built by
+`hires/export_web.py` and `hires/export_app.py`; running `backend.web_export` again restores the 1° data.
+Sources, method, validation and results are in [`hires/README.md`](hires/README.md).
 
 The app is published as a Claude artifact. Any static host also works:
 

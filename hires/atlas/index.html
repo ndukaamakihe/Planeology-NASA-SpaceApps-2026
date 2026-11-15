@@ -1,0 +1,551 @@
+<title>Planalogy Analog Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column. The live 11 km explorer (map + ranked list + cell card) is the hero band, then the
+   resolution comparison, audited finalists, climate signals, all candidates, and the method. */
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5B6878; --line:#D3DAE2;
+  --sea:#C9D3DD; --land:#A9B3BE; --accent:#B4501F; --gain:#1F8E7C; --loss:#C4405A; --pin:#0E1620;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D131A; --surface:#151E28; --ink:#E4EAF0; --muted:#94A2B2; --line:#26323F;
+  --sea:#0A1016; --land:#2A3540; --accent:#E8834C; --gain:#4CC7B0; --loss:#F07A92; --pin:#F4F6F8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D131A; --surface:#151E28; --ink:#E4EAF0; --muted:#94A2B2; --line:#26323F;
+  --sea:#0A1016; --land:#2A3540; --accent:#E8834C; --gain:#4CC7B0; --loss:#F07A92; --pin:#F4F6F8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--f-body);padding-block:32px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1180px;margin:0 auto;display:grid;gap:56px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.08;text-wrap:balance}
+h1{font-size:clamp(2.2rem,5.5vw,3.6rem);font-weight:800;font-stretch:80%;letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;font-stretch:85%}
+h3{font-size:1.2rem;font-weight:700;font-stretch:90%}
+p{margin:0;max-width:68ch}
+.eyebrow{font:500 .75rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)} .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+header{display:grid;gap:14px}
+.lead{font-size:1.15rem}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:.95rem}
+.stats b{font:600 1.35rem/1 var(--f-display);font-stretch:85%;display:block;font-variant-numeric:tabular-nums}
+section{display:grid;gap:16px}
+.controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:500 .85rem var(--f-body);border:0;background:none;color:var(--ink);padding:7px 11px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.explore{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start}
+@media (max-width:900px){.explore{grid-template-columns:1fr}}
+.mapcol{display:grid;gap:8px;min-width:0}
+.mapbox{position:relative;width:100%;aspect-ratio:2/1;max-width:100%;border-radius:10px;overflow:hidden;background:var(--sea);border:1px solid var(--line);touch-action:none;cursor:crosshair}
+.mapbox.drag{cursor:grabbing}
+.mapbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.pins{position:absolute;inset:0;pointer-events:none}
+.pinbtn{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;border:2px solid var(--bg);background:var(--pin);color:var(--bg);
+  width:24px;height:24px;border-radius:50%;font:600 .72rem var(--f-mono);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pinbtn.top{background:var(--accent);color:#fff;width:18px;height:18px;font-size:.6rem}
+.pinbtn.sel{outline:3px solid var(--accent);outline-offset:1px}
+.kdot{position:absolute;width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid var(--pin);opacity:.65}
+.xhair{position:absolute;width:16px;height:16px;transform:translate(-50%,-50%);border:2px solid var(--accent);border-radius:3px}
+.zoom{position:absolute;right:10px;top:10px;display:grid;gap:4px}
+.zoom button{width:32px;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 1rem var(--f-mono);cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:.85rem;color:var(--muted)}
+.ramp{width:150px;height:10px;border-radius:3px;display:inline-block;vertical-align:middle;margin:0 6px;background:linear-gradient(90deg,#542618,#9E421E 35%,#DE802C 65%,#F5BE5C 85%,#FFF4C8)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.status{font:400 .82rem var(--f-mono);color:var(--muted);min-height:1.2em}
+.side{display:grid;gap:12px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;min-width:0}
+.panel h3{font-size:1.05rem}
+.toplist{list-style:none;margin:0;padding:0;display:grid;gap:2px;max-height:360px;overflow:auto}
+.toplist button{width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:6px 6px;border-radius:6px;cursor:pointer;display:grid;grid-template-columns:28px 1fr auto;gap:8px;font:400 .86rem var(--f-body)}
+.toplist button:hover,.toplist button.sel{background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.toplist .n{font:600 .8rem var(--f-mono);color:var(--accent)}
+.toplist .k{color:var(--muted);font-size:.76rem;display:block}
+.check{display:flex;gap:8px;align-items:center;font-size:.86rem}
+details{font-size:.88rem} summary{cursor:pointer;color:var(--muted)}
+.wrow{display:grid;grid-template-columns:110px 1fr 34px;gap:8px;align-items:center;font-size:.82rem}
+.wrow input{width:100%}
+.feat{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:2px 8px;font-size:.8rem;align-items:center}
+.bar{height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--accent)}
+.grid3{display:grid;grid-template-columns:auto repeat(3,1fr);gap:4px;font-size:.8rem;align-items:center}
+.grid3 .h{color:var(--muted);font:500 .72rem var(--f-mono);text-align:center}
+.chip{border-radius:6px;padding:4px 4px;text-align:center;font:500 .72rem/1.2 var(--f-mono);border:1px solid var(--line)}
+.chip.dry{background:color-mix(in srgb,var(--gain) 18%,var(--surface));border-color:color-mix(in srgb,var(--gain) 45%,var(--line))}
+.chip.no{background:color-mix(in srgb,var(--loss) 14%,var(--surface));border-color:color-mix(in srgb,var(--loss) 40%,var(--line))}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.cmp{display:grid;gap:6px;min-width:0}
+.cmp canvas{width:100%;aspect-ratio:3/2;border-radius:8px;background:var(--sea);border:1px solid var(--line);image-rendering:pixelated}
+.cmp span{font:500 .8rem var(--f-mono);color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pills button{font:500 .85rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.pills button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.cards{display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:14px;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+@media (max-width:760px){.card{grid-template-columns:1fr}}
+.card .head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.rankno{font:800 2rem/1 var(--f-display);font-stretch:75%;color:var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.9rem;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0}
+.block{display:grid;gap:4px;font-size:.95rem}
+.block b{font:600 .72rem/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.conf{display:inline-flex;gap:2px;vertical-align:middle}
+.conf i{width:8px;height:8px;border-radius:2px;background:var(--line)} .conf i.on{background:var(--accent)}
+.src{font-size:.82rem;word-break:break-word;display:grid;gap:2px}
+.src a{color:var(--muted)}
+.ghost{justify-self:start;font:500 .85rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:.9rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:500 .72rem/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tag{display:inline-block;font:500 .72rem/1 var(--f-mono);padding:4px 7px;border-radius:5px;border:1px solid currentColor;white-space:nowrap}
+.tag.fin{color:var(--gain)} .tag.rej{color:var(--muted)}
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.method div{display:grid;gap:6px;align-content:start;min-width:0}
+.method ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.93rem}
+.foot{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px;display:grid;gap:6px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Planalogy · NASA Space Apps 2026 · 11 km Mars analog search</span>
+    <h1>Planalogy Analog Atlas</h1>
+    <p class="lead">We compared every 11 km cell of Earth's dry land with the places where Curiosity, Perseverance and future crews work on Mars, then sent ten search agents and an auditor to find analogs nobody has used yet, and to see which ones climate change creates or erases. The whole search runs in this page: pick a mission and a year, or click anywhere on the map.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section aria-labelledby="ex-h">
+    <h2 id="ex-h">Explore the 11 km grid</h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Mission" id="seg-mission"></div>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Year" id="seg-year"></div>
+      <div class="seg" role="group" aria-label="Climate scenario" id="seg-scen"></div>
+      <div class="seg" role="group" aria-label="Map layer" id="seg-layer"></div>
+      <label class="check"><input type="checkbox" id="chk-known" checked> Known analogs</label>
+    </div>
+    <div class="explore">
+      <div class="mapcol">
+        <div class="mapbox" id="mapbox">
+          <canvas id="map" aria-label="Map of Mars-analog similarity at 11 km"></canvas>
+          <div class="pins" id="pins"></div>
+          <div class="zoom"><button type="button" id="zin" aria-label="Zoom in">+</button><button type="button" id="zout" aria-label="Zoom out">−</button><button type="button" id="zreset" aria-label="Whole world" style="font-size:.7rem">⤢</button></div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div class="status" id="status">Loading 268,375 cells…</div>
+      </div>
+      <div class="side">
+        <div class="panel" id="cellpanel">
+          <h3>Any place on Earth</h3>
+          <p class="muted" style="font-size:.9rem">Click the map to see how a cell compares with the Mars target, and whether it counts as Mars-like dry land in each climate scenario.</p>
+        </div>
+        <div class="panel">
+          <h3 id="top-h">Best sites</h3>
+          <label class="check"><input type="checkbox" id="chk-new" checked> Hide sites within 50 km of a known analog</label>
+          <ol class="toplist" id="toplist"></ol>
+          <details id="weights"><summary>Adjust category weights</summary><div id="wbox" style="display:grid;gap:6px;margin-top:8px"></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="res-h">
+    <span class="eyebrow">Resolution</span>
+    <h2 id="res-h">From 110 km to 11 km</h2>
+    <p>The app's first grid had 1° cells, about 110 km across: a whole basin per cell. The new grid has 83 times more land cells and uses the same mission profiles. Left: the app's 1° result for the mission's base profile. Right: the live 11 km result above.</p>
+    <div class="pills" id="regions" role="group" aria-label="Region"></div>
+    <div class="compare">
+      <div class="cmp"><canvas id="c1" width="600" height="400" aria-label="1 degree grid"></canvas><span id="c1l">1° grid · 110 km</span></div>
+      <div class="cmp"><canvas id="c2" width="600" height="400" aria-label="11 km grid"></canvas><span id="c2l">0.1° grid · 11 km</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="fin-h">
+    <span class="eyebrow">Audited finalists</span>
+    <h2 id="fin-h">New analogs worth a field campaign</h2>
+    <p id="fin-intro" class="muted"></p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section aria-labelledby="ice-h">
+    <span class="eyebrow">Climate signal · ground ice</span>
+    <h2 id="ice-h">The best ice-drilling ground is thawing</h2>
+    <p id="ice-intro" class="muted"></p>
+    <div class="wrap"><table id="ice"><thead><tr><th>Site</th><th>Mission</th><th>Today</th><th>2050 moderate · high</th><th>2090 moderate · high</th><th>What changes</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="lose-h">
+    <span class="eyebrow">Known analogs</span>
+    <h2 id="lose-h">Classic analogs that climate change takes away</h2>
+    <p id="lose-intro" class="muted"></p>
+    <div class="wrap"><table id="lose"><thead><tr><th>Site</th><th>Mission</th><th>Today</th><th>2050 moderate · high</th><th>2090 moderate · high</th><th>What changes</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="all-h">
+    <span class="eyebrow">Audit trail</span>
+    <h2 id="all-h">Every candidate the agents proposed</h2>
+    <p class="muted">The auditor's decision on each candidate, in its own words.</p>
+    <div class="wrap"><table id="all"><thead><tr><th>Candidate</th><th>Scout</th><th>Decision</th><th>Reason</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="m-h">
+    <span class="eyebrow">Method</span>
+    <h2 id="m-h">How the atlas was built</h2>
+    <div class="method" id="method"></div>
+  </section>
+
+  <footer class="foot" id="foot"></footer>
+</main>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const el = (t, a = {}, ...k) => { const e = document.createElement(t); for (const [x, v] of Object.entries(a)) { if (v == null) continue; if (x === 'class') e.className = v; else if (x === 'text') e.textContent = v; else if (x.startsWith('on')) e.addEventListener(x.slice(2), v); else e.setAttribute(x, v); } k.flat().forEach(c => c != null && e.append(c)); return e; };
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = n => n == null ? '–' : Number(n).toLocaleString('en');
+  const MISSIONS = [
+    ['rover_navigation', 'Rover · Gale', 'rover_navigation', 'gale'],
+    ['sample_science', 'Samples · Jezero', 'sample_science', 'jezero'],
+    ['thermal_environment', 'Thermal · Gale', 'thermal_environment', 'gale'],
+    ['ice_prospecting', 'Ice · Arcadia', 'ice_prospecting', 'arcadia'],
+    ['oxia', 'Samples · Oxia Planum (ESA)', 'sample_science', 'oxia'],
+    ['deut', 'Ice · Deuteronilus', 'ice_prospecting', 'deuteronilus'],
+  ];
+  const st = { mission: 'rover_navigation', year: 'now', scen: 'ssp245', layer: 'score', z: 1, cx: 0, cy: 0, known: true, onlyNew: true,
+               cell: null, finSel: null, weights: null };
+  let A = null, E = null, C = null, DL = null; const IMG = {};
+  const SCN = [['ssp245', 'Moderate'], ['ssp585', 'High emissions']];
+  const key = () => st.year === 'now' ? 'now' : `${st.scen}_${st.year}`;
+
+  /* ---------- data ---------- */
+  function b64(s, t) { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return t === 'u16' ? new Uint16Array(u.buffer) : t === 'i16' ? new Int16Array(u.buffer) : u; }
+  function decodeCells(J) { const o = { n: J.n, keys: J.keys, scale: J.scale }; for (const [k, v] of Object.entries(J.cols)) o[k] = b64(v.b64, v.t); return o; }
+  function num(arr, i, scale, miss) { const v = arr[i]; return v === miss ? NaN : v / scale; }
+
+  // future climate: same bilinear delta method as the local tool
+  const CL = {};
+  function bilinearCells(grid, scale) {
+    const out = new Float32Array(C.n);
+    for (let i = 0; i < C.n; i++) {
+      const lat = 90 - (C.r[i] + .5) * .1, lon = -180 + (C.c[i] + .5) * .1;
+      const fy = Math.min(179, Math.max(0, 89.5 - lat)), y0 = Math.floor(fy), y1 = Math.min(y0 + 1, 179), wy = fy - y0;
+      const fx = ((lon + 179.5) % 360 + 360) % 360, x0 = Math.floor(fx) % 360, x1 = (x0 + 1) % 360, wx = fx - Math.floor(fx);
+      let nm = 0, dn = 0;
+      for (const [yy, a] of [[y0, 1 - wy], [y1, wy]]) for (const [xx, b] of [[x0, 1 - wx], [x1, wx]]) {
+        const v = grid[yy * 360 + xx]; if (v !== -32768) { nm += v / scale * a * b; dn += a * b; } }
+      if (dn > 0.15) out[i] = nm / dn;
+      else { const pi = Math.min(179, Math.max(0, Math.floor(90 - lat))), pj = Math.min(359, Math.max(0, Math.floor(lon + 180))); const v = grid[pi * 360 + pj]; out[i] = v === -32768 ? NaN : v / scale; }
+    }
+    return out;
+  }
+  function climate(k) {
+    if (CL[k]) return CL[k];
+    const s = C.scale, n = C.n;
+    const base = { sswing: new Float32Array(n), smin: new Float32Array(n), aswing: new Float32Array(n), tmean: new Float32Array(n), precip: new Float32Array(n), arid: new Float32Array(n) };
+    for (let i = 0; i < n; i++) { base.sswing[i] = num(C.sswing, i, s.sswing, -32768); base.smin[i] = num(C.smin, i, s.smin, -32768); base.aswing[i] = num(C.aswing, i, s.aswing, -32768);
+      base.tmean[i] = num(C.tmean, i, s.tmean, -32768); base.precip[i] = num(C.precip, i, s.precip, -32768); base.arid[i] = num(C.arid, i, s.arid, -32768); }
+    if (k === 'now') return (CL[k] = base);
+    const d = DL.years[k], D = DL.scale.d, R = DL.scale.r;
+    const g = f => bilinearCells(b64(d[f], 'i16'), f.startsWith('r') ? R : D);
+    const dTm = g('dTmean'), dTn = g('dTmin'), dAs = g('dAswing'), rP = g('rP'), rA = g('rAI');
+    const o = {};
+    o.aswing = base.aswing.map((v, i) => v + dAs[i]); o.sswing = base.sswing.map((v, i) => v + dAs[i]); o.smin = base.smin.map((v, i) => v + dTn[i]);
+    o.tmean = base.tmean.map((v, i) => v + dTm[i]); o.precip = base.precip.map((v, i) => v * rP[i]); o.arid = base.arid.map((v, i) => v * rA[i]);
+    return (CL[k] = o);
+  }
+  const dryBit = (i, k) => (C.dry[i] >> C.keys.indexOf(k)) & 1;
+
+  /* ---------- engine (same comparators and weights as the app) ---------- */
+  function mission() { const m = MISSIONS.find(x => x[0] === st.mission); const p = E.presets.find(x => x.id === m[2]); return { m, p, t: E.targets[m[3]] }; }
+  function effWeights(catW, featW) {
+    const cats = {}; E.features.forEach(f => (cats[f.category] = cats[f.category] || []).push(f.id));
+    const tot = Object.keys(cats).reduce((s, c) => s + (+catW[c] || 0), 0) || 1; const w = {};
+    for (const [c, ids] of Object.entries(cats)) { const W = (+catW[c] || 0) / tot; const inner = ids.reduce((s, i) => s + Math.max(0, +(featW[i] ?? 1)), 0);
+      ids.forEach(i => { w[i] = W > 0 && inner > 0 ? W * Math.max(0, +(featW[i] ?? 1)) / inner : 0; }); }
+    return w;
+  }
+  const POP = Array.from({ length: 256 }, (_, i) => i.toString(2).split('1').length - 1);
+  function earthValue(fid, i, cl) {
+    const s = C.scale;
+    switch (fid) {
+      case 'slope_deg': return num(C.slope, i, s.slope, 65535);
+      case 'roughness_m': return num(C.rough, i, s.rough, 65535);
+      case 'relief_m': return num(C.relief, i, s.relief, 65535);
+      case 'albedo': return num(C.albedo, i, s.albedo, 65535);
+      case 'ati_percentile': return num(C.ati, i, s.ati, 65535);
+      case 'surface_temp_swing_K': return cl.sswing[i];
+      case 'surface_temp_min_K': return cl.smin[i];
+      case 'air_temp_swing_K': return cl.aswing[i];
+    }
+    return NaN;
+  }
+  function sim(f, i, t, cl) {
+    const fid = f.id;
+    if (t == null) return NaN;
+    if (f.comparator === 'clipped_linear_v1') { const x = earthValue(fid, i, cl); if (!isFinite(x)) return NaN; return 1 - Math.min(1, Math.abs(x - t) / (f.tau * (E.tau_scale[fid] || 1))); }
+    if (f.comparator === 'jaccard_v1') { if (!(C.flags[i] & 4)) return NaN; let tm = 0; E.minerals.forEach((m, j) => { if (t.includes(m)) tm |= 1 << j; });
+      const a = C.minerals[i], u = POP[a | tm]; return u === 0 ? 1 : POP[a & tm] / u; }
+    if (fid === 'rock_group') { if (C.rock[i] === 0) return NaN; return C.rock[i] === E.rocks.indexOf(t) ? 1 : 0; }
+    if (fid === 'inside_impact_structure') return ((C.flags[i] & 1) === 1) === !!t ? 1 : 0;
+    if (fid === 'ground_ice_flag') return ((C.flags[i] & 2) === 2) === !!t ? 1 : 0;
+    return NaN;
+  }
+  const RUNS = {};
+  function run(k) {
+    const { p, t, m } = mission(); const wsig = JSON.stringify(st.weights || p.category_weights);
+    const id = `${m[0]}|${k}|${wsig}`; if (RUNS[id]) return RUNS[id];
+    const cl = climate(k), w = effWeights(st.weights || p.category_weights, p.feature_weights), tv = t.values;
+    const score = new Float32Array(C.n).fill(NaN), feats = E.features.filter(f => w[f.id] > 0);
+    const needIce = (p.requirements || []).some(r => r.feature === 'ground_ice_flag' && r.equals);
+    for (let i = 0; i < C.n; i++) {
+      if (!dryBit(i, k)) continue;
+      if (needIce && !(C.flags[i] & 2)) continue;
+      let nm = 0, dn = 0, ok = true;
+      for (const f of feats) { const s = sim(f, i, tv[f.id], cl); if (!isFinite(s)) { ok = false; break; } nm += w[f.id] * s; dn += w[f.id]; }
+      if (ok && dn > 0) score[i] = nm / dn;
+    }
+    const order = []; for (let i = 0; i < C.n; i++) if (isFinite(score[i])) order.push(i);
+    order.sort((a, b) => (score[b] - score[a]) || (a - b));
+    const rank = new Int32Array(C.n); order.forEach((i, j) => { rank[i] = j + 1; });
+    const sorted = order.map(i => score[i]);
+    return (RUNS[id] = { score, rank, order, n: order.length, lo: sorted[Math.floor(sorted.length * 0.5)] || 0, hi: sorted[Math.floor(sorted.length * 0.0001)] || 1, w });
+  }
+
+  /* ---------- map ---------- */
+  const cv = $('#map'), box = $('#mapbox');
+  let live = null;
+  const STOPS = [[0, 84, 38, 24], [0.35, 158, 66, 30], [0.65, 222, 128, 44], [0.85, 245, 190, 92], [1, 255, 244, 200]];
+  function ramp(t) { t = Math.max(0, Math.min(1, t)); for (let j = 1; j < STOPS.length; j++) if (t <= STOPS[j][0]) { const a = STOPS[j - 1], b = STOPS[j], u = (t - a[0]) / (b[0] - a[0]); return [0, 1, 2].map(k => a[k + 1] + (b[k + 1] - a[k + 1]) * u); } return STOPS[4].slice(1); }
+  function liveLayer() {
+    const R = run(key()); const c = document.createElement('canvas'); c.width = 3600; c.height = 1800; const g = c.getContext('2d'); const im = g.createImageData(3600, 1800);
+    for (const i of R.order) { const [r, gg, b] = ramp((R.score[i] - R.lo) / (R.hi - R.lo)); const p = (C.r[i] * 3600 + C.c[i]) * 4; im.data[p] = r; im.data[p + 1] = gg; im.data[p + 2] = b; im.data[p + 3] = 255; }
+    g.putImageData(im, 0, 0); live = c;
+  }
+  function size() { const r = box.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); draw(); }
+  function proj(lat, lon) { const W = cv.clientWidth, H = cv.clientHeight; return [W / 2 + (lon - st.cx) * W / 360 * st.z, H / 2 - (lat - st.cy) * H / 180 * st.z]; }
+  function unproj(x, y) { const W = cv.clientWidth, H = cv.clientHeight; return [st.cy - (y - H / 2) / (H / 180 * st.z), st.cx + (x - W / 2) / (W / 360 * st.z)]; }
+  function clamp() { st.z = Math.max(1, Math.min(60, st.z)); const hw = 180 / st.z, hh = 90 / st.z; st.cx = Math.max(-180 + hw, Math.min(180 - hw, st.cx)); st.cy = Math.max(-90 + hh, Math.min(90 - hh, st.cy)); }
+  function draw() {
+    const g = cv.getContext('2d'), d = cv.width / (cv.clientWidth || 1);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = css('--sea'); g.fillRect(0, 0, cv.width, cv.height);
+    const [x0, y0] = proj(90, -180), [x1, y1] = proj(-90, 180);
+    g.imageSmoothingEnabled = st.z < 3;
+    const put = img => img && g.drawImage(img, x0 * d, y0 * d, (x1 - x0) * d, (y1 - y0) * d);
+    put(IMG.landTint);
+    if (st.layer === 'score') put(live); else put(IMG['change_' + (st.year === 'now' ? 'ssp585_2090' : key())]);
+    pins();
+  }
+  function tintLand() { if (!IMG.land) return; const c = document.createElement('canvas'); c.width = IMG.land.width; c.height = IMG.land.height; const g = c.getContext('2d');
+    g.drawImage(IMG.land, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = css('--land'); g.fillRect(0, 0, c.width, c.height); IMG.landTint = c; }
+  let TOP = [];
+  function pins() {
+    const P = $('#pins'); P.innerHTML = ''; if (!A) return; const W = cv.clientWidth, H = cv.clientHeight; const inside = (x, y) => x > -20 && y > -20 && x < W + 20 && y < H + 20;
+    if (st.known) A.known.forEach(k => { const [x, y] = proj(k.lat, k.lon); if (inside(x, y)) P.append(el('span', { class: 'kdot', style: `left:${x}px;top:${y}px`, title: k.name })); });
+    TOP.forEach((i, j) => { const lat = 90 - (C.r[i] + .5) * .1, lon = -180 + (C.c[i] + .5) * .1, [x, y] = proj(lat, lon); if (!inside(x, y)) return;
+      P.append(el('button', { type: 'button', class: 'pinbtn top' + (st.cell === i ? ' sel' : ''), style: `left:${x}px;top:${y}px`, 'aria-label': `Top site ${j + 1}`, text: String(j + 1), onclick: ev => { ev.stopPropagation(); pickCell(i, true); } })); });
+    (A.finalists || []).forEach((f, j) => { const [x, y] = proj(f.lat, f.lon); if (!inside(x, y)) return;
+      P.append(el('button', { type: 'button', class: 'pinbtn', style: `left:${x}px;top:${y}px`, 'aria-label': `Finalist ${j + 1}: ${f.name}`, title: f.name, text: 'F' + (j + 1),
+        onclick: ev => { ev.stopPropagation(); openFinalist(j); } })); });
+    if (st.cell != null) { const lat = 90 - (C.r[st.cell] + .5) * .1, lon = -180 + (C.c[st.cell] + .5) * .1, [x, y] = proj(lat, lon); if (inside(x, y)) P.append(el('span', { class: 'xhair', style: `left:${x}px;top:${y}px` })); }
+  }
+  let drag = null, pinch = null, moved = false;
+  box.addEventListener('pointerdown', e => { if (e.target.closest('.pinbtn,.zoom')) return; box.setPointerCapture(e.pointerId); drag = { x: e.clientX, y: e.clientY, cx: st.cx, cy: st.cy, id: e.pointerId }; moved = false; });
+  box.addEventListener('pointermove', e => {
+    if (!drag || drag.id !== e.pointerId) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) { moved = true; box.classList.add('drag'); }
+    st.cx = drag.cx - dx * 360 / (cv.clientWidth * st.z); st.cy = drag.cy + dy * 180 / (cv.clientHeight * st.z); clamp(); draw(); });
+  box.addEventListener('pointerup', e => { const was = drag && !moved; drag = null; box.classList.remove('drag');
+    if (was && C && !e.target.closest('.pinbtn,.zoom')) { const r = box.getBoundingClientRect(); const [la, lo] = unproj(e.clientX - r.left, e.clientY - r.top); clickAt(la, lo); } });
+  box.addEventListener('pointercancel', () => { drag = null; box.classList.remove('drag'); });
+  function zoomAt(f, x, y) { const [la, lo] = unproj(x, y); st.z *= f; clamp(); const [la2, lo2] = unproj(x, y); st.cx += lo - lo2; st.cy += la - la2; clamp(); draw(); }
+  box.addEventListener('wheel', e => { e.preventDefault(); const r = box.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.25 : 0.8, e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  box.addEventListener('touchstart', e => { if (e.touches.length === 2) { const [a, b] = e.touches; pinch = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); drag = null; } }, { passive: true });
+  box.addEventListener('touchmove', e => { if (e.touches.length === 2 && pinch) { const [a, b] = e.touches; const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), r = box.getBoundingClientRect();
+    zoomAt(d / pinch, (a.clientX + b.clientX) / 2 - r.left, (a.clientY + b.clientY) / 2 - r.top); pinch = d; } }, { passive: true });
+  box.addEventListener('touchend', () => { pinch = null; });
+  $('#zin').onclick = () => zoomAt(1.6, cv.clientWidth / 2, cv.clientHeight / 2);
+  $('#zout').onclick = () => zoomAt(0.625, cv.clientWidth / 2, cv.clientHeight / 2);
+  $('#zreset').onclick = () => { st.z = 1; st.cx = 0; st.cy = 0; draw(); };
+  $('#chk-known').onchange = e => { st.known = e.target.checked; draw(); };
+  $('#chk-new').onchange = e => { st.onlyNew = e.target.checked; topList(); draw(); };
+
+  /* ---------- cells, top list, card ---------- */
+  let INDEX = null;
+  function clickAt(la, lo) {
+    if (la > 90 || la < -90) return; const r = Math.min(1799, Math.max(0, Math.floor((90 - la) / .1))), c = Math.floor(((lo + 180) % 360 + 360) % 360 / .1) % 3600;
+    const i = INDEX[r * 3600 + c]; if (i >= 0) pickCell(i, false); else noCell(la, lo);
+  }
+  function hav(a, b, c, d) { const R = Math.PI / 180, p1 = a * R, p2 = c * R, x = Math.sin((p2 - p1) / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin((d - b) * R / 2) ** 2; return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(x))); }
+  function nearestKnown(la, lo) { let best = null, bd = 1e9; A.known.forEach(k => { const d = hav(la, lo, k.lat, k.lon); if (d < bd) { bd = d; best = k; } }); return [best, bd]; }
+  function topList() {
+    const R = run(key()); const L = $('#toplist'); L.innerHTML = ''; TOP = [];
+    for (const i of R.order) { if (TOP.length >= 15) break;
+      const la = 90 - (C.r[i] + .5) * .1, lo = -180 + (C.c[i] + .5) * .1;
+      if (st.onlyNew && nearestKnown(la, lo)[1] < 50) continue;
+      if (TOP.some(j => hav(la, lo, 90 - (C.r[j] + .5) * .1, -180 + (C.c[j] + .5) * .1) < 60)) continue;
+      TOP.push(i); }
+    TOP.forEach((i, j) => { const la = 90 - (C.r[i] + .5) * .1, lo = -180 + (C.c[i] + .5) * .1, [k, d] = nearestKnown(la, lo);
+      L.append(el('li', {}, el('button', { type: 'button', class: st.cell === i ? 'sel' : null, onclick: () => pickCell(i, true) },
+        el('span', { class: 'n', text: String(j + 1) }), el('span', {}, `${la.toFixed(2)}°, ${lo.toFixed(2)}°`, el('span', { class: 'k', text: `#${fmt(R.rank[i])} · ${k ? Math.round(d) + ' km from ' + k.name : ''}` })),
+        el('span', { class: 'mono', text: (R.score[i] * 100).toFixed(1) })))); });
+    const { m } = mission(); $('#top-h').textContent = `Best sites · ${m[1]} · ${st.year === 'now' ? 'today' : st.year + ' ' + (st.scen === 'ssp245' ? 'moderate' : 'high')}`;
+  }
+  function chipFor(i, k) { const d = dryBit(i, k); if (!d) return el('span', { class: 'chip no', text: 'not dry' }); const R = run(k); return el('span', { class: 'chip dry', text: R.rank[i] ? '#' + fmt(R.rank[i]) : 'dry' }); }
+  function featLabel(f) { return f.label || f.id; }
+  function pickCell(i, center) {
+    st.cell = i; const la = 90 - (C.r[i] + .5) * .1, lo = -180 + (C.c[i] + .5) * .1;
+    if (center) { st.z = Math.max(st.z, 12); st.cx = lo; st.cy = la; clamp(); }
+    const k = key(), R = run(k), cl = climate(k), { t, m } = mission(), s = C.scale; const [kn, kd] = nearestKnown(la, lo);
+    const grid = el('div', { class: 'grid3' }, el('span'), el('span', { class: 'h', text: 'Today' }), el('span', { class: 'h', text: '2050' }), el('span', { class: 'h', text: '2090' }));
+    SCN.forEach(([sc, lab]) => grid.append(el('span', { class: 'muted', style: 'font-size:.76rem', text: lab }), chipFor(i, 'now'), chipFor(i, sc + '_2050'), chipFor(i, sc + '_2090')));
+    const feats = el('div', { class: 'feat' });
+    E.features.forEach(f => { if (!(R.w[f.id] > 0)) return; const sv = sim(f, i, t.values[f.id], cl);
+      const ev = earthValue(f.id, i, cl), tvv = t.values[f.id];
+      const vtxt = f.comparator === 'clipped_linear_v1' ? `${isFinite(ev) ? +ev.toFixed(2) : '–'} vs ${typeof tvv === 'number' ? +tvv.toFixed(2) : '–'}` : '';
+      feats.append(el('span', {}, el('span', { text: featLabel(f) + ' ' }), el('span', { class: 'muted mono', style: 'font-size:.72rem', text: vtxt }),
+        el('div', { class: 'bar' }, el('i', { style: `width:${isFinite(sv) ? sv * 100 : 0}%` }))), el('span', { class: 'mono', style: 'text-align:right', text: isFinite(sv) ? (sv * 100).toFixed(0) : '–' })); });
+    const P = $('#cellpanel'); P.innerHTML = '';
+    P.append(el('h3', { text: `${Math.abs(la).toFixed(2)}° ${la >= 0 ? 'N' : 'S'}, ${Math.abs(lo).toFixed(2)}° ${lo >= 0 ? 'E' : 'W'}` }),
+      el('dl', { class: 'kv' },
+        el('dt', { text: 'Mission' }), el('dd', { text: `${m[1]} · ${t.label}` }),
+        el('dt', { text: 'Score' }), el('dd', { class: 'mono', text: isFinite(R.score[i]) ? `${(R.score[i] * 100).toFixed(1)} / 100 · #${fmt(R.rank[i])} of ${fmt(R.n)}` : (dryBit(i, k) ? 'not scored (missing data or no ground ice)' : 'not Mars-like dry land this year') }),
+        el('dt', { text: 'Climate' }), el('dd', { class: 'mono', text: `${isFinite(cl.tmean[i]) ? cl.tmean[i].toFixed(1) + ' °C' : '–'} · ${isFinite(cl.precip[i]) ? Math.round(cl.precip[i]) + ' mm' : '–'} · aridity ${isFinite(cl.arid[i]) ? cl.arid[i].toFixed(3) : '–'}` }),
+        el('dt', { text: 'Ground' }), el('dd', { text: `${E.rocks[C.rock[i]] || 'unknown'} · ${C.elev[i] === -32768 ? '–' : fmt(C.elev[i]) + ' m'} · NDVI ${C.ndvi[i] === -32768 ? '–' : (C.ndvi[i] / 1000).toFixed(2)}${C.flags[i] & 2 ? ' · ground ice' : ''}${C.flags[i] & 1 ? ' · impact structure' : ''}` }),
+        el('dt', { text: 'Nearest known' }), el('dd', { text: kn ? `${kn.name} · ${Math.round(kd)} km` : '–' })),
+      el('div', { class: 'block' }, el('b', { text: 'Dry-land rank by scenario' }), grid),
+      el('div', { class: 'block' }, el('b', { text: 'Similarity by feature (Earth vs Mars)' }), feats));
+    draw(); $('#toplist').querySelectorAll('button').forEach((b, j) => b.classList.toggle('sel', TOP[j] === i));
+  }
+  function noCell(la, lo) {
+    const P = $('#cellpanel'); P.innerHTML = '';
+    P.append(el('h3', { text: `${Math.abs(la).toFixed(2)}° ${la >= 0 ? 'N' : 'S'}, ${Math.abs(lo).toFixed(2)}° ${lo >= 0 ? 'E' : 'W'}` }),
+      el('p', { class: 'muted', style: 'font-size:.9rem', text: 'This cell is never Mars-like dry land, in any year or scenario: it is sea, a lake, ice, or land that is too green or too wet. Try a desert, a high plateau or a polar desert.' }));
+    st.cell = null; draw();
+  }
+
+  /* ---------- controls ---------- */
+  function seg(id, items, k, after) { const b = $(id); b.innerHTML = ''; items.forEach(([v, l]) => b.append(el('button', { type: 'button', 'aria-pressed': String(st[k] === v), text: l, onclick: () => { st[k] = v; seg(id, items, k, after); after(); } }))); }
+  function weightsUI() {
+    const { p } = mission(); const W = st.weights || p.category_weights; const B = $('#wbox'); B.innerHTML = '';
+    E.categories.forEach(c => { const v = +(W[c.id] || 0);
+      const out = el('span', { class: 'mono', text: v.toFixed(2) });
+      const inp = el('input', { type: 'range', min: '0', max: '3', step: '0.25', value: String(v), id: 'w-' + c.id, 'aria-label': c.label + ' weight' });
+      inp.addEventListener('input', () => { st.weights = { ...(st.weights || p.category_weights), [c.id]: +inp.value }; out.textContent = (+inp.value).toFixed(2); schedule(); });
+      B.append(el('label', { class: 'wrow', for: 'w-' + c.id }, el('span', { text: c.label }), inp, out)); });
+    B.append(el('button', { type: 'button', class: 'ghost', text: 'Reset to the mission profile', onclick: () => { st.weights = null; weightsUI(); refresh(); } }));
+  }
+  let timer = null; function schedule() { clearTimeout(timer); timer = setTimeout(refresh, 250); }
+  function legend() {
+    const L = $('#legend'); L.innerHTML = ''; const { t } = mission();
+    if (st.layer === 'score') { const R = run(key());
+      L.append(el('span', {}, 'Similarity to ', el('b', { text: t.label })), el('span', { class: 'mono' }, (R.lo * 100).toFixed(0), el('span', { class: 'ramp' }), (R.hi * 100).toFixed(0), ' / 100'),
+        el('span', { class: 'mono', text: `${fmt(R.n)} dry cells ranked` }));
+    } else { const k = st.year === 'now' ? 'ssp585_2090' : key(), c = A.layers.changes[k];
+      L.append(el('span', { text: st.year === 'now' ? 'Change by 2090, high emissions:' : 'Change vs today:' }),
+        el('span', {}, el('i', { class: 'sw', style: `background:${css('--gain')}` }), `becomes dry land · ${fmt(c.gain)}`),
+        el('span', {}, el('i', { class: 'sw', style: `background:${css('--loss')}` }), `stops counting · ${fmt(c.loss)}`)); }
+  }
+  function refresh() {
+    $('#seg-scen').hidden = st.year === 'now';
+    const t0 = performance.now(); liveLayer(); topList(); legend(); draw(); compare(); weightsUI();
+    if (st.cell != null) pickCell(st.cell, false);
+    $('#status').textContent = `${fmt(C.n)} cells searched in ${Math.round(performance.now() - t0)} ms · drag to pan, scroll or pinch to zoom, click for a cell card`;
+  }
+
+  /* ---------- resolution compare ---------- */
+  const REGIONS = [['Great Basin, US', 35, 44, -121, -109], ['Tarim Basin', 36, 43, 75, 90], ['Atacama', -28, -18, -72, -64], ['Arabia', 15, 30, 40, 58], ['Tibet', 28, 37, 78, 95]];
+  let region = 0;
+  function regionsUI() { const R = $('#regions'); R.innerHTML = ''; REGIONS.forEach((r, i) => R.append(el('button', { type: 'button', 'aria-pressed': String(i === region), text: r[0], onclick: () => { region = i; regionsUI(); compare(); } }))); }
+  function compare() {
+    const [, la0, la1, lo0, lo1] = REGIONS[region]; const { m } = mission();
+    [['#c1', IMG['score1_' + m[2]], 1], ['#c2', live, 10]].forEach(([id, img, ppd]) => {
+      const c = $(id), g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.fillStyle = css('--sea'); g.fillRect(0, 0, c.width, c.height);
+      const sw = (lo1 - lo0), sh = (la1 - la0), s = Math.min(c.width / sw, c.height / sh), w = sw * s, h = sh * s, ox = (c.width - w) / 2, oy = (c.height - h) / 2;
+      if (IMG.landTint) g.drawImage(IMG.landTint, (lo0 + 180) * 10, (90 - la1) * 10, sw * 10, sh * 10, ox, oy, w, h);
+      if (img) g.drawImage(img, (lo0 + 180) * ppd, (90 - la1) * ppd, sw * ppd, sh * ppd, ox, oy, w, h);
+    });
+    $('#c1l').textContent = `1° app grid · 110 km · ${m[2].replace('_', ' ')} profile, today`;
+    $('#c2l').textContent = `0.1° grid · 11 km · ${m[1]} · ${st.year === 'now' ? 'today' : st.year}`;
+  }
+
+  /* ---------- finalists, tables, method ---------- */
+  function trajGrid(tr) { const g = el('div', { class: 'grid3' }, el('span'), el('span', { class: 'h', text: 'Today' }), el('span', { class: 'h', text: '2050' }), el('span', { class: 'h', text: '2090' }));
+    const ch = t => !t ? el('span', { class: 'chip', text: '–' }) : el('span', { class: 'chip ' + (t.dry ? 'dry' : 'no'), title: `aridity ${t.aridity} · ${t.T_mean_C} °C · ${t.precip_mm} mm`, text: t.dry ? (t.rank ? '#' + fmt(t.rank) : 'dry') : 'not dry' });
+    SCN.forEach(([k, l]) => g.append(el('span', { class: 'muted', style: 'font-size:.76rem', text: l }), ch(tr.now), ch(tr[k + '_2050']), ch(tr[k + '_2090']))); return g; }
+  function openFinalist(j) {
+    const f = A.finalists[j]; const m = MISSIONS.find(x => x[0] === f.preset); if (m) { st.mission = m[0]; st.weights = null; seg('#seg-mission', MISSIONS.map(x => [x[0], x[1]]), 'mission', onMission); }
+    st.year = 'now'; seg('#seg-year', YEARS, 'year', refresh); refresh();
+    const r = Math.floor((90 - f.lat) / .1), c = Math.floor((f.lon + 180) / .1), i = INDEX[r * 3600 + c]; if (i >= 0) pickCell(i, true);
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function renderCards() {
+    const C2 = $('#cards'); C2.innerHTML = '';
+    (A.finalists || []).forEach((f, i) => {
+      const conf = el('span', { class: 'conf', title: `Auditor confidence ${f.confidence}/10` }, ...Array.from({ length: 10 }, (_, j) => el('i', { class: j < (f.confidence || 0) ? 'on' : null })));
+      const left = el('div', { style: 'display:grid;gap:12px;min-width:0' },
+        el('div', { class: 'head' }, el('span', { class: 'rankno', text: 'F' + (i + 1) }), el('h3', { text: f.name })),
+        el('div', { class: 'muted mono', style: 'font-size:.85rem', text: `${f.lat.toFixed(2)}°, ${f.lon.toFixed(2)}° · ${f.country || ''}` }),
+        f.verdict ? el('p', { style: 'font-weight:600', text: f.verdict }) : null,
+        ...[['What is there', f.what_is_there], ['Mission value', f.mission_value], ['Climate', f.climate_story], ['Why it is new', f.novelty_evidence], ['Caveats', f.caveats]]
+          .filter(x => x[1]).map(([h, t]) => el('div', { class: 'block' }, el('b', { text: h }), el('span', { text: t }))));
+      const right = el('div', { style: 'display:grid;gap:12px;align-content:start;min-width:0' },
+        el('dl', { class: 'kv' }, el('dt', { text: 'Mission' }), el('dd', { text: f.mission_label }), el('dt', { text: 'Mars target' }), el('dd', { text: f.mars_target }),
+          el('dt', { text: 'Score today' }), el('dd', { class: 'mono', text: f.score_today != null ? f.score_today + ' / 100' : '–' }),
+          el('dt', { text: 'Rank today' }), el('dd', { class: 'mono', text: f.rank_today ? `#${fmt(f.rank_today)} of ${fmt(f.of_today)}` : 'not dry land today' }),
+          el('dt', { text: 'Nearest known' }), el('dd', { text: f.nearest_known_analog ? `${f.nearest_known_analog.name} · ${f.nearest_known_analog.km} km` : '–' }),
+          el('dt', { text: 'Confidence' }), el('dd', {}, conf)),
+        el('div', { class: 'block' }, el('b', { text: 'Dry-land rank by scenario' }), trajGrid(f.trajectory)),
+        el('button', { type: 'button', class: 'ghost', text: 'Open in the explorer', onclick: () => openFinalist(i) }),
+        f.sources.length ? el('div', { class: 'src' }, el('b', { style: 'font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)', text: 'Sources' }),
+          ...f.sources.slice(0, 5).map(u => el('a', { href: u, target: '_blank', rel: 'noopener', text: u.replace(/^https?:\/\//, '').slice(0, 90) }))) : null);
+      C2.append(el('article', { class: 'card', id: 'card-' + i }, left, right));
+    });
+  }
+  function table(sel, L, introSel, intro) {
+    const B = $(sel + ' tbody'); B.innerHTML = ''; $(introSel).textContent = intro || '';
+    const c = x => x ? (x.dry ? (x.rank ? '#' + fmt(x.rank) : 'dry') : 'not dry') : '–';
+    L.forEach(k => { const t = k.trajectory || {}; B.append(el('tr', {}, el('td', {}, el('b', { text: k.name }), el('div', { class: 'muted mono', style: 'font-size:.78rem', text: k.where || '' })),
+      el('td', { text: k.mission || '' }), el('td', { class: 'mono', text: c(t.now) }), el('td', { class: 'mono', text: `${c(t.ssp245_2050)} · ${c(t.ssp585_2050)}` }),
+      el('td', { class: 'mono', text: `${c(t.ssp245_2090)} · ${c(t.ssp585_2090)}` }), el('td', { class: 'muted', text: k.mechanism || '' }))); });
+  }
+  function renderStatic() {
+    const S = $('#stats'); (A.stats || []).forEach(([v, l]) => S.append(el('div', {}, el('b', { text: v }), el('span', { class: 'muted', text: l }))));
+    $('#fin-intro').textContent = A.finalists_intro || '';
+    renderCards();
+    table('#ice', A.signal || [], '#ice-intro', A.signal_intro); table('#lose', A.known_losers || [], '#lose-intro', A.known_losers_intro);
+    const T = $('#all tbody'); (A.candidates || []).forEach(c => T.append(el('tr', {}, el('td', { text: c.name }), el('td', { class: 'mono', text: c.scout || '' }),
+      el('td', {}, el('span', { class: 'tag ' + (c.status === 'finalist' ? 'fin' : 'rej'), text: c.status })), el('td', { class: 'muted', text: c.reason || '' }))));
+    const M = $('#method'); (A.method || []).forEach(b => M.append(el('div', {}, el('h3', { text: b.title }), el('ul', {}, ...b.items.map(t => el('li', { text: t }))))));
+    (A.footer || []).forEach(t => $('#foot').append(el('span', { text: t })));
+  }
+
+  const YEARS = [['now', 'Today'], ['2050', '2050'], ['2090', '2090']];
+  function onMission() { st.weights = null; refresh(); }
+  async function boot() {
+    const get = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u); return r.json(); };
+    try { A = await get('data/atlas.json'); renderStatic(); } catch (e) { $('#status').textContent = 'The atlas data did not load. Reload the page to try again.'; return; }
+    regionsUI(); size(); window.addEventListener('resize', size);
+    const load = n => new Promise(res => { const i = new Image(); i.onload = () => { IMG[n] = i; res(); }; i.onerror = () => res(); i.src = 'layers/' + n + '.png'; });
+    const imgs = Promise.all(['land', 'score1_rover_navigation', 'score1_sample_science', 'score1_thermal_environment', 'score1_ice_prospecting',
+      'change_ssp245_2050', 'change_ssp585_2050', 'change_ssp245_2090', 'change_ssp585_2090'].map(load)).then(() => { tintLand(); draw(); });
+    try { [E, C, DL] = await Promise.all([get('data/engine.json'), get('data/cells.json').then(decodeCells), get('data/deltas.json')]); }
+    catch (e) { $('#status').textContent = 'The 11 km cells did not load. Reload the page to try again.'; return; }
+    INDEX = new Int32Array(1800 * 3600).fill(-1); for (let i = 0; i < C.n; i++) INDEX[C.r[i] * 3600 + C.c[i]] = i;
+    await imgs;
+    seg('#seg-mission', MISSIONS.map(x => [x[0], x[1]]), 'mission', onMission);
+    seg('#seg-year', YEARS, 'year', refresh); seg('#seg-scen', SCN, 'scen', refresh);
+    seg('#seg-layer', [['score', 'Similarity'], ['change', 'Dry land change']], 'layer', refresh);
+    refresh();
+    const mq = matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener && mq.addEventListener('change', () => { tintLand(); draw(); compare(); });
+  }
+  boot();
+})();
+</script>

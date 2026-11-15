@@ -158,8 +158,12 @@ TT.pages.finder = function(root){
   }
 
   const scen = () => (st.m.scenarios || []).find(s => s.id === st.scenario) || null;
+  /* 11 km compact data (js/compact.js): tables are rebuilt in memory, years from the 1° climate changes */
+  let compactP = null;
+  const compactData = () => compactP || (compactP = Promise.all([load(st.m.compact.cells), load(st.m.compact.deltas)])
+    .then(([c, d]) => window.PlanalogyCompact.init(st.m, c, d)));
   async function earthTable(year){
-    const base = await load(st.m.files.earth.now);
+    const base = st.m.compact ? (await compactData()).base : await load(st.m.files.earth.now);
     if (year === 'now') return base;
     const sc = scen();
     if (!sc){
@@ -167,7 +171,9 @@ TT.pages.finder = function(root){
       if (!cache[key]) cache[key] = load(st.m.files.earth[year]).then(yt => PS.earthForYear(base, yt));
       return cache[key];
     }
-    const snap = y => { const k = 'earth@' + sc.id + '@' + y; if (!cache[k]) cache[k] = load(sc.files[String(y)]).then(t => PS.earthForYear(base, t)); return cache[k]; };
+    const snap = y => {
+      if (st.m.compact) return compactData().then(cd => cd.year(sc.id + '_' + y));  // compact.js keeps its own small cache
+      const k = 'earth@' + sc.id + '@' + y; if (!cache[k]) cache[k] = load(sc.files[String(y)]).then(t => PS.earthForYear(base, t)); return cache[k]; };
     if (sc.files[String(year)]) return snap(year);
     const ys = sc.years, lo = ys.filter(y => y < year).pop(), hi = ys.find(y => y > year);
     // before the first projection: blend today's observed climate into it, so the slider has no jump
@@ -214,7 +220,7 @@ TT.pages.finder = function(root){
       const earth = await earthTable(y);
       if (dead || y !== st.year) return;
       const key = tk + '@' + (st.scenario || '') + '@' + y;
-      if (!simCache.has(key)){ simCache.set(key, PS.similarities(st.m, earth, t.values)); while (simCache.size > 6) simCache.delete(simCache.keys().next().value); }
+      if (!simCache.has(key)){ simCache.set(key, PS.similarities(st.m, earth, t.values)); while (simCache.size > (st.m.compact ? 2 : 6)) simCache.delete(simCache.keys().next().value); }
       st.sims = simCache.get(key);
       st.res = PS.scoreCells(st.m, earth, st.sims, {categoryWeights: effectiveCW(), featureWeights: effectiveFW(),
         requirements: st.req, requiredFeatures: st.reqF.filter(f => !st.sims.targetMissing.includes(f)), onlyDryBare: st.dry, hyperArid: st.hyper});
@@ -308,7 +314,9 @@ TT.pages.finder = function(root){
     try {
       status.textContent = 'Loading Mars data…';
       const mars = await load(st.m.files.mars);
-      const cell = PS.marsCell(st.m, mars, lat, lon);
+      const cell = st.m.compact
+        ? window.PlanalogyCompact.marsCell(st.m, PS, mars, await load(st.m.compact.mars_fine[0]), await load(st.m.compact.mars_fine[1]), lat, lon)
+        : PS.marsCell(st.m, mars, lat, lon);
       if (!cell){ TT.toast('No Mars data for that point.', true); drawStatus(); return; }
       st.custom = {key:'custom', lat:cell.lat, lon:cell.lon, values:cell.values, name: label || ('Mars ' + TT.fmtCoord(cell.lat, cell.lon, 1))};
       st.target = 'custom'; setPicking(false);
